@@ -38,8 +38,8 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "audit": {
-          "block-insecure": false, // 全局禁用安全拦截
-          "ignore": [              // 忽略指定漏洞 ID（精准控制）
+          "block-insecure": false, 
+          "ignore": [              
            "PKSA-y2cr-5h3j-g3ys"
       ]
     },
