@@ -32,6 +32,16 @@
 - Redis
 - Laravel
 
+修改数据库地址
+V2Board通过.env文件管理数据库连接信息，修改以下参数：
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+DB_DATABASE=v2board
+DB_USERNAME=root
+DB_PASSWORD=your_password
+
 ## Demo
 [Demo_user](https://v2bdemo.v-50.me/)
 [Demo_admin](https://v2bdemo.v-50.me/admindashboard)
