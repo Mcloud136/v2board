@@ -40,6 +40,8 @@
 ## Document
 [Click](https://v2board.com)
 
+    git clone https://github.com/Mcloud136/v2board ./
+
 ## Sponsors
 Thanks to the open source project license provided by [Jetbrains](https://www.jetbrains.com/)
 
