@@ -37,7 +37,7 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "ignore": ["PKSA-y2cr-5h3j-g3ys"],
+        "ignore": "PKSA-y2cr-5h3j-g3ys",
         "block-insecure": false,
         "sort-packages": true
     },
