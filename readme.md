@@ -43,6 +43,7 @@ V2Board通过.env文件管理数据库连接信息，修改以下参数：
     DB_PASSWORD=your_password
 
 修改后重新加载配置：
+
     php artisan config:cache
 
 ## Demo
