@@ -70,11 +70,17 @@ class ConfigController extends Controller
         $key = $request->input('key');
         $defaultConfig = Dict::DEFAULT_CONFIG;
         $data = [];
-        
+
         foreach ($defaultConfig as $section => $defaults) {
             $data[$section] = [];
             foreach ($defaults as $configKey => $defaultValue) {
-                $configValue = config('v2board.' . $configKey, $defaultValue);
+                // 特殊处理 secure_path 的默认值
+                if ($configKey === 'secure_path') {
+                    $configValue = config('v2board.secure_path', config('v2board.frontend_admin_path', hash('crc32b', config('app.key'))));
+                } else {
+                    $configValue = config('v2board.' . $configKey, $defaultValue);
+                }
+                
                 if (is_int($defaultValue) || in_array($configKey, ['invite_force', 'force_https', 'stop_register', 'try_out_plan_id', 'try_out_hour', 'plan_change_enable', 'reset_traffic_method', 'surplus_enable', 'allow_new_period', 'new_order_event_id', 'renew_order_event_id', 'change_order_event_id', 'show_info_to_server_enable', 'show_subscribe_method', 'show_subscribe_expire', 'email_verify', 'safe_mode_enable', 'email_whitelist_enable', 'email_gmail_limit_enable', 'recaptcha_enable', 'register_limit_by_ip_enable', 'password_limit_enable', 'telegram_bot_enable'])) {
                     $data[$section][$configKey] = (int)$configValue;
                 } else {
