@@ -11,9 +11,7 @@ use App\Models\User;
 use App\Services\CouponService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
-use App\Services\PlanService;
 use App\Services\UserService;
-use App\Utils\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,17 +24,19 @@ class OrderController extends Controller
         if ($request->input('status') !== null) {
             $model->where('status', $request->input('status'));
         }
-        $order = $model->get();
-        $plan = Plan::get();
-        for ($i = 0; $i < count($order); $i++) {
-            for ($x = 0; $x < count($plan); $x++) {
-                if ($order[$i]['plan_id'] === $plan[$x]['id']) {
-                    $order[$i]['plan'] = $plan[$x];
-                }
+        $orders = $model->get();
+        $plans = Plan::get();
+        $planMap = [];
+        foreach ($plans as $plan) {
+            $planMap[$plan->id] = $plan;
+        }
+        foreach ($orders as $index => $order) {
+            if (isset($planMap[$order->plan_id])) {
+                $orders[$index]['plan'] = $planMap[$order->plan_id];
             }
         }
         return response([
-            'data' => $order->makeHidden(['id', 'user_id'])
+            'data' => $orders->makeHidden(['id', 'user_id'])
         ]);
     }
 
@@ -53,15 +53,15 @@ class OrderController extends Controller
                 'id' => 0,
                 'name' => 'deposit'
             ];
-            $order->bounus = $this->getbounus($order->total_amount);
-            $order->get_amount = $order->total_amount + $order->bounus;
+            $order->bonus = $this->getBonus($order->total_amount);
+            $order->get_amount = $order->total_amount + $order->bonus;
 
             return response([
                 'data' => $order
             ]);
         }
         $order['plan'] = Plan::find($order->plan_id);
-        $order['try_out_plan_id'] = (int)config('v2board.try_out_plan_id');
+        $order['try_out_plan_id'] = (int) config('v2board.try_out_plan_id');
         if (!$order['plan']) {
             abort(500, __('Subscription plan does not exist'));
         }
@@ -84,7 +84,7 @@ class OrderController extends Controller
             if ($amount <= 0) {
                 abort(500, __('Failed to create order, deposit amount must be greater than 0'));
             }
-            if ($amount >= 9999999 ) {
+            if ($amount >= 9999999) {
                 abort(500, __('Deposit amount too large, please contact the administrator'));
             }
             $user = User::find($request->user['id']);
@@ -94,24 +94,24 @@ class OrderController extends Controller
             $order->user_id = $request->user['id'];
             $order->plan_id = $request->input('plan_id');
             $order->period = 'deposit';
-            $order->trade_no = Helper::generateOrderNo();
+            $order->trade_no = \App\Utils\Helper::generateOrderNo();
             $order->total_amount = $amount;
-            
+
             $orderService->setOrderType($user);
             $orderService->setInvite($user);
 
             if (!$order->save()) {
-                DB::rollback();
+                DB::rollBack();
                 abort(500, __('Failed to create order'));
             }
-    
+
             DB::commit();
-    
+
             return response([
                 'data' => $order->trade_no
             ]);
         }
-        $planService = new PlanService($request->input('plan_id'));
+        $planService = new \App\Services\PlanService($request->input('plan_id'));
 
         $plan = $planService->plan;
         $user = User::find($request->user['id']);
@@ -124,7 +124,7 @@ class OrderController extends Controller
             abort(500, __('Current product is sold out'));
         }
 
-        if ($plan[$request->input('period')] === NULL) {
+        if ($plan[$request->input('period')] === null) {
             abort(500, __('This payment period cannot be purchased, please choose another period'));
         }
 
@@ -144,7 +144,6 @@ class OrderController extends Controller
             abort(500, __('This subscription cannot be renewed, please change to another subscription'));
         }
 
-
         if (!$plan->show && $plan->renew && !$userService->isAvailable($user)) {
             abort(500, __('This subscription has expired, please change to another subscription'));
         }
@@ -155,7 +154,7 @@ class OrderController extends Controller
         $order->user_id = $request->user['id'];
         $order->plan_id = $plan->id;
         $order->period = $request->input('period');
-        $order->trade_no = Helper::generateOrderNo();
+        $order->trade_no = \App\Utils\Helper::generateOrderNo();
         $order->total_amount = $plan[$request->input('period')];
 
         if ($request->input('coupon_code')) {
@@ -172,16 +171,15 @@ class OrderController extends Controller
 
         if ($user->balance > 0 && $order->total_amount > 0) {
             $remainingBalance = $user->balance - $order->total_amount;
-            $userService = new UserService();
             if ($remainingBalance > 0) {
-                if (!$userService->addBalance($order->user_id, - $order->total_amount)) {
+                if (!$userService->addBalance($order->user_id, -$order->total_amount)) {
                     DB::rollBack();
                     abort(500, __('Insufficient balance'));
                 }
                 $order->balance_amount = $order->total_amount;
                 $order->total_amount = 0;
             } else {
-                if (!$userService->addBalance($order->user_id, - $user->balance)) {
+                if (!$userService->addBalance($order->user_id, -$user->balance)) {
                     DB::rollBack();
                     abort(500, __('Insufficient balance'));
                 }
@@ -193,7 +191,7 @@ class OrderController extends Controller
         $orderService->setInvite($user);
 
         if (!$order->save()) {
-            DB::rollback();
+            DB::rollBack();
             abort(500, __('Failed to create order'));
         }
 
@@ -218,21 +216,27 @@ class OrderController extends Controller
         // free process
         if ($order->total_amount <= 0) {
             $orderService = new OrderService($order);
-            if (!$orderService->paid($order->trade_no)) abort(500, '');
+            if (!$orderService->paid($order->trade_no)) {
+                abort(500, '');
+            }
             return response([
                 'type' => -1,
                 'data' => true
             ]);
         }
         $payment = Payment::find($method);
-        if (!$payment || $payment->enable !== 1) abort(500, __('Payment method is not available'));
+        if (!$payment || $payment->enable !== 1) {
+            abort(500, __('Payment method is not available'));
+        }
         $paymentService = new PaymentService($payment->payment, $payment->id);
-        $order->handling_amount = NULL;
+        $order->handling_amount = null;
         if ($payment->handling_fee_fixed || $payment->handling_fee_percent) {
             $order->handling_amount = round(($order->total_amount * ($payment->handling_fee_percent / 100)) + $payment->handling_fee_fixed);
         }
         $order->payment_id = $method;
-        if (!$order->save()) abort(500, __('Request failed, please try again later'));
+        if (!$order->save()) {
+            abort(500, __('Request failed, please try again later'));
+        }
         $result = $paymentService->pay([
             'trade_no' => $tradeNo,
             'total_amount' => isset($order->handling_amount) ? ($order->total_amount + $order->handling_amount) : $order->total_amount,
@@ -301,20 +305,21 @@ class OrderController extends Controller
         ]);
     }
 
-    private function getbounus($total_amount) {
-        $deposit_bounus = config('v2board.deposit_bounus', []);
-        if (empty($deposit_bounus) || $deposit_bounus[0] === null) {
+    private function getBonus($totalAmount): int
+    {
+        $depositBonus = config('v2board.deposit_bonus', []);
+        if (empty($depositBonus) || $depositBonus[0] === null) {
             return 0;
         }
         $add = 0;
-        foreach ($deposit_bounus as $tier) {
-            list($amount, $bounus) = explode(':', $tier);
-            $amount = (float)$amount * 100;
-            $bounus = (float)$bounus * 100;
-            $amount = (int)$amount;
-            $bounus = (int)$bounus;
-            if ($total_amount >= $amount) {
-                $add = max($add, $bounus);
+        foreach ($depositBonus as $tier) {
+            list($amount, $bonus) = explode(':', $tier);
+            $amount = (float) $amount * 100;
+            $bonus = (float) $bonus * 100;
+            $amount = (int) $amount;
+            $bonus = (int) $bonus;
+            if ($totalAmount >= $amount) {
+                $add = max($add, $bonus);
             }
         }
         return $add;
