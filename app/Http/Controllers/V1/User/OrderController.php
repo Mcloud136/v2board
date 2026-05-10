@@ -307,12 +307,15 @@ class OrderController extends Controller
 
     private function getBonus($totalAmount): int
     {
-        $depositBonus = config('v2board.deposit_bonus', []);
+        $depositBonus = config('v2board.deposit_bounus', []);
         if (empty($depositBonus) || $depositBonus[0] === null) {
             return 0;
         }
         $add = 0;
         foreach ($depositBonus as $tier) {
+            if (!is_string($tier) || !str_contains($tier, ':')) {
+                continue;
+            }
             list($amount, $bonus) = explode(':', $tier);
             $amount = (float) $amount * 100;
             $bonus = (float) $bonus * 100;

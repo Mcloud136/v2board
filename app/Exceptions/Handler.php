@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -59,6 +60,14 @@ class Handler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($this->shouldReturnJson($request, $exception)) {
+            return response()->json(['message' => $exception->getMessage()], 401);
+        }
+
+        return redirect()->guest(url('/'));
+    }
 
     protected function convertExceptionToArray(Throwable $e)
     {

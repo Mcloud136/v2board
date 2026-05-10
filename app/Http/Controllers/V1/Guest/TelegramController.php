@@ -12,20 +12,20 @@ class TelegramController extends Controller
     protected $commands = [];
     protected $telegramService;
 
-    public function __construct(Request $request)
+    public function webhook(Request $request)
+    {
+        $this->authorizeWebhook($request);
+        $this->telegramService = new TelegramService();
+        $this->formatMessage($request->input());
+        $this->formatChatJoinRequest($request->input());
+        $this->handle();
+    }
+
+    private function authorizeWebhook(Request $request): void
     {
         if ($request->input('access_token') !== md5(config('v2board.telegram_bot_token'))) {
             abort(401);
         }
-
-        $this->telegramService = new TelegramService();
-    }
-
-    public function webhook(Request $request)
-    {
-        $this->formatMessage($request->input());
-        $this->formatChatJoinRequest($request->input());
-        $this->handle();
     }
 
     public function handle()

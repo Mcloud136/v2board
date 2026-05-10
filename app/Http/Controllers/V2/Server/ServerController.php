@@ -13,7 +13,7 @@ class ServerController extends Controller
     private $nodeId;
     private $serverService;
 
-    public function __construct(Request $request)
+    private function boot(Request $request): void
     {
         $token = $request->input('token');
 
@@ -52,6 +52,7 @@ class ServerController extends Controller
     // 后端获取配置
     public function config(Request $request)
     {
+        $this->boot($request);
         $response = [
             'listen_ip' => $this->nodeInfo->listen_ip,
             'server_port' => $this->nodeInfo->server_port,

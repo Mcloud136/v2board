@@ -3,8 +3,21 @@
 use Illuminate\Support\Str;
 use Linfo\Linfo;
 
-$lInfo = new Linfo();
-$parser = $lInfo->getParser();
+$parser = null;
+try {
+    $lInfo = new Linfo();
+    $parser = $lInfo->getParser();
+} catch (Throwable $e) {
+    $parser = null;
+}
+
+$maxProcesses = 1;
+if ($parser) {
+    $ram = $parser->getRam();
+    if (!empty($ram['total'])) {
+        $maxProcesses = (int) ceil($ram['total'] / 1024 / 1024 / 1024 * 6);
+    }
+}
 
 return [
 
@@ -182,7 +195,7 @@ return [
                 ],
                 'balance' => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => (int)ceil($parser->getRam()['total'] / 1024 / 1024 / 1024 * 6),
+                'maxProcesses' => $maxProcesses,
                 'tries' => 1,
                 'balanceCooldown' => 3,
             ],

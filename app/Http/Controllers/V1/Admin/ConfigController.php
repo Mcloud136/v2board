@@ -19,7 +19,7 @@ class ConfigController extends Controller
         $path = resource_path('views/mail/');
         $files = array_map(function ($item) use ($path) {
             return str_replace($path, '', $item);
-        }, glob($path . '*'));
+        }, glob($path . '*') ?: []);
         return response([
             'data' => $files
         ]);
@@ -30,7 +30,7 @@ class ConfigController extends Controller
         $path = public_path('theme/');
         $files = array_map(function ($item) use ($path) {
             return str_replace($path, '', $item);
-        }, glob($path . '*'));
+        }, glob($path . '*') ?: []);
         return response([
             'data' => $files
         ]);
@@ -105,14 +105,11 @@ class ConfigController extends Controller
     {
         $data = $request->validated();
         $config = config('v2board');
-        foreach (ConfigSave::RULES as $k => $v) {
-            if (!in_array($k, array_keys(ConfigSave::RULES))) {
-                unset($config[$k]);
+        foreach (array_keys(ConfigSave::RULES) as $k) {
+            if (!array_key_exists($k, $data)) {
                 continue;
             }
-            if (array_key_exists($k, $data)) {
-                $config[$k] = $data[$k];
-            }
+            $config[$k] = $data[$k];
         }
         $data = var_export($config, 1);
         if (!File::put(base_path() . '/config/v2board.php', "<?php\n return $data ;")) {

@@ -256,6 +256,9 @@ class OrderService
         }
         $orderSurplusSecond = $expiredAtByUser - time();
         $orderRangeSecond = $expiredAtByOrder - $lastValidateAt;
+        if ($orderRangeSecond <= 0) {
+            return;
+        }
 
         $totalTraffic = $user->transfer_enable;
         $usedTraffic = ($user->u + $user->d);
@@ -352,8 +355,9 @@ class OrderService
         }
 
         // 到期当天续费刷新流量
-        $expireDay = date('d', $this->user->expired_at);
-        $expireMonth = date('m', $this->user->expired_at);
+        $expiredAt = $this->user->expired_at ?? time();
+        $expireDay = date('d', $expiredAt);
+        $expireMonth = date('m', $expiredAt);
         $today = date('d');
         $currentMonth = date('m');
         if ($order->type === 2 && $expireMonth == $currentMonth && $expireDay === $today) {
@@ -417,12 +421,15 @@ class OrderService
 
     private function getBonus($totalAmount): int
     {
-        $depositBonus = config('v2board.deposit_bonus', []);
+        $depositBonus = config('v2board.deposit_bounus', []);
         if (empty($depositBonus) || $depositBonus[0] === null) {
             return 0;
         }
         $add = 0;
         foreach ($depositBonus as $tier) {
+            if (!is_string($tier) || !str_contains($tier, ':')) {
+                continue;
+            }
             list($amount, $bonus) = explode(':', $tier);
             $amount = (float) $amount * 100;
             $bonus = (float) $bonus * 100;

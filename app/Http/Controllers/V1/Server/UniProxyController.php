@@ -18,7 +18,7 @@ class UniProxyController extends Controller
     private $nodeId;
     private $serverService;
 
-    public function __construct(Request $request)
+    private function boot(Request $request): void
     {
         $token = $request->input('token');
         if (empty($token)) {
@@ -39,6 +39,7 @@ class UniProxyController extends Controller
     // 后端获取用户
     public function user(Request $request)
     {
+        $this->boot($request);
         ini_set('memory_limit', -1);
         Cache::put(CacheKey::get('SERVER_' . strtoupper($this->nodeType) . '_LAST_CHECK_AT', $this->nodeInfo->id), time(), 3600);
         $users = $this->serverService->getAvailableUsers($this->nodeInfo->group_id)
@@ -71,6 +72,7 @@ class UniProxyController extends Controller
     // 后端提交数据
     public function push(Request $request)
     {
+        $this->boot($request);
         $data = $request->json()->all();
         if (empty($data)) {
             $data = $_POST;
@@ -94,6 +96,7 @@ class UniProxyController extends Controller
     // 后端获取在线数据
     public function alivelist(Request $request)
     {
+        $this->boot($request);
         $alive = Cache::remember('ALIVE_LIST', 60, function () {
             $userService = new UserService();
             $users = $userService->getDeviceLimitedUsers();
@@ -125,6 +128,7 @@ class UniProxyController extends Controller
     // 后端提交在线数据
     public function alive(Request $request)
     {
+        $this->boot($request);
         $data = $request->json()->all();
         if (empty($data)) {
             $data = $_POST;
@@ -196,6 +200,7 @@ class UniProxyController extends Controller
     // 后端获取配置
     public function config(Request $request)
     {
+        $this->boot($request);
         switch ($this->nodeType) {
             case 'shadowsocks':
                 $response = [
