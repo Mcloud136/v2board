@@ -1,0 +1,123 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: "*"
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+tcp-concurrent: true
+mux:
+  enable: true
+  concurrency: 10
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+
+  nameserver:
+    - 223.5.5.5  # 阿里 DNS
+    - 119.29.29.29 # 腾讯 DNS
+
+  fallback:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+  proxy-server-nameserver: 
+    - 223.5.5.5  # 阿里 DNS
+    - 119.29.29.29 # 腾讯 DNS
+  respect-rules: true
+
+proxies: []
+
+proxy-groups:
+
+
+  # ===== 🌍 总出口 =====
+  - name: 🌍 默认出口
+    type: select
+    proxies:
+      - 🚀 全局负载
+      - 🇭🇰 香港负载
+      - 🇺🇸 美国负载
+      - ⚡ 最优节点
+      - 🔁 故障转移
+      - DIRECT
+  # ===== 🇭🇰 香港负载 =====
+  - name: 🇭🇰 香港负载
+    type: load-balance
+    strategy: round-robin
+    url: http://cp.cloudflare.com/generate_204
+    interval: 60
+    proxies:
+      - "/(?i)香港/"
+      - "/(?i)HK/"
+
+  # ===== 🇺🇸 美国负载 =====
+  - name: 🇺🇸 美国负载
+    type: load-balance
+    strategy: round-robin
+    url: http://cp.cloudflare.com/generate_204
+    interval: 60
+    proxies:
+      - "/(?i)美国/"
+      - "/(?i)USA/"
+
+
+  # ===== 🚀 跨区负载（测试/下载用）=====
+  - name: 🚀 全局负载
+    type: load-balance
+    strategy: round-robin
+    url: http://cp.cloudflare.com/generate_204
+    interval: 60
+    proxies:
+      - "/(?i)香港/"
+      - "/(?i)HK/"
+      - "/(?i)美国/"
+      - "/(?i)USA/"
+
+  # ===== ⚡ 自动测速 =====
+  - name: ⚡ 最优节点
+    type: url-test
+    url: http://cp.cloudflare.com/generate_204
+    interval: 120
+    tolerance: 30
+    proxies:
+      - "/(?i)香港/"
+      - "/(?i)HK/"
+      - "/(?i)美国/"
+      - "/(?i)USA/"
+
+  # ===== 🔁 故障切换 =====
+  - name: 🔁 故障转移
+    type: fallback
+    url: http://cp.cloudflare.com/generate_204
+    interval: 120
+    proxies:
+      - "/(?i)香港/"
+      - "/(?i)HK/"
+      - "/(?i)美国/"
+      - "/(?i)USA/"
+
+      
+rules:
+  # 局域网
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  
+  - DOMAIN,rom.miui.com,DIRECT
+  - DOMAIN,oneplus.net,DIRECT
+  - DOMAIN,oppo.com,DIRECT
+  - DOMAIN,wxmuma.cn,DIRECT
+  - DOMAIN,api.wxmuma.cn,DIRECT
+
+  # 国内直连
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT
+
+  # 其余走代理
+  - MATCH,🌍 默认出口
