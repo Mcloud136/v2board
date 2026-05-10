@@ -50,6 +50,14 @@ class UserService
         return (int)(($nextYear - time()) / 86400);
     }
 
+    private function getResetTrafficMethod($plan)
+    {
+        if ($plan->reset_traffic_method === NULL) {
+            return (int)config('v2board.reset_traffic_method', 0);
+        }
+        return (int)$plan->reset_traffic_method;
+    }
+
     public function getResetDay(User $user)
     {
         if (!isset($user->plan)) {
@@ -57,47 +65,24 @@ class UserService
             $user->plan = Plan::find($user->plan_id);
         }
         if ($user->expired_at <= time() || $user->expired_at === NULL) return null;
-        // if reset method is not reset
-        if ($user->plan->reset_traffic_method === 2) return null;
-        switch (true) {
-            case ($user->plan->reset_traffic_method === NULL): {
-                $resetTrafficMethod = config('v2board.reset_traffic_method', 0);
-                switch ((int)$resetTrafficMethod) {
-                    // month first day
-                    case 0:
-                        return $this->calcResetDayByMonthFirstDay();
-                    // expire day
-                    case 1:
-                        return $this->calcResetDayByExpireDay($user->expired_at);
-                    // no action
-                    case 2:
-                        return null;
-                    // year first day
-                    case 3:
-                        return $this->calcResetDayByYearFirstDay();
-                    // year expire day
-                    case 4:
-                        return $this->calcResetDayByYearExpiredAt($user->expired_at);
-                }
-                break;
-            }
-            case ($user->plan->reset_traffic_method === 0): {
-                return $this->calcResetDayByMonthFirstDay();
-            }
-            case ($user->plan->reset_traffic_method === 1): {
-                return $this->calcResetDayByExpireDay($user->expired_at);
-            }
-            case ($user->plan->reset_traffic_method === 2): {
-                return null;
-            }
-            case ($user->plan->reset_traffic_method === 3): {
-                return $this->calcResetDayByYearFirstDay();
-            }
-            case ($user->plan->reset_traffic_method === 4): {
-                return $this->calcResetDayByYearExpiredAt($user->expired_at);
-            }
+        
+        $method = $this->getResetTrafficMethod($user->plan);
+        if ($method === 2) return null;
+        
+        $map = [
+            0 => 'calcResetDayByMonthFirstDay',
+            1 => 'calcResetDayByExpireDay',
+            3 => 'calcResetDayByYearFirstDay',
+            4 => 'calcResetDayByYearExpiredAt'
+        ];
+        
+        if (!isset($map[$method])) return null;
+        
+        $func = $map[$method];
+        if ($method === 1 || $method === 4) {
+            return $this->$func($user->expired_at);
         }
-        return null;
+        return $this->$func();
     }
 
     public function getResetPeriod(User $user)
@@ -105,42 +90,18 @@ class UserService
         if ($user->plan_id === NULL) return null;
         $plan = Plan::find($user->plan_id);
         if ($user->expired_at <= time() || $user->expired_at === NULL) return null;
-        // if reset method is not reset
-        if ($plan->reset_traffic_method === 2) return null;
-        switch (true) {
-            case ($plan->reset_traffic_method === NULL) : {
-                $resetTrafficMethod = config('v2board.reset_traffic_method', 0);
-                switch ((int)$resetTrafficMethod) {
-                    case 0:
-                        return 1;
-                    case 1:
-                        return 30;
-                    case 2:
-                        return null;
-                    case 3:
-                        return 12;
-                    case 4:
-                        return 365;
-                }
-                break;
-            }
-            case ($plan->reset_traffic_method === 0): {
-                return 1;
-            }
-            case ($plan->reset_traffic_method === 1): {
-                return 30;
-            }
-            case ($plan->reset_traffic_method === 2): {
-                return null;
-            }
-            case ($plan->reset_traffic_method === 3): {
-                return 12;
-            }
-            case ($plan->reset_traffic_method === 4): {
-                return 365;
-            }
-        }    
-        return null;
+        
+        $method = $this->getResetTrafficMethod($plan);
+        if ($method === 2) return null;
+        
+        $map = [
+            0 => 1,
+            1 => 30,
+            3 => 12,
+            4 => 365
+        ];
+        
+        return $map[$method] ?? null;
     }
 
     public function isAvailable(User $user)
