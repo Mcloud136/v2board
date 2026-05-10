@@ -1,85 +1,90 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Payments;
 
-class EPay {
+class EPay
+{
+    private array $config;
+
     public function __construct($config)
     {
+        if (empty($config['url']) || empty($config['pid']) || empty($config['key'])) {
+            throw new \InvalidArgumentException('EPay 配置缺少 url、pid 或 key');
+        }
+
         $this->config = $config;
     }
 
-    public function form()
+    public function form(): array
     {
         return [
             'url' => [
-                'label' => 'URL',
-                'description' => '',
-                'type' => 'input',
+                'label'       => '易支付接口地址',
+                'description' => '例如：https://pay.example.com（不带 /submit.php）',
+                'type'        => 'input',
             ],
             'pid' => [
-                'label' => 'PID',
+                'label'       => '商户ID (PID)',
                 'description' => '',
-                'type' => 'input',
+                'type'        => 'input',
             ],
             'key' => [
-                'label' => 'KEY',
+                'label'       => '商户密钥 (KEY)',
                 'description' => '',
-                'type' => 'input',
+                'type'        => 'input',
             ],
-            'type' => [
-                'label' => 'TYPE',
-                'description' => '支付类型，如: alipay, wxpay, qqpay',
-                'type' => 'input',
-            ]
         ];
     }
 
     public function pay($order)
     {
         $params = [
-            'money' => $order['total_amount'] / 100,
-            'name' => $order['trade_no'],
-            'notify_url' => $order['notify_url'],
-            'return_url' => $order['return_url'],
+            'money'        => sprintf('%.2f', $order['total_amount'] / 100),
+            'name'         => $order['trade_no'],
+            'notify_url'   => $order['notify_url'],
+            'return_url'   => $order['return_url'],
             'out_trade_no' => $order['trade_no'],
-            'pid' => $this->config['pid']
+            'pid'          => $this->config['pid'],
+            'type'         => 'alipay',           // ← 关键修改：强制支付宝直跳
         ];
-        if (!empty($this->config['type'])) {
-            $params['type'] = $this->config['type'];
-        }
-        ksort($params);
-        reset($params);
-        $str = stripslashes(urldecode(http_build_query($params))) . $this->config['key'];
-        $params['sign'] = md5($str);
+
+        $params['sign']      = $this->buildSign($params);
         $params['sign_type'] = 'MD5';
+
         return [
-            'type' => 1, // 0:qrcode 1:url
-            'data' => $this->config['url'] . '/submit.php?' . http_build_query($params)
+            'type' => 1, // 1:url
+            'data' => $this->config['url'] . '/submit.php?' . http_build_query($params),
         ];
     }
 
     public function notify($params)
     {
-        $sign = $params['sign'];
-        unset($params['sign']);
-        unset($params['sign_type']);
-        ksort($params);
-        reset($params);
-        $str = stripslashes(urldecode(http_build_query($params))) . $this->config['key'];
-        $generateSignature = md5($str);
-        if (!hash_equals($generateSignature, $sign)) {
+        if (!isset($params['sign'], $params['out_trade_no'], $params['trade_no'])) {
             return false;
         }
 
-        // 强制要求交易状态为成功，避免未支付/处理中状态被误入账
-        $tradeStatus = $params['trade_status'] ?? '';
-        if ($tradeStatus !== 'TRADE_SUCCESS') {
-            return('fail');
+        $sign = $params['sign'];
+        unset($params['sign'], $params['sign_type']);
+
+        if ($sign !== $this->buildSign($params)) {
+            return false;
         }
 
         return [
-            'trade_no' => $params['out_trade_no'],
-            'callback_no' => $params['trade_no']
+            'trade_no'    => $params['out_trade_no'],
+            'callback_no' => $params['trade_no'],
         ];
+    }
+
+    /**
+     * 统一构建易支付签名（已包含 type 参数）
+     */
+    private function buildSign(array $params): string
+    {
+        ksort($params);
+        $str = stripslashes(urldecode(http_build_query($params))) . $this->config['key'];
+        return md5($str);
     }
 }
