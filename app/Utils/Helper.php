@@ -38,9 +38,23 @@ class Helper
 
     public static function exchange($from, $to)
     {
-        $result = file_get_contents('https://api.exchangerate.host/latest?symbols=' . $to . '&base=' . $from);
-        $result = json_decode($result, true);
-        return $result['rates'][$to];
+        $client = new \GuzzleHttp\Client([
+            'timeout' => 10,
+            'connect_timeout' => 10
+        ]);
+        try {
+            $response = $client->get('https://api.exchangerate.host/latest', [
+                'query' => [
+                    'symbols' => $to,
+                    'base' => $from
+                ]
+            ]);
+            $result = json_decode($response->getBody()->getContents(), true);
+            return $result['rates'][$to] ?? null;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Exchange rate fetch failed: ' . $e->getMessage());
+            return null;
+        }
     }
 
     public static function randomChar($len, $special = false)
@@ -144,7 +158,7 @@ class Helper
 
     public static function randomPort($range) {
         $portRange = explode('-', $range);
-        return rand($portRange[0], $portRange[1]);
+        return random_int($portRange[0], $portRange[1]);
     }
 
     public static function base64EncodeUrlSafe($data)
@@ -372,7 +386,7 @@ class Helper
         return "trojan://{$password}@" . self::formatHost($server['host']) . ":{$server['port']}?{$query}#". rawurlencode($server['name']) . "\r\n";
     }
 
-    public static function buildHysteriaUri($password, $server)
+    private static function buildHysteriaCommon($password, $server, $isV2 = false, $tlsSettings = [])
     {
         $remote = self::formatHost($server['host']);
         $name = self::encodeURIComponent($server['name']);
@@ -380,15 +394,23 @@ class Helper
         $parts = explode(",", $server['port']);
         $firstPort = strpos($parts[0], '-') !== false ? explode('-', $parts[0])[0] : $parts[0];
 
-        $uri = $server['version'] == 2 ?
-            "hysteria2://{$password}@{$remote}:{$firstPort}/?insecure={$server['insecure']}&sni={$server['server_name']}" :
-            "hysteria://{$remote}:{$firstPort}/?protocol=udp&auth={$password}&insecure={$server['insecure']}&peer={$server['server_name']}&upmbps={$server['down_mbps']}&downmbps={$server['up_mbps']}";
+        if ($isV2) {
+            $insecure = $tlsSettings['allow_insecure'] ?? 0;
+            $sni = $tlsSettings['server_name'] ?? '';
+            $uri = "hysteria2://{$password}@{$remote}:{$firstPort}/?insecure={$insecure}&sni={$sni}";
+        } else {
+            $uri = $server['version'] == 2 ?
+                "hysteria2://{$password}@{$remote}:{$firstPort}/?insecure={$server['insecure']}&sni={$server['server_name']}" :
+                "hysteria://{$remote}:{$firstPort}/?protocol=udp&auth={$password}&insecure={$server['insecure']}&peer={$server['server_name']}&upmbps={$server['down_mbps']}&downmbps={$server['up_mbps']}";
+        }
 
         if (isset($server['obfs']) && isset($server['obfs_password'])) {
             $obfs_password = rawurlencode($server['obfs_password']);
-            $uri .= $server['version'] == 2 ? 
-                "&obfs={$server['obfs']}&obfs-password={$obfs_password}" :
-                "&obfs={$server['obfs']}&obfsParam{$obfs_password}";
+            if ($isV2 || ($server['version'] ?? 0) == 2) {
+                $uri .= "&obfs={$server['obfs']}&obfs-password={$obfs_password}";
+            } else {
+                $uri .= "&obfs={$server['obfs']}&obfsParam{$obfs_password}";
+            }
         }
         if (count($parts) !== 1 || strpos($parts[0], '-') !== false) {
             $uri .= "&mport={$server['mport']}";
@@ -396,26 +418,15 @@ class Helper
         return "{$uri}#{$name}\r\n";
     }
 
+    public static function buildHysteriaUri($password, $server)
+    {
+        return self::buildHysteriaCommon($password, $server);
+    }
+
     public static function buildHysteria2Uri($password, $server)
     {
-        $remote = self::formatHost($server['host']);
-        $name = self::encodeURIComponent($server['name']);
-
-        $parts = explode(",", $server['port']);
-        $firstPort = strpos($parts[0], '-') !== false ? explode('-', $parts[0])[0] : $parts[0];
         $tlsSettings = $server['tls_settings'] ?? [];
-        $insecure = $tlsSettings['allow_insecure'] ?? 0;
-        $sni = $tlsSettings['server_name'] ?? '';
-        $uri = "hysteria2://{$password}@{$remote}:{$firstPort}/?insecure={$insecure}&sni={$sni}";
-
-        if (isset($server['obfs']) && isset($server['obfs_password'])) {
-            $obfs_password = rawurlencode($server['obfs_password']);
-            $uri .= "&obfs={$server['obfs']}&obfs-password={$obfs_password}";
-        }
-        if (count($parts) !== 1 || strpos($parts[0], '-') !== false) {
-            $uri .= "&mport={$server['mport']}";
-        }
-        return "{$uri}#{$name}\r\n";
+        return self::buildHysteriaCommon($password, $server, true, $tlsSettings);
     }
 
     public static function buildTuicUri($password, $server)
