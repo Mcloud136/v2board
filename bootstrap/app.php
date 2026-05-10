@@ -20,7 +20,6 @@ $app = Application::configure(basePath: dirname(__DIR__))
             Route::group([
                 'prefix' => '/api/v1',
                 'middleware' => 'api',
-                'namespace' => 'App\\Http\\Controllers'
             ], function ($router) {
                 foreach (glob(app_path('Http/Routes/V1') . '/*.php') as $file) {
                     $routeClass = 'App\\Http\\Routes\\V1\\' . basename($file, '.php');
@@ -34,7 +33,6 @@ $app = Application::configure(basePath: dirname(__DIR__))
             Route::group([
                 'prefix' => '/api/v2',
                 'middleware' => 'api',
-                'namespace' => 'App\\Http\\Controllers'
             ], function ($router) {
                 foreach (glob(app_path('Http/Routes/V2') . '/*.php') as $file) {
                     $routeClass = 'App\\Http\\Routes\\V2\\' . basename($file, '.php');

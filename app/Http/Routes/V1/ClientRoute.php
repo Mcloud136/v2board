@@ -9,15 +9,16 @@ class ClientRoute
     {
         $router->group([
             'prefix' => 'client',
-            'middleware' => 'client'
+            'middleware' => ['client']
         ], function ($router) {
-            // Client
-            if (empty(config('v2board.subscribe_path'))) {
-                $router->get('/subscribe', 'V1\\Client\\ClientController@subscribe');
-            }
-            // App
-            $router->get('/app/getConfig', 'V1\\Client\\AppController@getConfig');
-            $router->get('/app/getVersion', 'V1\\Client\\AppController@getVersion');
+            $router->get('/config', [\App\Http\Controllers\V1\Client\ClientController::class, 'config']);
+            $router->post('/config', [\App\Http\Controllers\V1\Client\ClientController::class, 'config']);
+        });
+        $router->group([
+            'prefix' => 'app',
+            'middleware' => ['client']
+        ], function ($router) {
+            $router->get('/version', [\App\Http\Controllers\V1\Client\AppController::class, 'version']);
         });
     }
 }

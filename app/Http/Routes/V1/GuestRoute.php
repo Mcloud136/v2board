@@ -11,11 +11,11 @@ class GuestRoute
             'prefix' => 'guest'
         ], function ($router) {
             // Telegram
-            $router->post('/telegram/webhook', 'V1\\Guest\\TelegramController@webhook');
+            $router->post('/telegram/webhook', [\App\Http\Controllers\V1\Guest\TelegramController::class, 'webhook']);
             // Payment
-            $router->match(['get', 'post'], '/payment/notify/{method}/{uuid}', 'V1\\Guest\\PaymentController@notify');
+            $router->match(['get', 'post'], '/payment/notify/{method}/{uuid}', [\App\Http\Controllers\V1\Guest\PaymentController::class, 'notify']);
             // Comm
-            $router->get ('/comm/config', 'V1\\Guest\\CommController@config');
+            $router->get ('/comm/config', [\App\Http\Controllers\V1\Guest\CommController::class, 'config']);
         });
     }
 }

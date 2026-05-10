@@ -12,56 +12,56 @@ class UserRoute
             'middleware' => 'user'
         ], function ($router) {
             // User
-            $router->get ('/unbindTelegram', 'V1\\User\\UserController@unbindTelegram');
-            $router->get ('/resetSecurity', 'V1\\User\\UserController@resetSecurity');
-            $router->get ('/info', 'V1\\User\\UserController@info');
-            $router->post('/newPeriod', 'V1\\User\\UserController@newPeriod');
-            $router->post('/redeemgiftcard', 'V1\\User\\UserController@redeemgiftcard');
-            $router->post('/changePassword', 'V1\\User\\UserController@changePassword');
-            $router->post('/update', 'V1\\User\\UserController@update');
-            $router->get ('/getSubscribe', 'V1\\User\\UserController@getSubscribe');
-            $router->get ('/getStat', 'V1\\User\\UserController@getStat');
-            $router->get ('/checkLogin', 'V1\\User\\UserController@checkLogin');
-            $router->post('/transfer', 'V1\\User\\UserController@transfer');
-            $router->post('/getQuickLoginUrl', 'V1\\User\\UserController@getQuickLoginUrl');
-            $router->get ('/getActiveSession', 'V1\\User\\UserController@getActiveSession');
-            $router->post('/removeActiveSession', 'V1\\User\\UserController@removeActiveSession');
+            $router->get ('/unbindTelegram', [\App\Http\Controllers\V1\User\UserController::class, 'unbindTelegram']);
+            $router->get ('/resetSecurity', [\App\Http\Controllers\V1\User\UserController::class, 'resetSecurity']);
+            $router->get ('/info', [\App\Http\Controllers\V1\User\UserController::class, 'info']);
+            $router->post('/newPeriod', [\App\Http\Controllers\V1\User\UserController::class, 'newPeriod']);
+            $router->post('/redeemgiftcard', [\App\Http\Controllers\V1\User\UserController::class, 'redeemgiftcard']);
+            $router->post('/changePassword', [\App\Http\Controllers\V1\User\UserController::class, 'changePassword']);
+            $router->post('/update', [\App\Http\Controllers\V1\User\UserController::class, 'update']);
+            $router->get ('/getSubscribe', [\App\Http\Controllers\V1\User\UserController::class, 'getSubscribe']);
+            $router->get ('/getStat', [\App\Http\Controllers\V1\User\UserController::class, 'getStat']);
+            $router->get ('/checkLogin', [\App\Http\Controllers\V1\User\UserController::class, 'checkLogin']);
+            $router->post('/transfer', [\App\Http\Controllers\V1\User\UserController::class, 'transfer']);
+            $router->post('/getQuickLoginUrl', [\App\Http\Controllers\V1\User\UserController::class, 'getQuickLoginUrl']);
+            $router->get ('/getActiveSession', [\App\Http\Controllers\V1\User\UserController::class, 'getActiveSession']);
+            $router->post('/removeActiveSession', [\App\Http\Controllers\V1\User\UserController::class, 'removeActiveSession']);
             // Order
-            $router->post('/order/save', 'V1\\User\\OrderController@save');
-            $router->post('/order/checkout', 'V1\\User\\OrderController@checkout');
-            $router->get ('/order/check', 'V1\\User\\OrderController@check');
-            $router->get ('/order/detail', 'V1\\User\\OrderController@detail');
-            $router->get ('/order/fetch', 'V1\\User\\OrderController@fetch');
-            $router->get ('/order/getPaymentMethod', 'V1\\User\\OrderController@getPaymentMethod');
-            $router->post('/order/cancel', 'V1\\User\\OrderController@cancel');
+            $router->post('/order/save', [\App\Http\Controllers\V1\User\OrderController::class, 'save']);
+            $router->post('/order/checkout', [\App\Http\Controllers\V1\User\OrderController::class, 'checkout']);
+            $router->get ('/order/check', [\App\Http\Controllers\V1\User\OrderController::class, 'check']);
+            $router->get ('/order/detail', [\App\Http\Controllers\V1\User\OrderController::class, 'detail']);
+            $router->get ('/order/fetch', [\App\Http\Controllers\V1\User\OrderController::class, 'fetch']);
+            $router->get ('/order/getPaymentMethod', [\App\Http\Controllers\V1\User\OrderController::class, 'getPaymentMethod']);
+            $router->post('/order/cancel', [\App\Http\Controllers\V1\User\OrderController::class, 'cancel']);
             // Plan
-            $router->get ('/plan/fetch', 'V1\\User\\PlanController@fetch');
+            $router->get ('/plan/fetch', [\App\Http\Controllers\V1\User\PlanController::class, 'fetch']);
             // Invite
-            $router->get ('/invite/save', 'V1\\User\\InviteController@save');
-            $router->get ('/invite/fetch', 'V1\\User\\InviteController@fetch');
-            $router->get ('/invite/details', 'V1\\User\\InviteController@details');
+            $router->get ('/invite/save', [\App\Http\Controllers\V1\User\InviteController::class, 'save']);
+            $router->get ('/invite/fetch', [\App\Http\Controllers\V1\User\InviteController::class, 'fetch']);
+            $router->get ('/invite/details', [\App\Http\Controllers\V1\User\InviteController::class, 'details']);
             // Notice
-            $router->get ('/notice/fetch', 'V1\\User\\NoticeController@fetch');
+            $router->get ('/notice/fetch', [\App\Http\Controllers\V1\User\NoticeController::class, 'fetch']);
             // Ticket
-            $router->post('/ticket/reply', 'V1\\User\\TicketController@reply');
-            $router->post('/ticket/close', 'V1\\User\\TicketController@close');
-            $router->post('/ticket/save', 'V1\\User\\TicketController@save');
-            $router->get ('/ticket/fetch', 'V1\\User\\TicketController@fetch');
-            $router->post('/ticket/withdraw', 'V1\\User\\TicketController@withdraw');
+            $router->post('/ticket/reply', [\App\Http\Controllers\V1\User\TicketController::class, 'reply']);
+            $router->post('/ticket/close', [\App\Http\Controllers\V1\User\TicketController::class, 'close']);
+            $router->post('/ticket/save', [\App\Http\Controllers\V1\User\TicketController::class, 'save']);
+            $router->get ('/ticket/fetch', [\App\Http\Controllers\V1\User\TicketController::class, 'fetch']);
+            $router->post('/ticket/withdraw', [\App\Http\Controllers\V1\User\TicketController::class, 'withdraw']);
             // Server
-            $router->get ('/server/fetch', 'V1\\User\\ServerController@fetch');
+            $router->get ('/server/fetch', [\App\Http\Controllers\V1\User\ServerController::class, 'fetch']);
             // Coupon
-            $router->post('/coupon/check', 'V1\\User\\CouponController@check');
+            $router->post('/coupon/check', [\App\Http\Controllers\V1\User\CouponController::class, 'check']);
             // Telegram
-            $router->get ('/telegram/getBotInfo', 'V1\\User\\TelegramController@getBotInfo');
+            $router->get ('/telegram/getBotInfo', [\App\Http\Controllers\V1\User\TelegramController::class, 'getBotInfo']);
             // Comm
-            $router->get ('/comm/config', 'V1\\User\\CommController@config');
-            $router->Post('/comm/getStripePublicKey', 'V1\\User\\CommController@getStripePublicKey');
+            $router->get ('/comm/config', [\App\Http\Controllers\V1\User\CommController::class, 'config']);
+            $router->post('/comm/getStripePublicKey', [\App\Http\Controllers\V1\User\CommController::class, 'getStripePublicKey']);
             // Knowledge
-            $router->get ('/knowledge/fetch', 'V1\\User\\KnowledgeController@fetch');
-            $router->get ('/knowledge/getCategory', 'V1\\User\\KnowledgeController@getCategory');
+            $router->get ('/knowledge/fetch', [\App\Http\Controllers\V1\User\KnowledgeController::class, 'fetch']);
+            $router->get ('/knowledge/getCategory', [\App\Http\Controllers\V1\User\KnowledgeController::class, 'getCategory']);
             // Stat
-            $router->get ('/stat/getTrafficLog', 'V1\\User\\StatController@getTrafficLog');
+            $router->get ('/stat/getTrafficLog', [\App\Http\Controllers\V1\User\StatController::class, 'getTrafficLog']);
         });
     }
 }
