@@ -1,6 +1,10 @@
 <?php
 namespace App\Http\Routes\V1;
 
+use App\Http\Controllers\V1\Admin\NoticeController as AdminNoticeController;
+use App\Http\Controllers\V1\Staff\PlanController as StaffPlanController;
+use App\Http\Controllers\V1\Staff\TicketController as StaffTicketController;
+use App\Http\Controllers\V1\Staff\UserController as StaffUserController;
 use Illuminate\Contracts\Routing\Registrar;
 
 class StaffRoute
@@ -12,21 +16,21 @@ class StaffRoute
             'middleware' => 'staff'
         ], function ($router) {
             // Ticket
-            $router->get ('/ticket/fetch', 'V1\\Staff\\TicketController@fetch');
-            $router->post('/ticket/reply', 'V1\\Staff\\TicketController@reply');
-            $router->post('/ticket/close', 'V1\\Staff\\TicketController@close');
+            $router->get ('/ticket/fetch', [StaffTicketController::class, 'fetch']);
+            $router->post('/ticket/reply', [StaffTicketController::class, 'reply']);
+            $router->post('/ticket/close', [StaffTicketController::class, 'close']);
             // User
-            $router->post('/user/update', 'V1\\Staff\\UserController@update');
-            $router->get ('/user/getUserInfoById', 'V1\\Staff\\UserController@getUserInfoById');
-            $router->post('/user/sendMail', 'V1\\Staff\\UserController@sendMail');
-            $router->post('/user/ban', 'V1\\Staff\\UserController@ban');
+            $router->post('/user/update', [StaffUserController::class, 'update']);
+            $router->get ('/user/getUserInfoById', [StaffUserController::class, 'getUserInfoById']);
+            $router->post('/user/sendMail', [StaffUserController::class, 'sendMail']);
+            $router->post('/user/ban', [StaffUserController::class, 'ban']);
             // Plan
-            $router->get ('/plan/fetch', 'V1\\Staff\\PlanController@fetch');
+            $router->get ('/plan/fetch', [StaffPlanController::class, 'fetch']);
             // Notice
-            $router->get ('/notice/fetch', 'V1\\Admin\\NoticeController@fetch');
-            $router->post('/notice/save', 'V1\\Admin\\NoticeController@save');
-            $router->post('/notice/update', 'V1\\Admin\\NoticeController@update');
-            $router->post('/notice/drop', 'V1\\Admin\\NoticeController@drop');
+            $router->get ('/notice/fetch', [AdminNoticeController::class, 'fetch']);
+            $router->post('/notice/save', [AdminNoticeController::class, 'save']);
+            $router->post('/notice/update', [AdminNoticeController::class, 'update']);
+            $router->post('/notice/drop', [AdminNoticeController::class, 'drop']);
         });
     }
 }

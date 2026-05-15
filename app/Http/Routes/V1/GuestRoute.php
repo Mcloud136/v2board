@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Routes\V1;
 
+use App\Http\Controllers\V1\Guest\CommController;
+use App\Http\Controllers\V1\Guest\PaymentController;
+use App\Http\Controllers\V1\Guest\TelegramController;
 use Illuminate\Contracts\Routing\Registrar;
 
 class GuestRoute
@@ -11,11 +14,11 @@ class GuestRoute
             'prefix' => 'guest'
         ], function ($router) {
             // Telegram
-            $router->post('/telegram/webhook', 'V1\\Guest\\TelegramController@webhook');
+            $router->post('/telegram/webhook', [TelegramController::class, 'webhook']);
             // Payment
-            $router->match(['get', 'post'], '/payment/notify/{method}/{uuid}', 'V1\\Guest\\PaymentController@notify');
+            $router->match(['get', 'post'], '/payment/notify/{method}/{uuid}', [PaymentController::class, 'notify']);
             // Comm
-            $router->get ('/comm/config', 'V1\\Guest\\CommController@config');
+            $router->get ('/comm/config', [CommController::class, 'config']);
         });
     }
 }

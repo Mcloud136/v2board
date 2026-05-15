@@ -1,6 +1,30 @@
 <?php
 namespace App\Http\Routes\V1;
 
+use App\Http\Controllers\V1\Admin\ConfigController;
+use App\Http\Controllers\V1\Admin\CouponController;
+use App\Http\Controllers\V1\Admin\GiftcardController;
+use App\Http\Controllers\V1\Admin\KnowledgeController;
+use App\Http\Controllers\V1\Admin\NoticeController;
+use App\Http\Controllers\V1\Admin\OrderController;
+use App\Http\Controllers\V1\Admin\PaymentController;
+use App\Http\Controllers\V1\Admin\PlanController;
+use App\Http\Controllers\V1\Admin\StatController;
+use App\Http\Controllers\V1\Admin\SystemController;
+use App\Http\Controllers\V1\Admin\ThemeController;
+use App\Http\Controllers\V1\Admin\TicketController;
+use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\Admin\Server\AnyTLSController;
+use App\Http\Controllers\V1\Admin\Server\GroupController;
+use App\Http\Controllers\V1\Admin\Server\HysteriaController;
+use App\Http\Controllers\V1\Admin\Server\ManageController;
+use App\Http\Controllers\V1\Admin\Server\RouteController;
+use App\Http\Controllers\V1\Admin\Server\ShadowsocksController;
+use App\Http\Controllers\V1\Admin\Server\TrojanController;
+use App\Http\Controllers\V1\Admin\Server\TuicController;
+use App\Http\Controllers\V1\Admin\Server\V2nodeController;
+use App\Http\Controllers\V1\Admin\Server\VlessController;
+use App\Http\Controllers\V1\Admin\Server\VmessController;
 use Illuminate\Contracts\Routing\Registrar;
 
 class AdminRoute
@@ -12,165 +36,165 @@ class AdminRoute
             'middleware' => ['admin', 'log'],
         ], function ($router) {
             // Config
-            $router->get ('/config/fetch', 'V1\\Admin\\ConfigController@fetch');
-            $router->post('/config/save', 'V1\\Admin\\ConfigController@save');
-            $router->get ('/config/getEmailTemplate', 'V1\\Admin\\ConfigController@getEmailTemplate');
-            $router->get ('/config/getThemeTemplate', 'V1\\Admin\\ConfigController@getThemeTemplate');
-            $router->post('/config/setTelegramWebhook', 'V1\\Admin\\ConfigController@setTelegramWebhook');
-            $router->post('/config/testSendMail', 'V1\\Admin\\ConfigController@testSendMail');
+            $router->get ('/config/fetch', [ConfigController::class, 'fetch']);
+            $router->post('/config/save', [ConfigController::class, 'save']);
+            $router->get ('/config/getEmailTemplate', [ConfigController::class, 'getEmailTemplate']);
+            $router->get ('/config/getThemeTemplate', [ConfigController::class, 'getThemeTemplate']);
+            $router->post('/config/setTelegramWebhook', [ConfigController::class, 'setTelegramWebhook']);
+            $router->post('/config/testSendMail', [ConfigController::class, 'testSendMail']);
             // Plan
-            $router->get ('/plan/fetch', 'V1\\Admin\\PlanController@fetch');
-            $router->post('/plan/save', 'V1\\Admin\\PlanController@save');
-            $router->post('/plan/drop', 'V1\\Admin\\PlanController@drop');
-            $router->post('/plan/update', 'V1\\Admin\\PlanController@update');
-            $router->post('/plan/sort', 'V1\\Admin\\PlanController@sort');
+            $router->get ('/plan/fetch', [PlanController::class, 'fetch']);
+            $router->post('/plan/save', [PlanController::class, 'save']);
+            $router->post('/plan/drop', [PlanController::class, 'drop']);
+            $router->post('/plan/update', [PlanController::class, 'update']);
+            $router->post('/plan/sort', [PlanController::class, 'sort']);
             // Server
-            $router->get ('/server/group/fetch', 'V1\\Admin\\Server\\GroupController@fetch');
-            $router->post('/server/group/save', 'V1\\Admin\\Server\\GroupController@save');
-            $router->post('/server/group/drop', 'V1\\Admin\\Server\\GroupController@drop');
-            $router->get ('/server/route/fetch', 'V1\\Admin\\Server\\RouteController@fetch');
-            $router->post('/server/route/save', 'V1\\Admin\\Server\\RouteController@save');
-            $router->post('/server/route/drop', 'V1\\Admin\\Server\\RouteController@drop');
-            $router->get ('/server/manage/getNodes', 'V1\\Admin\\Server\\ManageController@getNodes');
-            $router->post('/server/manage/sort', 'V1\\Admin\\Server\\ManageController@sort');
+            $router->get ('/server/group/fetch', [GroupController::class, 'fetch']);
+            $router->post('/server/group/save', [GroupController::class, 'save']);
+            $router->post('/server/group/drop', [GroupController::class, 'drop']);
+            $router->get ('/server/route/fetch', [RouteController::class, 'fetch']);
+            $router->post('/server/route/save', [RouteController::class, 'save']);
+            $router->post('/server/route/drop', [RouteController::class, 'drop']);
+            $router->get ('/server/manage/getNodes', [ManageController::class, 'getNodes']);
+            $router->post('/server/manage/sort', [ManageController::class, 'sort']);
             $router->group([
                 'prefix' => 'server/trojan'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\TrojanController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\TrojanController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\TrojanController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\TrojanController@copy');
+                $router->post('save', [TrojanController::class, 'save']);
+                $router->post('drop', [TrojanController::class, 'drop']);
+                $router->post('update', [TrojanController::class, 'update']);
+                $router->post('copy', [TrojanController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/vmess'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\VmessController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\VmessController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\VmessController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\VmessController@copy');
+                $router->post('save', [VmessController::class, 'save']);
+                $router->post('drop', [VmessController::class, 'drop']);
+                $router->post('update', [VmessController::class, 'update']);
+                $router->post('copy', [VmessController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/shadowsocks'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\ShadowsocksController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\ShadowsocksController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\ShadowsocksController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\ShadowsocksController@copy');
+                $router->post('save', [ShadowsocksController::class, 'save']);
+                $router->post('drop', [ShadowsocksController::class, 'drop']);
+                $router->post('update', [ShadowsocksController::class, 'update']);
+                $router->post('copy', [ShadowsocksController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/tuic'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\TuicController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\TuicController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\TuicController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\TuicController@copy');
+                $router->post('save', [TuicController::class, 'save']);
+                $router->post('drop', [TuicController::class, 'drop']);
+                $router->post('update', [TuicController::class, 'update']);
+                $router->post('copy', [TuicController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/hysteria'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\HysteriaController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\HysteriaController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\HysteriaController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\HysteriaController@copy');
+                $router->post('save', [HysteriaController::class, 'save']);
+                $router->post('drop', [HysteriaController::class, 'drop']);
+                $router->post('update', [HysteriaController::class, 'update']);
+                $router->post('copy', [HysteriaController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/vless'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\VlessController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\VlessController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\VlessController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\VlessController@copy');
+                $router->post('save', [VlessController::class, 'save']);
+                $router->post('drop', [VlessController::class, 'drop']);
+                $router->post('update', [VlessController::class, 'update']);
+                $router->post('copy', [VlessController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/anytls'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\AnyTLSController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\AnyTLSController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\AnyTLSController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\AnyTLSController@copy');
+                $router->post('save', [AnyTLSController::class, 'save']);
+                $router->post('drop', [AnyTLSController::class, 'drop']);
+                $router->post('update', [AnyTLSController::class, 'update']);
+                $router->post('copy', [AnyTLSController::class, 'copy']);
             });
             $router->group([
                 'prefix' => 'server/v2node'
             ], function ($router) {
-                $router->post('save', 'V1\\Admin\\Server\\V2nodeController@save');
-                $router->post('drop', 'V1\\Admin\\Server\\V2nodeController@drop');
-                $router->post('update', 'V1\\Admin\\Server\\V2nodeController@update');
-                $router->post('copy', 'V1\\Admin\\Server\\V2nodeController@copy');
+                $router->post('save', [V2nodeController::class, 'save']);
+                $router->post('drop', [V2nodeController::class, 'drop']);
+                $router->post('update', [V2nodeController::class, 'update']);
+                $router->post('copy', [V2nodeController::class, 'copy']);
             });
             // Order
-            $router->get ('/order/fetch', 'V1\\Admin\\OrderController@fetch');
-            $router->post('/order/update', 'V1\\Admin\\OrderController@update');
-            $router->post('/order/assign', 'V1\\Admin\\OrderController@assign');
-            $router->post('/order/paid', 'V1\\Admin\\OrderController@paid');
-            $router->post('/order/cancel', 'V1\\Admin\\OrderController@cancel');
-            $router->post('/order/detail', 'V1\\Admin\\OrderController@detail');
+            $router->get ('/order/fetch', [OrderController::class, 'fetch']);
+            $router->post('/order/update', [OrderController::class, 'update']);
+            $router->post('/order/assign', [OrderController::class, 'assign']);
+            $router->post('/order/paid', [OrderController::class, 'paid']);
+            $router->post('/order/cancel', [OrderController::class, 'cancel']);
+            $router->post('/order/detail', [OrderController::class, 'detail']);
             // User
-            $router->get ('/user/fetch', 'V1\\Admin\\UserController@fetch');
-            $router->post('/user/update', 'V1\\Admin\\UserController@update');
-            $router->get ('/user/getUserInfoById', 'V1\\Admin\\UserController@getUserInfoById');
-            $router->post('/user/generate', 'V1\\Admin\\UserController@generate');
-            $router->post('/user/dumpCSV', 'V1\\Admin\\UserController@dumpCSV');
-            $router->post('/user/sendMail', 'V1\\Admin\\UserController@sendMail');
-            $router->post('/user/ban', 'V1\\Admin\\UserController@ban');
-            $router->post('/user/resetSecret', 'V1\\Admin\\UserController@resetSecret');
-            $router->post('/user/delUser', 'V1\\Admin\\UserController@delUser');
-            $router->post('/user/allDel', 'V1\\Admin\\UserController@allDel');
-            $router->post('/user/setInviteUser', 'V1\\Admin\\UserController@setInviteUser');
+            $router->get ('/user/fetch', [UserController::class, 'fetch']);
+            $router->post('/user/update', [UserController::class, 'update']);
+            $router->get ('/user/getUserInfoById', [UserController::class, 'getUserInfoById']);
+            $router->post('/user/generate', [UserController::class, 'generate']);
+            $router->post('/user/dumpCSV', [UserController::class, 'dumpCSV']);
+            $router->post('/user/sendMail', [UserController::class, 'sendMail']);
+            $router->post('/user/ban', [UserController::class, 'ban']);
+            $router->post('/user/resetSecret', [UserController::class, 'resetSecret']);
+            $router->post('/user/delUser', [UserController::class, 'delUser']);
+            $router->post('/user/allDel', [UserController::class, 'allDel']);
+            $router->post('/user/setInviteUser', [UserController::class, 'setInviteUser']);
             // Stat
-            $router->get ('/stat/getStat', 'V1\\Admin\\StatController@getStat');
-            $router->get ('/stat/getOverride', 'V1\\Admin\\StatController@getOverride');
-            $router->get ('/stat/getServerLastRank', 'V1\\Admin\\StatController@getServerLastRank');
-            $router->get ('/stat/getServerTodayRank', 'V1\\Admin\\StatController@getServerTodayRank');
-            $router->get ('/stat/getUserLastRank', 'V1\\Admin\\StatController@getUserLastRank');
-            $router->get ('/stat/getUserTodayRank', 'V1\\Admin\\StatController@getUserTodayRank');
-            $router->get ('/stat/getOrder', 'V1\\Admin\\StatController@getOrder');
-            $router->get ('/stat/getStatUser', 'V1\\Admin\\StatController@getStatUser');
-            $router->get ('/stat/getRanking', 'V1\\Admin\\StatController@getRanking');
-            $router->get ('/stat/getStatRecord', 'V1\\Admin\\StatController@getStatRecord');
+            $router->get ('/stat/getStat', [StatController::class, 'getStat']);
+            $router->get ('/stat/getOverride', [StatController::class, 'getOverride']);
+            $router->get ('/stat/getServerLastRank', [StatController::class, 'getServerLastRank']);
+            $router->get ('/stat/getServerTodayRank', [StatController::class, 'getServerTodayRank']);
+            $router->get ('/stat/getUserLastRank', [StatController::class, 'getUserLastRank']);
+            $router->get ('/stat/getUserTodayRank', [StatController::class, 'getUserTodayRank']);
+            $router->get ('/stat/getOrder', [StatController::class, 'getOrder']);
+            $router->get ('/stat/getStatUser', [StatController::class, 'getStatUser']);
+            $router->get ('/stat/getRanking', [StatController::class, 'getRanking']);
+            $router->get ('/stat/getStatRecord', [StatController::class, 'getStatRecord']);
             // Notice
-            $router->get ('/notice/fetch', 'V1\\Admin\\NoticeController@fetch');
-            $router->post('/notice/save', 'V1\\Admin\\NoticeController@save');
-            $router->post('/notice/update', 'V1\\Admin\\NoticeController@update');
-            $router->post('/notice/drop', 'V1\\Admin\\NoticeController@drop');
-            $router->post('/notice/show', 'V1\\Admin\\NoticeController@show');
+            $router->get ('/notice/fetch', [NoticeController::class, 'fetch']);
+            $router->post('/notice/save', [NoticeController::class, 'save']);
+            $router->post('/notice/update', [NoticeController::class, 'update']);
+            $router->post('/notice/drop', [NoticeController::class, 'drop']);
+            $router->post('/notice/show', [NoticeController::class, 'show']);
             // Ticket
-            $router->get ('/ticket/fetch', 'V1\\Admin\\TicketController@fetch');
-            $router->post('/ticket/reply', 'V1\\Admin\\TicketController@reply');
-            $router->post('/ticket/close', 'V1\\Admin\\TicketController@close');
+            $router->get ('/ticket/fetch', [TicketController::class, 'fetch']);
+            $router->post('/ticket/reply', [TicketController::class, 'reply']);
+            $router->post('/ticket/close', [TicketController::class, 'close']);
             // Coupon
-            $router->get ('/coupon/fetch', 'V1\\Admin\\CouponController@fetch');
-            $router->post('/coupon/generate', 'V1\\Admin\\CouponController@generate');
-            $router->post('/coupon/drop', 'V1\\Admin\\CouponController@drop');
-            $router->post('/coupon/show', 'V1\\Admin\\CouponController@show');
+            $router->get ('/coupon/fetch', [CouponController::class, 'fetch']);
+            $router->post('/coupon/generate', [CouponController::class, 'generate']);
+            $router->post('/coupon/drop', [CouponController::class, 'drop']);
+            $router->post('/coupon/show', [CouponController::class, 'show']);
             // Giftcard
-            $router->get ('/giftcard/fetch', 'V1\\Admin\\GiftcardController@fetch');
-            $router->post('/giftcard/generate', 'V1\\Admin\\GiftcardController@generate');
-            $router->post('/giftcard/drop', 'V1\\Admin\\GiftcardController@drop');
+            $router->get ('/giftcard/fetch', [GiftcardController::class, 'fetch']);
+            $router->post('/giftcard/generate', [GiftcardController::class, 'generate']);
+            $router->post('/giftcard/drop', [GiftcardController::class, 'drop']);
             // Knowledge
-            $router->get ('/knowledge/fetch', 'V1\\Admin\\KnowledgeController@fetch');
-            $router->get ('/knowledge/getCategory', 'V1\\Admin\\KnowledgeController@getCategory');
-            $router->post('/knowledge/save', 'V1\\Admin\\KnowledgeController@save');
-            $router->post('/knowledge/show', 'V1\\Admin\\KnowledgeController@show');
-            $router->post('/knowledge/drop', 'V1\\Admin\\KnowledgeController@drop');
-            $router->post('/knowledge/sort', 'V1\\Admin\\KnowledgeController@sort');
+            $router->get ('/knowledge/fetch', [KnowledgeController::class, 'fetch']);
+            $router->get ('/knowledge/getCategory', [KnowledgeController::class, 'getCategory']);
+            $router->post('/knowledge/save', [KnowledgeController::class, 'save']);
+            $router->post('/knowledge/show', [KnowledgeController::class, 'show']);
+            $router->post('/knowledge/drop', [KnowledgeController::class, 'drop']);
+            $router->post('/knowledge/sort', [KnowledgeController::class, 'sort']);
             // Payment
-            $router->get ('/payment/fetch', 'V1\\Admin\\PaymentController@fetch');
-            $router->get ('/payment/getPaymentMethods', 'V1\\Admin\\PaymentController@getPaymentMethods');
-            $router->post('/payment/getPaymentForm', 'V1\\Admin\\PaymentController@getPaymentForm');
-            $router->post('/payment/save', 'V1\\Admin\\PaymentController@save');
-            $router->post('/payment/drop', 'V1\\Admin\\PaymentController@drop');
-            $router->post('/payment/show', 'V1\\Admin\\PaymentController@show');
-            $router->post('/payment/sort', 'V1\\Admin\\PaymentController@sort');
+            $router->get ('/payment/fetch', [PaymentController::class, 'fetch']);
+            $router->get ('/payment/getPaymentMethods', [PaymentController::class, 'getPaymentMethods']);
+            $router->post('/payment/getPaymentForm', [PaymentController::class, 'getPaymentForm']);
+            $router->post('/payment/save', [PaymentController::class, 'save']);
+            $router->post('/payment/drop', [PaymentController::class, 'drop']);
+            $router->post('/payment/show', [PaymentController::class, 'show']);
+            $router->post('/payment/sort', [PaymentController::class, 'sort']);
             // System
-            $router->get ('/system/getSystemStatus', 'V1\\Admin\\SystemController@getSystemStatus');
-            $router->get ('/system/getQueueStats', 'V1\\Admin\\SystemController@getQueueStats');
-            $router->get ('/system/getQueueWorkload', 'V1\\Admin\\SystemController@getQueueWorkload');
-            $router->get ('/system/getQueueMasters', '\\Laravel\\Horizon\\Http\\Controllers\\MasterSupervisorController@index');
-            $router->get ('/system/getSystemLog', 'V1\\Admin\\SystemController@getSystemLog');
+            $router->get ('/system/getSystemStatus', [SystemController::class, 'getSystemStatus']);
+            $router->get ('/system/getQueueStats', [SystemController::class, 'getQueueStats']);
+            $router->get ('/system/getQueueWorkload', [SystemController::class, 'getQueueWorkload']);
+            $router->get ('/system/getQueueMasters', [\Laravel\Horizon\Http\Controllers\MasterSupervisorController::class, 'index']);
+            $router->get ('/system/getSystemLog', [SystemController::class, 'getSystemLog']);
             // Theme
-            $router->get ('/theme/getThemes', 'V1\\Admin\\ThemeController@getThemes');
-            $router->post('/theme/saveThemeConfig', 'V1\\Admin\\ThemeController@saveThemeConfig');
-            $router->post('/theme/getThemeConfig', 'V1\\Admin\\ThemeController@getThemeConfig');
+            $router->get ('/theme/getThemes', [ThemeController::class, 'getThemes']);
+            $router->post('/theme/saveThemeConfig', [ThemeController::class, 'saveThemeConfig']);
+            $router->post('/theme/getThemeConfig', [ThemeController::class, 'getThemeConfig']);
         });
     }
 }

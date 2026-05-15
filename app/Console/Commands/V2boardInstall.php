@@ -82,7 +82,7 @@ class V2boardInstall extends Command
             $this->info('正在导入数据库请稍等...');
             foreach ($sql as $item) {
                 try {
-                    DB::select(DB::raw($item));
+                    DB::statement($item);
                 } catch (\Exception $e) {
                 }
             }
