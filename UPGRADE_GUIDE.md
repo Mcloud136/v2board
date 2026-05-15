@@ -84,6 +84,9 @@ php artisan route:clear
 # 重新生成缓存
 php artisan config:cache
 php artisan route:cache
+
+# 替换update.sh
+./update.sh
 ```
 
 ### 2.4 重启服务
