@@ -52,5 +52,5 @@ Route::get('/' . config('v2board.secure_path', config('v2board.frontend_admin_pa
 });
 
 if (!empty(config('v2board.subscribe_path'))) {
-    Route::get(config('v2board.subscribe_path'), 'V1\\Client\\ClientController@subscribe')->middleware('client');
+    Route::get(config('v2board.subscribe_path'), [\App\Http\Controllers\V1\Client\ClientController::class, 'subscribe'])->middleware('client');
 }
