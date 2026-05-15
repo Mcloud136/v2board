@@ -53,7 +53,7 @@ class V2boardUpdate extends Command
         foreach ($sql as $item) {
             if (!$item) continue;
             try {
-                DB::select(DB::raw($item));
+                DB::statement($item);
             } catch (\Exception $e) {
             }
         }
