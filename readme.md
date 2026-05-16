@@ -34,9 +34,8 @@
 | nunomaduro/collision | ^4.3 | **^8.0** | |
 | phpunit/phpunit | ^9.0 | **^11.0** | |
 
-## 三、代码质量修复（两轮共 17 项）
+## 三、代码质量修复（共 17 项）
 
-### 第一轮：零风险 + 低风险修复
 
 | 修复 | 文件 | 说明 |
 |------|------|------|
@@ -49,11 +48,6 @@
 | 冗余查询 | `StatUserJob.php` | 消除重复的 first() 查询 |
 | 查询优化 | 4 个 Controller | plan_name 匹配从 O(N*M) 优化为 O(N+M) |
 | 返佣保存 | `CheckCommission.php` | 添加缺失的 `$order->save()` |
-
-### 第二轮：功能修复 + 性能优化
-
-| 修复 | 文件 | 说明 |
-|------|------|------|
 | **VIP 折扣失效** | `CheckRenewal.php` | `total_amount=0` 导致折扣计算为 0，用户被扣原价 |
 | **邮件异常吞没** | `SendEmailJob.php` | 发送失败不重试，邮件永久丢失 |
 | 邮件阻塞 | `SendEmailJob.php` | 移除 `sleep(2)`，每封邮件节省 2 秒 |
