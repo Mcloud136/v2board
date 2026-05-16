@@ -268,6 +268,8 @@ class UserController extends Controller
             ->select([
                 'email',
                 'transfer_enable',
+                'u',
+                'd',
                 'device_limit',
                 'last_login_at',
                 'created_at',
