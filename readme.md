@@ -4,7 +4,7 @@
 
 ## 本分支支持的后端
  - [修改版V2bX](https://github.com/wyx2685/V2bX)
- - [v2node](https://github.com/wyx2685/v2node)
+ - [v2node](https://github.com/Mcloud136/v2node)
 
 ## 原版迁移步骤
 
@@ -26,7 +26,7 @@
 
 # **V2Board**
 
-- PHP7.3+
+- PHP8.2+
 - Composer
 - MySQL5.5+
 - Redis
@@ -38,7 +38,8 @@
 邮箱和密码可随意输入
 
 ## Document
-[Click](https://v2board.com)
+[安装步骤](https://v2board.com)
+[更新步骤](https://github.com/Mcloud136/v2board/blob/master/UPGRADE_GUIDE.md)
 
 ## Sponsors
 Thanks to the open source project license provided by [Jetbrains](https://www.jetbrains.com/)
