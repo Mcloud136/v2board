@@ -45,14 +45,13 @@ class ResetUser extends Command
         if (!$this->confirm("确定要重置所有用户安全信息吗？")) {
             return;
         }
-        ini_set('memory_limit', -1);
-        $users = User::all();
-        foreach ($users as $user)
-        {
-            $user->token = Helper::guid();
-            $user->uuid = Helper::guid(true);
-            $user->save();
-            $this->info("已重置用户{$user->email}的安全信息");
-        }
+        User::chunk(200, function ($users) {
+            foreach ($users as $user) {
+                $user->token = Helper::guid();
+                $user->uuid = Helper::guid(true);
+                $user->save();
+                $this->info("已重置用户{$user->email}的安全信息");
+            }
+        });
     }
 }

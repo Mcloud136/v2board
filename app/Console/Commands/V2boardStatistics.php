@@ -43,7 +43,6 @@ class V2boardStatistics extends Command
     public function handle()
     {
         $startAt = microtime(true);
-        ini_set('memory_limit', -1);
         //$this->statUser();
         //$this->statServer();
         $this->stat();

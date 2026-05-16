@@ -39,7 +39,6 @@ class CheckOrder extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', -1);
         $orders = Order::whereIn('status', [0, 1])
             ->orderBy('created_at', 'ASC')
             ->get();

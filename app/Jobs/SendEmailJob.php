@@ -50,7 +50,6 @@ class SendEmailJob implements ShouldQueue
         $subject = $params['subject'];
         $params['template_name'] = 'mail.' . config('v2board.email_template', 'default') . '.' . $params['template_name'];
         try {
-            sleep(2); 
             Mail::send(
                 $params['template_name'],
                 $params['template_value'],
@@ -59,14 +58,21 @@ class SendEmailJob implements ShouldQueue
                 }
             );
         } catch (\Exception $e) {
-            $error = $e->getMessage();
+            $log = [
+                'email' => $params['email'],
+                'subject' => $params['subject'],
+                'template_name' => $params['template_name'],
+                'error' => $e->getMessage()
+            ];
+            MailLog::create($log);
+            throw $e;
         }
 
         $log = [
             'email' => $params['email'],
             'subject' => $params['subject'],
             'template_name' => $params['template_name'],
-            'error' => isset($error) ? $error : NULL
+            'error' => NULL
         ];
 
         MailLog::create($log);

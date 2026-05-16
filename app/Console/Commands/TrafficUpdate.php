@@ -40,7 +40,6 @@ class TrafficUpdate extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', -1);
         if (Redis::exists('traffic_reset_lock')) {
             return;
         }

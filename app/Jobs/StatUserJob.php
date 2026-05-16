@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\StatServer;
 use App\Models\StatUser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,6 +20,7 @@ class StatUserJob implements ShouldQueue
 
     public $tries = 3;
     public $timeout = 60;
+    public $backoff = [5, 15, 30];
 
     /**
      * Create a new job instance.
@@ -44,57 +44,54 @@ class StatUserJob implements ShouldQueue
     public function handle()
     {
         $recordAt = strtotime(date('Y-m-d'));
-        if ($this->recordType === 'm') {
-            //
-        }
-        $attempt = 0;
-        $maxAttempts = 3;
+
         $existingData = StatUser::where('record_at', $recordAt)
-        ->where('server_rate', $this->server['rate'])
-        ->whereIn('user_id', array_keys($this->data))
-        ->select(['user_id', 'id', 'u', 'd'])
-        ->get()
-        ->keyBy('user_id');
+            ->where('server_rate', $this->server['rate'])
+            ->whereIn('user_id', array_keys($this->data))
+            ->select(['user_id', 'id', 'u', 'd'])
+            ->get()
+            ->keyBy('user_id');
 
         $insertData = [];
-        while ($attempt < $maxAttempts) {
-            try {
-                DB::beginTransaction();
-                foreach($this->data as $userId => $trafficData){
-                    if (isset($existingData[$userId])) {
-                        StatUser::where('id', $existingData[$userId]['id'])->update([
-                            'u' => DB::raw('u + ' . (int)$trafficData[0]),
-                            'd' => DB::raw('d + ' . (int)$trafficData[1])
-                        ]);
-                    } else {
-                        $insertData[] = [
-                            'user_id' => $userId,
-                            'server_rate' => $this->server['rate'],
-                            'u' => $trafficData[0],
-                            'd' => $trafficData[1],
-                            'record_type' => $this->recordType,
-                            'record_at' => $recordAt
-                        ];
-                    }
+        DB::beginTransaction();
+        try {
+            foreach ($this->data as $userId => $trafficData) {
+                if (isset($existingData[$userId])) {
+                    StatUser::where('id', $existingData[$userId]['id'])->update([
+                        'u' => DB::raw('u + ' . (int)$trafficData[0]),
+                        'd' => DB::raw('d + ' . (int)$trafficData[1])
+                    ]);
+                } else {
+                    $insertData[] = [
+                        'user_id' => $userId,
+                        'server_rate' => $this->server['rate'],
+                        'u' => $trafficData[0],
+                        'd' => $trafficData[1],
+                        'record_type' => $this->recordType,
+                        'record_at' => $recordAt
+                    ];
                 }
-                if (!empty($insertData)) {
-                    collect($insertData)->chunk(500)->each(function ($chunk) {
-                        StatUser::upsert($chunk->toArray(), ['user_id', 'server_rate', 'record_at']);
-                    });
-                }
-                DB::commit();
-                return;
-            } catch (\Exception $e) {
-                DB::rollback();
-                if (strpos($e->getMessage(), '40001') !== false || strpos(strtolower($e->getMessage()), 'deadlock') !== false) {
-                    $attempt++;
-                    if ($attempt < $maxAttempts) {
-                        sleep(pow(2, $attempt));
-                        continue;
-                    }
-                }
-                abort(500, '用户统计数据失败'. $e->getMessage());
             }
+            if (!empty($insertData)) {
+                collect($insertData)->chunk(500)->each(function ($chunk) {
+                    StatUser::upsert($chunk->toArray(), ['user_id', 'server_rate', 'record_at']);
+                });
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
         }
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Exception $exception)
+    {
+        \Log::error('StatUserJob permanently failed: ' . $exception->getMessage(), [
+            'server' => $this->server,
+            'data_count' => count($this->data)
+        ]);
     }
 }

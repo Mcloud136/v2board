@@ -45,7 +45,6 @@ class ResetTraffic extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', -1);
         Redis::setex('traffic_reset_lock', 300, 1);
         $resetMethods = Plan::select(
             DB::raw("GROUP_CONCAT(`id`) as plan_ids"),

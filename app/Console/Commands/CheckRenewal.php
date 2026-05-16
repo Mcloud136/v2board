@@ -46,70 +46,74 @@ class CheckRenewal extends Command
      */
     public function handle()
     {
-        ini_set('memory_limit', -1);
-        $users = User::all();
+        User::where('auto_renewal', 1)
+            ->whereNotNull('plan_id')
+            ->whereNotNull('expired_at')
+            ->where('expired_at', '>', time())
+            ->where('expired_at', '<', time() + 86400 * 2)
+            ->chunk(200, function ($users) {
+                foreach ($users as $user) {
+                    try {
+                        $latestOrder = Order::where('user_id', $user->id)
+                            ->where('period', '!=', 'reset_price')
+                            ->where('period', '!=', 'onetime_price')
+                            ->where('period', '!=', 'deposit')
+                            ->where('status', 3)
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+                        if (!$latestOrder) {
+                            throw new Exception("No valid order");
+                        }
+                        $latestPeriod = $latestOrder->period;
 
-        //$mailService = new MailService();
-        foreach ($users as $user) {
-            if ($user->auto_renewal && $user->plan_id !== NULL && $user->expired_at !== NULL && $user->expired_at > time() && $user->expired_at - time() < 86400 * 2) {
-                try {
-                    $latestOrder = Order::where('user_id', $user->id)
-                        ->where('period', '!=', 'reset_price')
-                        ->where('period', '!=', 'onetime_price')
-                        ->where('period', '!=', 'deposit')
-                        ->where('status', 3)
-                        ->orderBy('created_at', 'desc')
-                        ->first();
-                    if (!$latestOrder) {
-                        throw new Exception("No valid order");
-                    }
-                    $latestPeriod = $latestOrder->period;
+                        $planService = new PlanService($user->plan_id);
+                        $plan = $planService->plan;
+                        if (!$plan) {
+                            throw new Exception("No such plan");
+                        }
+                        if (!$plan->renew) {
+                            throw new Exception('This subscription cannot be renewed');
+                        }
 
-                    $planService = new PlanService($user->plan_id);
-                    $plan = $planService->plan;
-                    if (!$plan) {
-                        throw new Exception("No such plan");
-                    }
-                    if (!$plan->renew) {
-                        throw new Exception('This subscription cannot be renewed');
-                    }
-                    if($user->balance < $plan[$latestPeriod]) {
-                        throw new Exception('No enough balance');
-                    }
+                        DB::beginTransaction();
+                        $order = new Order();
+                        $orderService = new OrderService($order);
+                        $order->user_id = $user->id;
+                        $order->plan_id = $plan->id;
+                        $order->period = $latestPeriod;
+                        $order->trade_no = Helper::generateOrderNo();
+                        $order->total_amount = $plan[$latestPeriod];
+                        $orderService->setVipDiscount($user);
+                        $order->type = 2;
 
-                    DB::beginTransaction();
-                    $order = new Order();
-                    $orderService = new OrderService($order);
-                    $order->user_id = $user->id;
-                    $order->plan_id = $plan->id;
-                    $order->period = $latestPeriod;
-                    $order->trade_no = Helper::generateOrderNo();
-                    $order->balance_amount = $plan[$latestPeriod];
-                    $order->total_amount = 0;
-                    $orderService->setVipDiscount($user);
-                    $order->type = 2;
-                    
-                    $user->balance = $user->balance - $plan[$latestPeriod];
-                    $user->expired_at = $this->getTime($latestPeriod, $user->expired_at);
-                    if (!$user->save()) {
-                        DB::rollback();
-                        throw new Exception('自动续费失败');
+                        if ($user->balance < $order->total_amount) {
+                            DB::rollback();
+                            throw new Exception('No enough balance');
+                        }
+
+                        $user->balance = $user->balance - $order->total_amount;
+                        $user->expired_at = $this->getTime($latestPeriod, $user->expired_at);
+                        if (!$user->save()) {
+                            DB::rollback();
+                            throw new Exception('自动续费失败');
+                        }
+                        $order->status = 3;
+                        if (!$order->save()) {
+                            DB::rollback();
+                            throw new Exception('自动续费失败');
+                        }
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        if (DB::transactionLevel() > 0) {
+                            DB::rollback();
+                        }
+                        $user->auto_renewal = 0;
+                        if(!$user->save()){
+                            info('用户自动续费失败,调整设置失败', [$e->getMessage() , $user]);
+                        };
                     }
-                    $order->status = 3;
-                    if (!$order->save()) {
-                        DB::rollback();
-                        throw new Exception('自动续费失败');
-                    }
-                    DB::commit();
-                    //$mailService->remindAutorenewal($user);
-                } catch (\Exception $e) {
-                    $user->auto_renewal = 0;
-                    if(!$user->save()){
-                        info('用户自动续费失败,调整设置失败', [$e->getMessage() , $user]);
-                    };
                 }
-            }
-        }
+            });
     }
 
     private function getTime($str, $timestamp)
