@@ -6,7 +6,7 @@ use Closure;
 
 class Admin extends AuthenticatesRole
 {
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $role = null)
     {
         return parent::handle($request, $next, 'admin');
     }
