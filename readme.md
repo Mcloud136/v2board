@@ -6,6 +6,8 @@
  - [修改版V2bX](https://github.com/wyx2685/V2bX)
  - [v2node](https://github.com/Mcloud136/v2node)
 
+## 本项目基于[xiao佬二改v2board](https://github.com/wyx2685/v2board)制作，升级到Laravel11并加入一些修改提升使用体验
+
 ## 原版迁移步骤
 
 按以下步骤进行面板代码文件迁移：
