@@ -27,12 +27,10 @@ class OrderController extends Controller
             $model->where('status', $request->input('status'));
         }
         $order = $model->get();
-        $plan = Plan::get();
-        for ($i = 0; $i < count($order); $i++) {
-            for ($x = 0; $x < count($plan); $x++) {
-                if ($order[$i]['plan_id'] === $plan[$x]['id']) {
-                    $order[$i]['plan'] = $plan[$x];
-                }
+        $plans = Plan::get()->keyBy('id');
+        foreach ($order as $k => $v) {
+            if (isset($plans[$v['plan_id']])) {
+                $order[$k]['plan'] = $plans[$v['plan_id']];
             }
         }
         return response([

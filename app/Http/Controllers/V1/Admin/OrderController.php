@@ -64,13 +64,9 @@ class OrderController extends Controller
         $total = $orderModel->count();
         $res = $orderModel->forPage($current, $pageSize)
             ->get();
-        $plan = Plan::get();
-        for ($i = 0; $i < count($res); $i++) {
-            for ($k = 0; $k < count($plan); $k++) {
-                if ($plan[$k]['id'] == $res[$i]['plan_id']) {
-                    $res[$i]['plan_name'] = $plan[$k]['name'];
-                }
-            }
+        $plans = Plan::get()->keyBy('id');
+        foreach ($res as $k => $v) {
+            $res[$k]['plan_name'] = $plans[$v['plan_id']]['name'] ?? null;
         }
         return response([
             'data' => $res,

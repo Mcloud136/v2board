@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class ServerLog extends Model
 {
+    protected $guarded = ['id'];
     protected $table = 'v2_server_log';
     protected $dateFormat = 'U';
     protected $casts = [

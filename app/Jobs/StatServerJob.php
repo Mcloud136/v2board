@@ -62,7 +62,7 @@ class StatServerJob implements ShouldQueue
                 ->where('record_at', $recordAt)
                 ->where('server_id', $this->server['id'])
                 ->where('server_type', $this->protocol)
-                ->lockForUpdate()->first();
+                ->first();
             if ($serverdata) {
                 $serverdata->update([
                     'u' => $serverdata['u'] + $u,

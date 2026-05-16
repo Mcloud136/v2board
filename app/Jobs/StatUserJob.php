@@ -62,10 +62,9 @@ class StatUserJob implements ShouldQueue
                 DB::beginTransaction();
                 foreach($this->data as $userId => $trafficData){
                     if (isset($existingData[$userId])) {
-                        $userdata = StatUser::where('id', $existingData[$userId]['id'])->first();
-                        $userdata->update([
-                            'u' => $userdata['u'] + $trafficData[0],
-                            'd' => $userdata['d'] + $trafficData[1]
+                        StatUser::where('id', $existingData[$userId]['id'])->update([
+                            'u' => DB::raw('u + ' . (int)$trafficData[0]),
+                            'd' => DB::raw('d + ' . (int)$trafficData[1])
                         ]);
                     } else {
                         $insertData[] = [

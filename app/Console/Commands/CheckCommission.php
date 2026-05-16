@@ -121,6 +121,7 @@ class CheckCommission extends Command
             // update order actual commission balance
             $order->actual_commission_balance = $order->actual_commission_balance + $commissionBalance;
         }
+        $order->save();
         return true;
     }
 

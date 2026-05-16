@@ -76,13 +76,9 @@ class UserController extends Controller
         $total = $userModel->count();
         $res = $userModel->forPage($current, $pageSize)
             ->get();
-        $plan = Plan::get();
+        $plans = Plan::get()->keyBy('id');
         for ($i = 0; $i < count($res); $i++) {
-            for ($k = 0; $k < count($plan); $k++) {
-                if ($plan[$k]['id'] == $res[$i]['plan_id']) {
-                    $res[$i]['plan_name'] = $plan[$k]['name'];
-                }
-            }
+            $res[$i]['plan_name'] = $plans[$res[$i]['plan_id']]['name'] ?? null;
             //统计在线设备
             $countalive = 0;
             $ips = [];
@@ -176,13 +172,9 @@ class UserController extends Controller
         $userModel = User::orderBy('id', 'asc');
         $this->filter($request, $userModel);
         $res = $userModel->get();
-        $plan = Plan::get();
-        for ($i = 0; $i < count($res); $i++) {
-            for ($k = 0; $k < count($plan); $k++) {
-                if ($plan[$k]['id'] == $res[$i]['plan_id']) {
-                    $res[$i]['plan_name'] = $plan[$k]['name'];
-                }
-            }
+        $plans = Plan::get()->keyBy('id');
+        foreach ($res as $k => $v) {
+            $res[$k]['plan_name'] = $plans[$v['plan_id']]['name'] ?? null;
         }
 
         $data = "邮箱,余额,推广佣金,总流量,设备数限制,剩余流量,套餐到期时间,订阅计划,订阅地址\r\n";
