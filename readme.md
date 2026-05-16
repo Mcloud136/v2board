@@ -83,32 +83,84 @@
 
 - 新增 `UPGRADE_GUIDE.md`：完整的升级测试和回退指南（345 行）
 
+## 八、代码质量修复（两轮共 17 项）
+
+### 第一轮：零风险 + 低风险修复（9 项）
+
+| 修复 | 文件 | 说明 |
+|------|------|------|
+| 流量重置逻辑 | `ResetTraffic.php` | switch case 3 缺少 break，导致流量被重置两次 |
+| 统计计时错误 | `V2boardStatistics.php` | 耗时显示比实际小 1000 倍 |
+| 邮件密码泄露 | `SendEmailJob.php` | return 值包含 SMTP 密码 |
+| Model 安全 | `InviteCode/ServerGroup/ServerLog` | 添加 `$guarded` 防止 mass assignment |
+| 冗余锁 | `StatServerJob.php` | 移除重复的 `lockForUpdate()` |
+| 订单超时 | `OrderHandleJob.php` | timeout 从 5 秒增至 30 秒 |
+| 冗余查询 | `StatUserJob.php` | 消除重复的 first() 查询 |
+| 查询优化 | 4 个 Controller | plan_name 匹配从 O(N*M) 优化为 O(N+M) |
+| 返佣保存 | `CheckCommission.php` | 添加缺失的 `$order->save()` |
+
+### 第二轮：功能修复 + 性能优化（8 项）
+
+| 修复 | 文件 | 说明 |
+|------|------|------|
+| **VIP 折扣失效** | `CheckRenewal.php` | `total_amount=0` 导致折扣计算为 0，用户被扣原价 |
+| **邮件异常吞没** | `SendEmailJob.php` | 发送失败不重试，邮件永久丢失 |
+| 邮件阻塞 | `SendEmailJob.php` | 移除 `sleep(2)`，每封邮件节省 2 秒 |
+| 内存溢出 | 3 个 Command | `User::all()` 改为 `chunk(200)` 分批处理 |
+| 队列阻塞 | `StatUserJob.php` | 手动 `sleep` 重试改为 Laravel `$backoff` 机制 |
+| 锁优化 | `CouponService.php` | `lockForUpdate()` 延迟到实际扣减时，减少锁竞争 |
+| 中间件重构 | `Admin/User/Staff` | 提取 `AuthenticatesRole` 基类，消除重复代码 |
+| 内存限制 | 9 个文件 | 移除 `ini_set('memory_limit', -1)`，改用分批查询 |
+
 ## 统计
 
 | 指标 | 数值 |
 |------|------|
-| 修改文件数 | 25 |
-| 新增行数 | 932 |
-| 删除行数 | 1,505 |
-| 净减少代码 | 573 行 |
+| 框架升级修改文件数 | 25 |
+| 代码质量修复文件数 | 17 |
+| 总新增行数 | 1,100+ |
+| 总删除行数 | 1,700+ |
+| 净减少代码 | 600+ 行 |
 
-## 原版迁移步骤
+## 迁移步骤
 
-按以下步骤进行面板代码文件迁移：
+### 从原版迁移
 
-    git remote set-url origin https://github.com/Mcloud136/v2board  
-    git checkout master  
-    ./update.sh  
+```bash
+git remote set-url origin https://github.com/Mcloud136/v2board
+git checkout master
+bash update.sh
+```
 
+### 环境要求
 
-按以下步骤配置缓存驱动为redis，然后刷新设置缓存，重启队列:
+| 项目 | 最低版本 |
+|------|---------|
+| PHP | 8.2+ |
+| Composer | 2.x |
+| MySQL | 5.5+ |
+| Redis | 任意版本 |
 
-    sed -i 's/^CACHE_DRIVER=.*/CACHE_DRIVER=redis/' .env
-    php artisan config:clear
-    php artisan config:cache
-    php artisan horizon:terminate
+### 必需 PHP 扩展
 
-最后进入后台重新保存主题： 主题配置-选择default主题-主题设置-确定保存
+`redis` `fileinfo` `pdo_mysql` `openssl` `curl` `mbstring` `xml` `pcntl`
+
+### 禁用函数检查
+
+`disable_functions` 中**不能**包含：`putenv` `proc_open` `pcntl_alarm` `pcntl_signal`
+
+### 更新后配置
+
+```bash
+# 配置缓存驱动为 redis
+sed -i 's/^CACHE_DRIVER=.*/CACHE_STORE=redis/' .env
+php artisan config:clear
+php artisan config:cache
+composer dump-autoload
+php artisan horizon:terminate
+```
+
+最后进入后台重新保存主题：主题配置 → 选择 default 主题 → 主题设置 → 确定保存
 
 ## Document
 [安装步骤](https://v2board.com)
