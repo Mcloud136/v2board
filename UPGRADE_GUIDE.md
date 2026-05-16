@@ -1,4 +1,4 @@
-# V2Board Laravel 11 升级指南
+# V2Board Laravel 12 升级指南
 
 ## 一、升级前准备
 
@@ -58,9 +58,9 @@ cd /path/to/v2board
 # 暂存本地改动（如有）
 git stash
 
-# 拉取升级分支
-git fetch origin
-git checkout upgrade/laravel-11
+# 拉取分支并升级
+git checkout master
+bash update.sh
 ```
 
 ### 2.2 安装依赖
@@ -115,7 +115,7 @@ systemctl restart nginx
 ```bash
 # 验证 Laravel 版本
 php artisan --version
-# 预期输出：Laravel Framework 11.x.x
+# 预期输出：Laravel Framework 12.x.x
 
 # 验证路由数量
 php artisan route:list | wc -l
@@ -272,77 +272,3 @@ composer install --no-dev
 
 ---
 
-## 五、回退步骤
-
-如果升级后出现无法解决的问题，按以下步骤回退到原版本。
-
-### 5.1 切换回 master 分支
-
-```bash
-cd /path/to/v2board
-
-# 切换回 master
-git checkout master
-```
-
-### 5.2 重新安装旧版依赖
-
-```bash
-# 删除新版本的 vendor 和 lock 文件
-rm -rf vendor composer.lock
-
-# 安装旧版依赖
-composer install --no-dev --optimize-autoloader
-```
-
-### 5.3 恢复 .env（如有修改）
-
-```bash
-cp .env.backup .env
-```
-
-### 5.4 清除缓存并重启
-
-```bash
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
-php artisan route:clear
-
-# 重启服务
-php artisan horizon:terminate
-systemctl restart php8.2-fpm
-systemctl restart nginx
-```
-
-### 5.5 验证回退成功
-
-```bash
-php artisan --version
-# 预期输出：Laravel Framework 8.x.x
-
-php artisan route:list | wc -l
-# 预期：与升级前一致
-```
-
-### 5.6 数据库说明
-
-升级过程**不涉及数据库变更**，无需回退数据库。如果已执行数据库备份且确认需要回退：
-
-```bash
-mysql -u root -p v2board < v2board_backup_YYYYMMDD.sql
-```
-
----
-
-## 六、回退检查清单
-
-| 检查项 | 命令 | 预期 |
-|--------|------|------|
-| Laravel 版本 | `php artisan --version` | 8.x.x |
-| 前台页面 | 浏览器访问 `/` | 正常显示 |
-| 管理后台 | 浏览器访问 `/{secure_path}` | 正常登录 |
-| API 登录 | `POST /api/v1/passport/auth/login` | 返回 token |
-| 用户信息 | `GET /api/v1/user/info` | 返回数据 |
-| 定时任务 | `php artisan check:order` | 无报错 |
-| 队列 | `php artisan horizon:status` | running |
