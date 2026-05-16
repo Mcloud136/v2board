@@ -85,7 +85,7 @@ php artisan route:clear
 php artisan config:cache
 php artisan route:cache
 
-# 替换update.sh
+# 替换update.sh后执行
 ./update.sh
 ```
 
