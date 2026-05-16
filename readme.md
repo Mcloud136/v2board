@@ -108,47 +108,8 @@
 | 删除行数 | 1,800+ |
 | 净减少代码 | 600+ 行 |
 
-## 迁移步骤
-
-### 从原版迁移
-
-```bash
-git remote set-url origin https://github.com/Mcloud136/v2board
-git checkout master
-bash update.sh
-
-### 环境要求
-
-| 项目 | 最低版本 |
-|------|---------|
-| PHP | 8.2+ |
-| Composer | 2.x |
-| MySQL | 5.5+ |
-| Redis | 任意版本 |
-
-### 必需 PHP 扩展
-
-`redis` `fileinfo` `pdo_mysql` `openssl` `curl` `mbstring` `xml` `pcntl`
-
-### 禁用函数检查
-
-`disable_functions` 中**不能**包含：`putenv` `proc_open` `pcntl_alarm` `pcntl_signal`
-
-### 更新后配置
-
-```bash
-# 配置缓存驱动为 redis
-sed -i 's/^CACHE_DRIVER=.*/CACHE_STORE=redis/' .env
-php artisan config:clear
-php artisan config:cache
-composer dump-autoload
-php artisan horizon:terminate
-```
-
-最后进入后台重新保存主题：主题配置 → 选择 default 主题 → 主题设置 → 确定保存
-
 ## Document
-[安装步骤](https://v2board.com)
+[安装步骤](https://github.com/Mcloud136/v2board/blob/master/install.md)
 [更新步骤](https://github.com/Mcloud136/v2board/blob/master/UPGRADE_GUIDE.md)
 
 ## How to Feedback
