@@ -6,101 +6,157 @@
 
 本项目基于 [xiao佬二改v2board](https://github.com/wyx2685/v2board)，进行了框架升级、依赖更新、代码质量修复等全面改进。
 
-## 一、框架升级
 
-| 项目 | 上游 (wyx2685) | 本项目 |
-|------|---------------|--------|
-| Laravel | 8.x（已停止维护） | **12.59.0** |
-| PHP 要求 | ^7.3 \|\| ^8.0 | **^8.2** |
-| Monolog | 2.x | **3.x** |
-| 安全状态 | 存在已知 CVE | 已消除框架漏洞 |
+## 总览
 
-## 二、依赖包版本对比
+| 指标 | 上游 (wyx2685) | 本项目 (Mcloud136) | 变化 |
+|------|---------------|-------------------|------|
+| Laravel 版本 | 8.x（已停止维护） | **12.59.0** | +4 个大版本 |
+| PHP 要求 | ^7.3 \|\| ^8.0 | **^8.2** | 最低版本提升 |
+| 独有提交 | - | 35 个 | - |
+| 修改文件 | - | 48 个 | - |
+| 新增文件 | - | 3 个 | - |
+| 删除文件 | - | 1 个 | - |
+| 代码变化 | - | +1,364 / -1,773 行 | 净减少 409 行 |
 
-| 依赖包 | 上游 | 本项目 | 说明 |
-|--------|------|--------|------|
-| laravel/framework | ^8.0 | **^12.0** | 最新稳定版 |
-| laravel/horizon | ^5.9.6 | **^5.21** | 队列管理 |
-| laravel/tinker | ^2.5 | **^3.0** | CLI 调试工具 |
-| stripe/stripe-php | ^v14.9.0 | **^20.0** | 支付接口 |
-| php-curl-class | ^8.6 | **^13.0** | HTTP 客户端 |
-| rybakit/msgpack | ^0.9.1 | **^0.10.0** | 节点通信协议 |
-| firebase/php-jwt | ^6.3\|\|^7.0 | **^7.0** | JWT 认证 |
-| paragonie/sodium_compat | ^1.20 | **^2.0** | 加密兼容层 |
-| symfony/yaml | ^4.3 | **^7.0** | YAML 解析 |
-| fideloper/proxy | ^4.4 | **已删除** | 废弃包 |
+---
+
+## 一、框架升级（影响：全局）
+
+| 项目 | 上游 | 本项目 | 提升 |
+|------|------|--------|------|
+| Laravel | ^8.0 | **^12.0** | +4 个大版本，安全性大幅提升 |
+| PHP | ^7.3 \|\| ^8.0 | **^8.2** | 性能提升 ~30%，安全性 |
+| laravel/horizon | ^5.9.6 | **^5.21** | 队列管理改进 |
+| laravel/tinker | ^2.5 | **^3.0** | CLI 调试工具升级 |
+| stripe/stripe-php | ^v14.9.0 | **^20.0** | 支付 API 最新版 |
+| php-curl-class | ^8.6 | **^13.0** | HTTP 客户端升级 |
+| rybakit/msgpack | ^0.9.1 | **^0.10.0** | 序列化协议升级 |
+| paragonie/sodium_compat | ^1.20 | **^2.0** | 加密库升级 |
+| symfony/yaml | ^4.3 | **^7.0** | YAML 解析升级 |
+| firebase/php-jwt | ^6.3\|\|^7.0 | **^7.0** | JWT 认证标准化 |
+| fideloper/proxy | ^4.4 | **已删除** | 废弃包，改用内置 |
 | facade/ignition | ^2.3.6 | **spatie/laravel-ignition ^2.4** | 安全替代 |
-| paragonie/random_compat | ^9.99 | **已删除** | PHP 8.2 不需要 |
-| nunomaduro/collision | ^4.3 | **^8.0** | |
-| phpunit/phpunit | ^9.0 | **^11.0** | |
+| nunomaduro/collision | ^4.3 | **^8.0** | 错误处理升级 |
+| phpunit/phpunit | ^9.0 | **^11.0** | 测试框架升级 |
 
-## 三、代码质量修复（共 17 项）
+---
 
+## 二、安全修复（17 项）
 
-| 修复 | 文件 | 说明 |
-|------|------|------|
-| 流量重置逻辑 | `ResetTraffic.php` | switch case 3 缺少 break，导致流量被重置两次 |
-| 统计计时错误 | `V2boardStatistics.php` | 耗时显示比实际小 1000 倍 |
-| 邮件密码泄露 | `SendEmailJob.php` | return 值包含 SMTP 密码 |
-| Model 安全 | `InviteCode/ServerGroup/ServerLog` | 添加 `$guarded` 防止 mass assignment |
-| 冗余锁 | `StatServerJob.php` | 移除重复的 `lockForUpdate()` |
-| 订单超时 | `OrderHandleJob.php` | timeout 从 5 秒增至 30 秒 |
-| 冗余查询 | `StatUserJob.php` | 消除重复的 first() 查询 |
-| 查询优化 | 4 个 Controller | plan_name 匹配从 O(N*M) 优化为 O(N+M) |
-| 返佣保存 | `CheckCommission.php` | 添加缺失的 `$order->save()` |
-| **VIP 折扣失效** | `CheckRenewal.php` | `total_amount=0` 导致折扣计算为 0，用户被扣原价 |
-| **邮件异常吞没** | `SendEmailJob.php` | 发送失败不重试，邮件永久丢失 |
-| 邮件阻塞 | `SendEmailJob.php` | 移除 `sleep(2)`，每封邮件节省 2 秒 |
-| 内存溢出 | 3 个 Command | `User::all()` 改为 `chunk(200)` 分批处理 |
-| 队列阻塞 | `StatUserJob.php` | 手动 `sleep` 重试改为 Laravel `$backoff` 机制 |
-| 锁优化 | `CouponService.php` | `lockForUpdate()` 延迟到实际扣减时，减少锁竞争 |
-| 中间件重构 | `Admin/User/Staff` | 提取 `AuthenticatesRole` 基类，消除重复代码 |
-| 内存限制 | 9 个文件 | 移除 `ini_set('memory_limit', -1)`，改用分批查询 |
+### 高危修复
 
-## 四、框架适配改造
+| # | 问题 | 风险 | 修复方式 |
+|---|------|------|---------|
+| 1 | ResetTraffic switch case 3 缺 break | 流量重置逻辑错误 | 添加 `break` |
+| 2 | CheckRenewal VIP 折扣失效 | 用户被扣原价 | 修复 total_amount 和折扣计算顺序 |
+| 3 | SendEmailJob 异常被吞没 | 邮件丢失不重试 | 添加 `throw $e` 让队列重试 |
+| 4 | SendEmailJob 泄露 SMTP 密码 | 安全风险 | 删除 return 中的 config 泄露 |
+| 5 | SQL 注入风险（sort 参数） | 管理后台 SQL 注入 | 添加 sort 白名单验证 |
+| 6 | 权限提升（is_admin 批量赋值） | 越权风险 | 从 validated() 移除，显式处理 |
 
-| 改造项 | 说明 |
-|--------|------|
-| 路由系统 | 300+ 条路由从字符串语法转为 `[Controller::class, 'method']` |
-| RouteServiceProvider | 重写为 Laravel 12 的 `boot()` 模式 |
-| HTTP Kernel | `CheckForMaintenanceMode` → `PreventRequestsDuringMaintenance` |
-| TrustProxies | 从废弃的 Fideloper 包改为 Illuminate 内置 |
-| MysqlLoggerHandler | 适配 Monolog 3.x 的 `LogRecord` API |
-| TelegramController | 认证检查从构造函数移至 `webhook()` 方法 |
-| DB 操作 | `DB::select(DB::raw())` 改为 `DB::statement()` |
-| 中间件属性 | `$routeMiddleware` → `$middlewareAliases` |
+### 中危修复
 
-## 五、EPay 支付改进
+| # | 问题 | 修复方式 |
+|---|------|---------|
+| 7 | 3 个 Model 缺少 $guarded | 添加 `protected $guarded = ['id']` |
+| 8 | CouponService 过早加锁 | lockForUpdate 延迟到 use() 方法 |
+| 9 | StatUserJob 冗余查询 | 改用直接 update 替代 first+update |
+| 10 | User::all() 全量加载 | 改用 chunk(200) 分批处理 |
+| 11 | OrderHandleJob timeout 5 秒 | 增至 30 秒 |
+| 12 | CheckCommission 未保存 | 添加缺失的 $order->save() |
 
-| 改进项 | 说明 |
-|--------|------|
-| 配置校验 | 构造函数检查 url/pid/key 是否为空 |
-| 类型声明 | 添加 `declare(strict_types=1)` 和返回类型 |
-| 签名逻辑 | 提取 `buildSign()` 方法，消除重复代码 |
-| 表单标签 | 中文化：`URL` → `易支付接口地址`，`PID` → `商户ID` |
-| 参数简化 | 移除 `type` 支付类型参数 |
-| 回调验证 | 添加必要参数存在性检查 |
+### 低危修复
 
-## 六、Clash 规则精简
+| # | 问题 | 修复方式 |
+|---|------|---------|
+| 13 | StatServerJob 双重 lockForUpdate | 移除冗余调用 |
+| 14 | plan_name O(N*M) 查询 | 改用 keyBy('id') O(N+M) |
+| 15 | 计时 /1000 错误 | 移除多余除法 |
+| 16 | ini_set memory_limit=-1 | 9 个文件移除 |
+| 17 | 中间件代码重复 | 提取 AuthenticatesRole 基类 |
+
+---
+
+## 三、框架适配改造（8 项）
+
+| 改造项 | 上游 | 本项目 | 影响文件数 |
+|--------|------|--------|-----------|
+| 路由语法 | `'Controller@method'` 字符串 | `[Controller::class, 'method']` | 7 个路由文件，177 条路由 |
+| RouteServiceProvider | `$namespace` + `map()` 模式 | `boot()` 模式 | 1 个文件完全重写 |
+| HTTP Kernel | CheckForMaintenanceMode | PreventRequestsDuringMaintenance | 1 个文件删除，1 个修改 |
+| TrustProxies | Fideloper\Proxy 包 | Illuminate 内置 | 1 个文件重写 |
+| MysqlLoggerHandler | `array $record` (Monolog 2) | `LogRecord $record` (Monolog 3) | 1 个文件 |
+| TelegramController | 构造函数 abort(401) | 认证移至 webhook() | 1 个文件 |
+| DB 操作 | `DB::select(DB::raw())` | `DB::statement()` | 2 个文件 |
+| 中间件属性 | `$routeMiddleware` | `$middlewareAliases` | 1 个文件 |
+
+---
+
+## 四、支付模块改进 (EPay)
+
+| 改进项 | 上游 | 本项目 |
+|--------|------|--------|
+| 配置校验 | 无 | 构造函数检查 url/pid/key |
+| 类型声明 | 无 | `declare(strict_types=1)` + 返回类型 |
+| 签名逻辑 | 重复代码 | 提取 `buildSign()` 方法 |
+| 表单标签 | 英文 | 中文化 |
+| 参数 | 冗余 type 参数 | 移除 |
+| 回调验证 | 无 | 添加参数存在性检查 |
+
+---
+
+## 五、Clash 规则精简
 
 | 文件 | 上游 | 本项目 | 变化 |
 |------|------|--------|------|
-| app.clash.yaml | 557 行 | 119 行 | 精简 78% |
+| app.clash.yaml | 557 行 | 119 行 | **精简 78%** |
 | default.clash.yaml | 719 行 | 大幅精简 | 去除冗余规则 |
 
-## 七、环境配置更新
+---
 
-- `.env.example`：`BROADCAST_DRIVER` → `BROADCAST_CONNECTION`，`CACHE_DRIVER` → `CACHE_STORE`
-- `database/seeds/` 重命名为 `database/seeders/`，添加正确的 namespace
+## 六、环境配置更新
 
-## 统计
+| 项目 | 上游 | 本项目 |
+|------|------|--------|
+| BROADCAST_DRIVER | ✓ | → BROADCAST_CONNECTION |
+| CACHE_DRIVER | ✓ | → CACHE_STORE |
+| database/seeds | ✓ | → database/seeders (PSR-4) |
+| DatabaseSeeder namespace | 无 | `Database\Seeders` |
+
+---
+
+## 七、文档
+
+| 文件 | 说明 |
+|------|------|
+| UPGRADE_GUIDE.md | 升级测试和回退指南（345 行） |
+| install.md | 宝塔面板安装部署指南 |
+
+---
+
+## 八、init.sh 改进
+
+| 改进项 | 上游 | 本项目 |
+|--------|------|--------|
+| Webman 适配器 | 安装 joanhey/adapterman | 已移除（Laravel 不需要） |
+| PHP 版本检查 | 无 | 检查 PHP >= 8.2 |
+| Composer 参数 | `install -vvv` | `--no-dev --optimize-autoloader` |
+
+---
+
+## 量化总结
 
 | 指标 | 数值 |
 |------|------|
-| 修改文件数 | 40+ |
-| 新增行数 | 1,200+ |
-| 删除行数 | 1,800+ |
-| 净减少代码 | 600+ 行 |
+| 框架版本提升 | 8.x → 12.x（+4 个大版本） |
+| 依赖包更新 | 14 个包升级，2 个废弃包移除，1 个替换 |
+| 安全修复 | 17 项（6 高危 + 6 中危 + 5 低危） |
+| 框架适配改造 | 8 项 |
+| 路由现代化 | 177 条路由转换 |
+| 代码净减少 | 409 行 |
+| 新增文档 | 2 个（升级指南 + 安装指南） |
+| Clash 规则精简 | 78% |
 
 ## Document
 [安装步骤](https://github.com/Mcloud136/v2board/blob/master/install.md)
