@@ -217,6 +217,7 @@ class OrderService
         $orderMonthSum = 0;
         $lastValidateAt = null;
         foreach ($orders as $item) {
+            if (!isset(self::STR_TO_TIME[$item['period']])) continue;
             $period = self::STR_TO_TIME[$item['period']];
             $orderEndTime = strtotime("+{$period} month", $item['created_at']);
             if ($orderEndTime < time()) continue;

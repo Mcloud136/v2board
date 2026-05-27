@@ -75,7 +75,8 @@ class UserController extends Controller
         $current = $request->input('current') ? $request->input('current') : 1;
         $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $allowedSorts = ['created_at', 'last_login_at', 'expired_at', 'balance', 'commission_balance', 'u', 'd', 'transfer_enable', 'id', 'email'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $userModel = User::select(
             DB::raw('*'),
             DB::raw('(u+d) as total_used')
@@ -292,7 +293,8 @@ class UserController extends Controller
     public function sendMail(UserSendMail $request)
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $allowedSorts = ['created_at', 'last_login_at', 'expired_at', 'balance', 'commission_balance', 'u', 'd', 'transfer_enable', 'id', 'email'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         foreach ($builder->cursor() as $user) {
@@ -316,7 +318,8 @@ class UserController extends Controller
     public function ban(Request $request)
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $allowedSorts = ['created_at', 'last_login_at', 'expired_at', 'balance', 'commission_balance', 'u', 'd', 'transfer_enable', 'id', 'email'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
@@ -339,7 +342,8 @@ class UserController extends Controller
     public function allDel(Request $request)
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $allowedSorts = ['created_at', 'last_login_at', 'expired_at', 'balance', 'commission_balance', 'u', 'd', 'transfer_enable', 'id', 'email'];
+        $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
 
