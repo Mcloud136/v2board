@@ -31,7 +31,9 @@ class NoticeController extends Controller
             }
         } else {
             try {
-                Notice::find($request->input('id'))->update($data);
+                $notice = Notice::find($request->input('id'));
+                if (!$notice) abort(500, '公告不存在');
+                $notice->update($data);
             } catch (\Exception $e) {
                 abort(500, '保存失败');
             }

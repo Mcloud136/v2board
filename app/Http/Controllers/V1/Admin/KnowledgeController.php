@@ -14,8 +14,9 @@ class KnowledgeController extends Controller
     public function fetch(Request $request)
     {
         if ($request->input('id')) {
-            $knowledge = Knowledge::find($request->input('id'))->toArray();
+            $knowledge = Knowledge::find($request->input('id'));
             if (!$knowledge) abort(500, '知识不存在');
+            $knowledge = $knowledge->toArray();
             return response([
                 'data' => $knowledge
             ]);
@@ -44,7 +45,9 @@ class KnowledgeController extends Controller
             }
         } else {
             try {
-                Knowledge::find($request->input('id'))->update($params);
+                $knowledge = Knowledge::find($request->input('id'));
+                if (!$knowledge) abort(500, '知识不存在');
+                $knowledge->update($params);
             } catch (\Exception $e) {
                 abort(500, '保存失败');
             }

@@ -30,6 +30,7 @@ class OrderService
     {
         $order = $this->order;
         $this->user = User::find($order->user_id);
+        if (!$this->user) abort(500, '用户不存在');
         if ($order->type == 9) {
             DB::beginTransaction();
             $this->user->balance += $order->total_amount + $this->getbounus($order->total_amount);
@@ -48,6 +49,7 @@ class OrderService
         }
 
         $plan = Plan::find($order->plan_id);
+        if (!$plan) abort(500, '订阅计划不存在');
 
         if ($order->refund_amount) {
             $this->user->balance = $this->user->balance + $order->refund_amount;

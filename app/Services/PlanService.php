@@ -13,6 +13,9 @@ class PlanService
     public function __construct(int $planId)
     {
         $this->plan = Plan::find($planId);
+        if (!$this->plan) {
+            abort(500, '订阅计划不存在');
+        }
     }
 
     public function haveCapacity(): bool
