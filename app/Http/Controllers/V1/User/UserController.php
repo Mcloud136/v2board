@@ -150,7 +150,7 @@ class UserController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            abort(500, $e->getMessage());
+            og::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
         }
     }
 
@@ -258,7 +258,7 @@ class UserController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            abort(500, $e->getMessage());
+            og::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
         }
     }
 

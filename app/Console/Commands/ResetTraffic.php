@@ -190,7 +190,8 @@ class ResetTraffic extends Command
                         date('Y/m/d H:i:s') . "用户流量重置失败：" . $e->getMessage()
                     );
                     $telegramService->sendMessageWithAdmin($message);
-                    abort(500, '用户流量重置失败'. $e->getMessage());
+                    \Log::error('用户流量重置失败: ' . $e->getMessage());
+                    abort(500, '用户流量重置失败');
                 }
                 sleep(5);
             }

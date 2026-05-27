@@ -85,7 +85,7 @@ class PaymentController extends Controller
             try {
                 $payment->update($params);
             } catch (\Exception $e) {
-                abort(500, $e->getMessage());
+                og::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
             }
             return response([
                 'data' => true

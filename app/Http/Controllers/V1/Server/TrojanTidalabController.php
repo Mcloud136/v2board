@@ -99,7 +99,7 @@ class TrojanTidalabController extends Controller
         try {
             $json = $this->getTrojanConfig($nodeId, $localPort);
         } catch (\Exception $e) {
-            abort(500, $e->getMessage());
+            og::error($e->getmessage()); abort(500, 'internal server error');
         }
 
         return(json_encode($json, JSON_UNESCAPED_UNICODE));
