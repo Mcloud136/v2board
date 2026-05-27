@@ -65,7 +65,7 @@ class CoinPayments {
             abort(500, 'No or incorrect Merchant ID passed');
         }
 
-        $headers = getallheaders();
+        $headers = function_exists('getallheaders') ? getallheaders() : request()->headers->all();
 
         ksort($params);
         reset($params);

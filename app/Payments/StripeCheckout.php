@@ -99,8 +99,8 @@ class StripeCheckout {
         \Stripe\Stripe::setApiKey($this->config['stripe_sk_live']);
         try {
             $event = \Stripe\Webhook::constructEvent(
-                request()->getContent() ?: json_encode($_POST),
-                $_SERVER['HTTP_STRIPE_SIGNATURE'],
+                request()->getContent(),
+                request()->header('stripe-signature'),
                 $this->config['stripe_webhook_key']
             );
         } catch (\Stripe\Error\SignatureVerification $e) {
@@ -132,8 +132,12 @@ class StripeCheckout {
 
     private function exchange($from, $to)
     {
-        $result = file_get_contents("https://api.exchangerate-api.com/v4/latest/{$from}");
-        $result = json_decode($result, true);
-        return $result['rates'][$to];
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get("https://api.exchangerate-api.com/v4/latest/{$from}");
+            $result = $response->json();
+            return $result['rates'][$to] ?? 1;
+        } catch (\Exception $e) {
+            return 1;
+        }
     }
 }

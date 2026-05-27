@@ -17,7 +17,7 @@ class ClientController extends Controller
     public function subscribe(Request $request)
     {
         $flag = $request->input('flag')
-            ?? ($_SERVER['HTTP_USER_AGENT'] ?? '');
+            ?? $request->header('user-agent', '');
         $flag = strtolower($flag);
         $user = $request->user;
         // account not expired and is not banned.

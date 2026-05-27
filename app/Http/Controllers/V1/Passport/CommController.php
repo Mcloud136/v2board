@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use ReCaptcha\ReCaptcha;
 use Illuminate\Support\Facades\RateLimiter;
 
-use function PHPUnit\Framework\isEmpty;
+
 
 class CommController extends Controller
 {
@@ -31,10 +31,15 @@ class CommController extends Controller
     public function sendEmailVerify(CommSendEmailVerify $request)
     {
         $ip = $request->ip();
-        if (RateLimiter::tooManyAttempts($ip, 3)) {
+        $executed = RateLimiter::attempt(
+            $ip,
+            3,
+            function () { return true; },
+            60
+        );
+        if (!$executed) {
             abort(429, __('Too many requests, please try again later.'));
         }
-        RateLimiter::hit($ip, 60);
 
         if ((int)config('v2board.recaptcha_enable', 0)) {
             $recaptcha = new ReCaptcha(config('v2board.recaptcha_key'));
@@ -73,7 +78,7 @@ class CommController extends Controller
         if (Cache::get(CacheKey::get('LAST_SEND_EMAIL_VERIFY_TIMESTAMP', $email))) {
             abort(500, __('Email verification code has been sent, please request again later'));
         }
-        $code = rand(100000, 999999);
+        $code = random_int(100000, 999999);
         $subject = config('v2board.app_name', 'V2Board') . __('Email verification code');
 
         SendEmailJob::dispatch([

@@ -231,22 +231,22 @@ class TicketController extends Controller
 				$remaining_traffic = $this->getFlowData($user->transfer_enable - $user->u - $user->d); // 剩余流量
 				$u = $this->getFlowData($user->u); // 上传
 				$d = $this->getFlowData($user->d); // 下载
-				$expired_at = date("Y-m-d H:i:s", $user->expired_at); // 到期时间
-				if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-				$ip_address = $_SERVER['HTTP_X_REAL_IP'];
-				} elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-					$ip_address = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
-				} else {
-					$ip_address = $_SERVER['REMOTE_ADDR'];
-				}
-
-				$api_url = "http://ip-api.com/json/{$ip_address}?fields=520191&lang=zh-CN";
-				$response = file_get_contents($api_url);
-				$user_location = json_decode($response, true);
-				if ($user_location && $user_location['status'] === 'success') {
-					$location =  $user_location['city'] . ", " . $user_location['country'];
-				} else {
-					$location =  "无法确定用户地址";
+				$expired_at = $user->expired_at ? date("Y-m-d H:i:s", $user->expired_at) : '永久'; // 到期时间
+				$ip_address = filter_var($request->ip(), FILTER_VALIDATE_IP) ?: 'unknown';
+				$location = '无法确定用户地址';
+				if ($ip_address !== 'unknown') {
+					try {
+						$resp = \Illuminate\Support\Facades\Http::timeout(5)->get("https://ip-api.com/json/{$ip_address}", [
+							'fields' => '520191',
+							'lang' => 'zh-CN'
+						]);
+						$user_location = $resp->json();
+						if ($user_location && ($user_location['status'] ?? '') === 'success') {
+							$location = ($user_location['city'] ?? '') . ", " . ($user_location['country'] ?? '');
+						}
+					} catch (\Exception $e) {
+						// 静默失败，不影响工单流程
+					}
 				}
 
 				$plan = Plan::where('id', $user->plan_id)->first();

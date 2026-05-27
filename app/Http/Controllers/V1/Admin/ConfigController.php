@@ -199,6 +199,13 @@ class ConfigController extends Controller
                 $config[$k] = $data[$k];
             }
         }
+        // 消毒字符串值防止 PHP 代码注入
+        $config = array_map(function ($v) {
+            if (is_string($v)) {
+                return str_replace(['<?php', '<?', '?>', '<?PHP', '<?='], '', $v);
+            }
+            return $v;
+        }, $config);
         $data = var_export($config, 1);
         if (!File::put(base_path() . '/config/v2board.php', "<?php\n return $data ;")) {
             abort(500, '修改失败');

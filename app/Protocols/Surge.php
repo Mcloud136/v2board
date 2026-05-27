@@ -69,7 +69,7 @@ class Surge
 
         // Subscription link
         $subsURL = Helper::getSubscribeUrl($user['token']);
-        $subsDomain = $_SERVER['HTTP_HOST'];
+        $subsDomain = request()->getHost();
 
         $config = str_replace('$subs_link', $subsURL, $config);
         $config = str_replace('$subs_domain', $subsDomain, $config);

@@ -36,8 +36,17 @@ class UserController extends Controller
     private function filter(Request $request, $builder)
     {
         $filters = $request->input('filter');
+        $allowedKeys = [
+            'email', 'plan_id', 'group_id', 'banned', 'expired_at',
+            'transfer_enable', 'd', 'u', 'invite_user_id', 'created_at',
+            'last_login_at', 'balance', 'commission_balance', 'is_admin',
+            'is_staff', 'token', 'uuid', 'telegram_id'
+        ];
         if ($filters) {
             foreach ($filters as $k => $filter) {
+                if (!in_array($filter['key'], $allowedKeys, true)) {
+                    continue;
+                }
                 if ($filter['condition'] === '模糊') {
                     $filter['condition'] = 'like';
                     $filter['value'] = "%{$filter['value']}%";
@@ -77,12 +86,18 @@ class UserController extends Controller
         $res = $userModel->forPage($current, $pageSize)
             ->get();
         $plans = Plan::get()->keyBy('id');
+        // 批量获取在线设备缓存
+        $cacheKeys = [];
+        foreach ($res as $user) {
+            $cacheKeys[] = 'ALIVE_IP_USER_' . $user['id'];
+        }
+        $cachedAliveData = Cache::many($cacheKeys);
         for ($i = 0; $i < count($res); $i++) {
             $res[$i]['plan_name'] = $plans[$res[$i]['plan_id']]['name'] ?? null;
             //统计在线设备
             $countalive = 0;
             $ips = [];
-            $ips_array = Cache::get('ALIVE_IP_USER_'. $res[$i]['id']);
+            $ips_array = $cachedAliveData['ALIVE_IP_USER_' . $res[$i]['id']] ?? null;
             if ($ips_array) {
                 $countalive = $ips_array['alive_ip'];
                 foreach($ips_array as $nodetypeid => $data) {
@@ -183,14 +198,16 @@ class UserController extends Controller
             $balance = $user['balance'] / 100;
             $commissionBalance = $user['commission_balance'] / 100;
             $transferEnable = $user['transfer_enable'] ? $user['transfer_enable'] / 1073741824 : 0;
-            $deviceLimit = $user['devce_limit'] ? $user['devce_limit'] : NULL;
+            $deviceLimit = $user['device_limit'] ? $user['device_limit'] : NULL;
             $notUseFlow = (($user['transfer_enable'] - ($user['u'] + $user['d'])) / 1073741824) ?? 0;
             $planName = $user['plan_name'] ?? '无订阅';
             $subscribeUrl =  Helper::getSubscribeUrl($user['token']);
             $data .= "{$user['email']},{$balance},{$commissionBalance},{$transferEnable}, {$deviceLimit}, {$notUseFlow},{$expireDate},{$planName},{$subscribeUrl}\r\n";
 
         }
-        echo "\xEF\xBB\xBF" . $data;
+        return response("\xEF\xBB\xBF" . $data)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="users_' . date('YmdHis') . '.csv"');
     }
 
     public function generate(UserGenerate $request)
@@ -267,7 +284,9 @@ class UserController extends Controller
             $subscribeUrl = Helper::getSubscribeUrl($user['token']);
             $data .= "{$user['email']},{$password},{$expireDate},{$user['uuid']},{$createDate},{$subscribeUrl}\r\n";
         }
-        echo $data;
+        return response("\xEF\xBB\xBF" . $data)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="generated_users_' . date('YmdHis') . '.csv"');
     }
 
     public function sendMail(UserSendMail $request)

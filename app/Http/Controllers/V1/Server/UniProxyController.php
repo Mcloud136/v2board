@@ -39,7 +39,7 @@ class UniProxyController extends Controller
     // 后端获取用户
     public function user(Request $request)
     {
-        ini_set('memory_limit', -1);
+        ini_set('memory_limit', '2G');
         Cache::put(CacheKey::get('SERVER_' . strtoupper($this->nodeType) . '_LAST_CHECK_AT', $this->nodeInfo->id), time(), 3600);
         $users = $this->serverService->getAvailableUsers($this->nodeInfo->group_id)
             ->map(function ($user) {
@@ -73,7 +73,7 @@ class UniProxyController extends Controller
     {
         $data = $request->json()->all();
         if (empty($data)) {
-            $data = $_POST;
+            $data = $request->post();
         }
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
             // JSON decoding error
@@ -127,7 +127,7 @@ class UniProxyController extends Controller
     {
         $data = $request->json()->all();
         if (empty($data)) {
-            $data = $_POST;
+            $data = $request->post();
         }
         if (!is_array($data)) {
             return response([

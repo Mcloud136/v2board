@@ -75,7 +75,8 @@ class AuthService
         $sessions[$guid] = $meta;
         if (!Cache::put(
             $cacheKey,
-            $sessions
+            $sessions,
+            86400
         )) return false;
         return true;
     }
@@ -92,7 +93,8 @@ class AuthService
         unset($sessions[$sessionId]);
         if (!Cache::put(
             $cacheKey,
-            $sessions
+            $sessions,
+            86400
         )) return false;
         return true;
     }

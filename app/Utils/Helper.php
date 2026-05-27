@@ -32,15 +32,21 @@ class Helper
 
     public static function generateOrderNo(): string
     {
-        $randomChar = mt_rand(10000, 99999);
-        return date('YmdHms') . substr(microtime(), 2, 6) . $randomChar;
+        return date('YmdHis') . str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT) . str_pad(random_int(0, 99999), 5, '0', STR_PAD_LEFT);
     }
 
     public static function exchange($from, $to)
     {
-        $result = file_get_contents('https://api.exchangerate.host/latest?symbols=' . $to . '&base=' . $from);
-        $result = json_decode($result, true);
-        return $result['rates'][$to];
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.exchangerate.host/latest', [
+                'symbols' => $to,
+                'base' => $from
+            ]);
+            $result = $response->json();
+            return $result['rates'][$to] ?? null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public static function randomChar($len, $special = false)
@@ -105,7 +111,7 @@ class Helper
             $path = '/api/v1/client/subscribe';
         } 
         $subscribeUrls = explode(',', config('v2board.subscribe_url'));
-        $subscribeUrl = $subscribeUrls[rand(0, count($subscribeUrls) - 1)];
+        $subscribeUrl = $subscribeUrls[random_int(0, count($subscribeUrls) - 1)];
         switch ($submethod) {
             case 0:
                 $path = "{$path}?token={$token}";
@@ -144,7 +150,7 @@ class Helper
 
     public static function randomPort($range) {
         $portRange = explode('-', $range);
-        return rand($portRange[0], $portRange[1]);
+        return random_int($portRange[0], $portRange[1]);
     }
 
     public static function base64EncodeUrlSafe($data)

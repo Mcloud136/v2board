@@ -18,7 +18,7 @@ class UAfilter
     {
         if (defined('isWEBMAN') && isWEBMAN) {
             if(str_contains($request->header('Content-Type'), 'application/json')) {
-                $phpInput = json_encode($_POST);
+                $phpInput = json_encode($request->post());
                 $decodedData = json_decode($phpInput, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $request->merge($decodedData);

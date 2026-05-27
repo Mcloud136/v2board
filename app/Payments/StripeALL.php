@@ -41,7 +41,7 @@ class StripeALL {
         $currency = $this->config['currency'];
         $exchange = $this->exchange('CNY', strtoupper($currency));
         if (!$exchange) {
-            throw new abort('Currency conversion API failed', 500);
+            abort(500, 'Currency conversion API failed');
         }
         //jump url
         $jumpUrl = null;
@@ -83,7 +83,7 @@ class StripeALL {
         $nextAction = null;
         
         if (!$stripeIntents['next_action']) {
-            throw new abort(__('Payment gateway request failed'));
+            abort(500, __('Payment gateway request failed'));
         }else {
             $nextAction = $stripeIntents['next_action'];
         }
@@ -94,14 +94,14 @@ class StripeALL {
                     $jumpUrl = $nextAction['alipay_handle_redirect']['url'];
                     $actionType = 1;
                 }else {
-                    throw new abort('unable get Alipay redirect url', 500);
+                    abort(500, 'unable get Alipay redirect url');
                 }
                 break;
             case "wechat_pay":
                 if (isset($nextAction['wechat_pay_display_qr_code'])){
                     $jumpUrl = $nextAction['wechat_pay_display_qr_code']['data'];
                 }else {
-                    throw new abort('unable get WeChat Pay redirect url', 500);
+                    abort(500, 'unable get WeChat Pay redirect url');
                 }
         }
     } else {
@@ -140,8 +140,8 @@ class StripeALL {
     {
         try {
             $event = \Stripe\Webhook::constructEvent(
-                request()->getContent() ?: json_encode($_POST),
-                $_SERVER['HTTP_STRIPE_SIGNATURE'],
+                request()->getContent(),
+                request()->header('stripe-signature'),
                 $this->config['stripe_webhook_key']
             );
         } catch (\Stripe\Error\SignatureVerification $e) {
@@ -179,7 +179,7 @@ class StripeALL {
                     ];
                     break;
             default:
-                throw new abort('webhook events are not supported');
+                abort(400, 'webhook events are not supported');
         }
         return('success');
     }
@@ -187,18 +187,13 @@ class StripeALL {
     private function exchange($from, $to)
     {
         try {
-            $url = "https://api.exchangerate-api.com/v4/latest/{$from}";
-            $result = file_get_contents($url);
-            $result = json_decode($result, true);
-
-            // 如果转换成功，返回结果
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get("https://api.exchangerate-api.com/v4/latest/{$from}");
+            $result = $response->json();
             if (isset($result['rates'][$to])) {
                 return $result['rates'][$to];
-            } else {
-                throw new \Exception("First currency API fails");
             }
+            return $this->backupExchange($from, $to);
         } catch (\Exception $e) {
-            // 如果API失败，调用第二个API
             return $this->backupExchange($from, $to);
         }
     }
@@ -207,18 +202,16 @@ class StripeALL {
     private function backupExchange($from, $to)
     {
         try {
-            $url = "https://api.frankfurter.app/latest?from={$from}&to={$to}";
-            $result = file_get_contents($url);
-            $result = json_decode($result, true);
-
-            // 如果转换成功，返回结果
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.frankfurter.app/latest', [
+                'from' => $from,
+                'to' => $to
+            ]);
+            $result = $response->json();
             if (isset($result['rates'][$to])) {
                 return $result['rates'][$to];
-            } else {
-                throw new \Exception("Second currency API fails");
             }
+            throw new \Exception("Second currency API fails");
         } catch (\Exception $e) {
-            // 如果所有API都失败，抛出异常
             throw new \Exception("All currency conversion APIs fail");
         }
     }

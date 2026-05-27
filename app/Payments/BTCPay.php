@@ -45,11 +45,11 @@ class BTCPay {
             ]
         ];
 
-        $params_string = @json_encode($params);
+        $params_string = json_encode($params);
 
         $ret_raw = self::_curlPost($this->config['btcpay_url'] . 'api/v1/stores/' . $this->config['btcpay_storeId'] . '/invoices', $params_string);
 
-        $ret = @json_decode($ret_raw, true);
+        $ret = json_decode($ret_raw, true);
         
         if(empty($ret['checkoutLink'])) {
             abort(500, "error!");
@@ -61,9 +61,9 @@ class BTCPay {
     }
 
     public function notify($params) {
-        $payload = trim(request()->getContent() ?: json_encode($_POST));
+        $payload = trim(request()->getContent());
 
-        $headers = getallheaders();
+        $headers = function_exists('getallheaders') ? getallheaders() : request()->headers->all();
 
         //IS Btcpay-Sig
         //NOT BTCPay-Sig
@@ -80,6 +80,10 @@ class BTCPay {
         }
 
         //get order id store in metadata
+        $invoiceId = preg_replace('/[^a-zA-Z0-9\-]/', '', $json_param['invoiceId'] ?? '');
+        if (empty($invoiceId)) {
+            abort(400, 'Invalid invoice ID');
+        }
         $context = stream_context_create(array(
             'http' => array(
                 'method' => 'GET',
@@ -87,7 +91,7 @@ class BTCPay {
             )
         ));
 
-        $invoiceDetail = file_get_contents($this->config['btcpay_url'] . 'api/v1/stores/' . $this->config['btcpay_storeId'] . '/invoices/' . $json_param['invoiceId'], false, $context);
+        $invoiceDetail = file_get_contents($this->config['btcpay_url'] . 'api/v1/stores/' . $this->config['btcpay_storeId'] . '/invoices/' . $invoiceId, false, $context);
         $invoiceDetail = json_decode($invoiceDetail, true);
 
     
@@ -97,8 +101,6 @@ class BTCPay {
             'trade_no' => $out_trade_no,
             'callback_no' => $pay_trade_no
         ];
-        http_response_code(200);
-        return('success');
     }
 
 

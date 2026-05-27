@@ -97,7 +97,7 @@ class Stash
         });
         $config['proxy-groups'] = array_values($config['proxy-groups']);
         // Force the current subscription domain to be a direct rule
-        $subsDomain = $_SERVER['HTTP_HOST'];
+        $subsDomain = request()->getHost();
         if ($subsDomain) {
             array_unshift($config['rules'], "DOMAIN,{$subsDomain},DIRECT");
         }

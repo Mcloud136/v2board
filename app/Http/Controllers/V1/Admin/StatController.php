@@ -107,19 +107,44 @@ class StatController extends Controller
         ];
     }
 
+    private function getAllServersMap(): array
+    {
+        static $serverMap = null;
+        if ($serverMap !== null) return $serverMap;
+        $models = [
+            'shadowsocks' => ServerShadowsocks::class,
+            'v2ray'       => ServerVmess::class,
+            'trojan'      => ServerTrojan::class,
+            'vmess'       => ServerVmess::class,
+            'vless'       => ServerVless::class,
+            'tuic'        => ServerTuic::class,
+            'hysteria'    => ServerHysteria::class,
+            'anytls'      => ServerAnytls::class,
+            'v2node'      => ServerV2node::class,
+        ];
+        $serverMap = [];
+        foreach ($models as $type => $modelClass) {
+            $servers = $modelClass::where('parent_id', null)->pluck('name', 'id')->toArray();
+            $serverMap[$type] = $servers;
+        }
+        return $serverMap;
+    }
+
+    private function enrichServerStatistics(array $statistics): array
+    {
+        $servers = $this->getAllServersMap();
+        foreach ($statistics as $k => $v) {
+            $type = $v['server_type'];
+            $sid = $v['server_id'];
+            $statistics[$k]['server_name'] = $servers[$type][$sid] ?? 'unknown';
+            $statistics[$k]['total'] = $statistics[$k]['total'] / 1073741824;
+        }
+        array_multisort(array_column($statistics, 'total'), SORT_DESC, $statistics);
+        return $statistics;
+    }
+
     public function getServerLastRank()
     {
-        $servers = [
-            'shadowsocks' => ServerShadowsocks::where('parent_id', null)->get()->toArray(),
-            'v2ray' => ServerVmess::where('parent_id', null)->get()->toArray(),
-            'trojan' => ServerTrojan::where('parent_id', null)->get()->toArray(),
-            'vmess' => ServerVmess::where('parent_id', null)->get()->toArray(),
-            'vless' => ServerVless::where('parent_id', null)->get()->toArray(),
-            'tuic' => ServerTuic::where('parent_id', null)->get()->toArray(),
-            'hysteria'=> ServerHysteria::where('parent_id', null)->get()->toArray(),
-            'anytls' => ServerAnytls::where('parent_id', null)->get()->toArray(),
-            'v2node' => ServerV2node::where('parent_id', null)->get()->toArray()
-        ];
         $startAt = strtotime('-1 day', strtotime(date('Y-m-d')));
         $endAt = strtotime(date('Y-m-d'));
         $statistics = StatServer::select([
@@ -136,33 +161,13 @@ class StatController extends Controller
             ->orderBy('total', 'DESC')
             ->get()
             ->toArray();
-        foreach ($statistics as $k => $v) {
-            foreach ($servers[$v['server_type']] as $server) {
-                if ($server['id'] === $v['server_id']) {
-                    $statistics[$k]['server_name'] = $server['name'];
-                }
-            }
-            $statistics[$k]['total'] = $statistics[$k]['total'] / 1073741824;
-        }
-        array_multisort(array_column($statistics, 'total'), SORT_DESC, $statistics);
         return [
-            'data' => $statistics
+            'data' => $this->enrichServerStatistics($statistics)
         ];
     }
 
     public function getServerTodayRank()
     {
-        $servers = [
-            'shadowsocks' => ServerShadowsocks::where('parent_id', null)->get()->toArray(),
-            'v2ray' => ServerVmess::where('parent_id', null)->get()->toArray(),
-            'trojan' => ServerTrojan::where('parent_id', null)->get()->toArray(),
-            'vmess' => ServerVmess::where('parent_id', null)->get()->toArray(),
-            'vless' => ServerVless::where('parent_id', null)->get()->toArray(),
-            'tuic' => ServerTuic::where('parent_id', null)->get()->toArray(),
-            'hysteria'=> ServerHysteria::where('parent_id', null)->get()->toArray(),
-            'anytls' => ServerAnytls::where('parent_id', null)->get()->toArray(),
-            'v2node' => ServerV2node::where('parent_id', null)->get()->toArray()
-        ];
         $startAt = strtotime(date('Y-m-d'));
         $endAt = time();
         $statistics = StatServer::select([
@@ -179,17 +184,8 @@ class StatController extends Controller
             ->orderBy('total', 'DESC')
             ->get()
             ->toArray();
-        foreach ($statistics as $k => $v) {
-            foreach ($servers[$v['server_type']] as $server) {
-                if ($server['id'] === $v['server_id']) {
-                    $statistics[$k]['server_name'] = $server['name'];
-                }
-            }
-            $statistics[$k]['total'] = $statistics[$k]['total'] / 1073741824;
-        }
-        array_multisort(array_column($statistics, 'total'), SORT_DESC, $statistics);
         return [
-            'data' => $statistics
+            'data' => $this->enrichServerStatistics($statistics)
         ];
     }
 
@@ -211,12 +207,13 @@ class StatController extends Controller
             ->orderBy('total', 'DESC')
             ->get()
             ->toArray();
+        $userIds = array_unique(array_column($statistics, 'user_id'));
+        $users = User::whereIn('id', $userIds)->pluck('email', 'id');
         $data = [];
         $idIndexMap = [];
         foreach ($statistics as $k => $v) {
             $id = $statistics[$k]['user_id'];
-            $user = User::where('id', $id)->first();
-            $statistics[$k]['email'] = empty($user) ? "null" : $user['email'];
+            $statistics[$k]['email'] = $users[$id] ?? "null";
             $statistics[$k]['total'] = $statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824;
             if (isset($idIndexMap[$id])) {
                 $index = $idIndexMap[$id];
@@ -251,15 +248,15 @@ class StatController extends Controller
             ->orderBy('total', 'DESC')
             ->get()
             ->toArray();
+        $userIds = array_unique(array_column($statistics, 'user_id'));
+        $users = User::whereIn('id', $userIds)->pluck('email', 'id');
         $data = [];
         $idIndexMap = [];
         foreach ($statistics as $k => $v) {
             $id = $statistics[$k]['user_id'];
-            $user = User::where('id', $id)->first();
-            $statistics[$k]['email'] = empty($user) ? "null" : $user['email'];
+            $statistics[$k]['email'] = $users[$id] ?? "null";
             $statistics[$k]['total'] = $statistics[$k]['total'] * $statistics[$k]['server_rate'] / 1073741824;
             if (isset($idIndexMap[$id])) {
-
                 $index = $idIndexMap[$id];
                 $data[$index]['total'] += $statistics[$k]['total'];
             } else {

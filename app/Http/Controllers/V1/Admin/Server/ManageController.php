@@ -31,15 +31,16 @@ class ManageController extends Controller
             'v2node'
         ) ?? [];
         if (empty($params)) {
+            $all = $request->all();
             $params = [
-                'shadowsocks' => $_POST['shadowsocks'] ?? null,
-                'vmess'       => $_POST['vmess'] ?? null,
-                'vless'       => $_POST['vless'] ?? null,
-                'trojan'      => $_POST['trojan'] ?? null,
-                'tuic'        => $_POST['tuic'] ?? null,
-                'hysteria'    => $_POST['hysteria'] ?? null,
-                'anytls'      => $_POST['anytls'] ?? null,
-                'v2node'      => $_POST['v2node'] ?? null,
+                'shadowsocks' => $all['shadowsocks'] ?? null,
+                'vmess'       => $all['vmess'] ?? null,
+                'vless'       => $all['vless'] ?? null,
+                'trojan'      => $all['trojan'] ?? null,
+                'tuic'        => $all['tuic'] ?? null,
+                'hysteria'    => $all['hysteria'] ?? null,
+                'anytls'      => $all['anytls'] ?? null,
+                'v2node'      => $all['v2node'] ?? null,
             ];
         }
         DB::beginTransaction();

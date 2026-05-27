@@ -47,7 +47,7 @@ class Coinbase {
         
         $ret_raw = self::_curlPost($this->config['coinbase_url'], $params_string);
 
-        $ret = @json_decode($ret_raw, true);
+        $ret = json_decode($ret_raw, true);
         
         if(empty($ret['data']['hosted_url'])) {
             abort(500, "error!");
@@ -60,12 +60,12 @@ class Coinbase {
 
     public function notify($params) {
         
-        $payload = trim(request()->getContent() ?: json_encode($_POST));
+        $payload = trim(request()->getContent());
         $json_param = json_decode($payload, true); 
 
 
         $headerName = 'X-Cc-Webhook-Signature';
-        $headers = getallheaders();
+        $headers = function_exists('getallheaders') ? getallheaders() : request()->headers->all();
         $signatureHeader = isset($headers[$headerName]) ? $headers[$headerName] : '';
         $computedSignature = \hash_hmac('sha256', $payload, $this->config['coinbase_webhook_key']);
 
@@ -79,8 +79,6 @@ class Coinbase {
             'trade_no' => $out_trade_no,
             'callback_no' => $pay_trade_no
         ];
-        http_response_code(200);
-        return('success');
     }
 
 

@@ -112,7 +112,9 @@ class CouponController extends Controller
             $limitPlanIds = isset($coupon['limit_plan_ids']) ? implode("/", $coupon['limit_plan_ids']) : '不限制';
             $data .= "{$coupon['name']},{$type},{$value},{$startTime},{$endTime},{$limitUse},{$limitPlanIds},{$coupon['code']},{$createTime}\r\n";
         }
-        echo $data;
+        return response("\xEF\xBB\xBF" . $data)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="coupons_' . date('YmdHis') . '.csv"');
     }
 
     public function drop(Request $request)

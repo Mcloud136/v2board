@@ -363,6 +363,8 @@ class OrderService
                 return strtotime('+24 month', $timestamp);
             case 'three_year_price':
                 return strtotime('+36 month', $timestamp);
+            default:
+                return time();
         }
     }
 
