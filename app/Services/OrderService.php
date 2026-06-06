@@ -32,75 +32,66 @@ class OrderService
         $this->user = User::find($order->user_id);
         if (!$this->user) abort(500, '用户不存在');
         if ($order->type == 9) {
-            DB::beginTransaction();
-            $this->user->balance += $order->total_amount + $this->getbounus($order->total_amount);
-
-            if (!$this->user->save()) {
-                DB::rollBack();
-                abort(500, '充值失败');
-            }
-            $order->status = 3;
-            if (!$order->save()) {
-                DB::rollBack();
-                abort(500, '充值失败');
-            }
-            DB::commit();
+            DB::transaction(function () use ($order) {
+                $this->user->balance += $order->total_amount + $this->getbounus($order->total_amount);
+                if (!$this->user->save()) {
+                    throw new \Exception('充值失败');
+                }
+                $order->status = 3;
+                if (!$order->save()) {
+                    throw new \Exception('充值失败');
+                }
+            });
             return;
         }
 
         $plan = Plan::find($order->plan_id);
         if (!$plan) abort(500, '订阅计划不存在');
 
-        if ($order->refund_amount) {
-            $this->user->balance = $this->user->balance + $order->refund_amount;
-        }
-        DB::beginTransaction();
-        if ($order->surplus_order_ids) {
-            try {
+        DB::transaction(function () use ($order, $plan) {
+            if ($order->refund_amount) {
+                $this->user->balance = $this->user->balance + $order->refund_amount;
+            }
+
+            if ($order->surplus_order_ids) {
                 Order::whereIn('id', $order->surplus_order_ids)->update([
                     'status' => 4
                 ]);
-            } catch (\Exception $e) {
-                DB::rollback();
-                abort(500, '开通失败');
             }
-        }
-        switch ((string)$order->period) {
-            case 'onetime_price':
-                $this->buyByOneTime($order, $plan);
-                break;
-            case 'reset_price':
-                $this->buyByResetTraffic();
-                break;
-            default:
-                $this->buyByPeriod($order, $plan);
-        }
 
-        switch ((int)$order->type) {
-            case 1:
-                $this->openEvent(config('v2board.new_order_event_id', 0));
-                break;
-            case 2:
-                $this->openEvent(config('v2board.renew_order_event_id', 0));
-                break;
-            case 3:
-                $this->openEvent(config('v2board.change_order_event_id', 0));
-                break;
-        }
+            switch ((string)$order->period) {
+                case 'onetime_price':
+                    $this->buyByOneTime($order, $plan);
+                    break;
+                case 'reset_price':
+                    $this->buyByResetTraffic();
+                    break;
+                default:
+                    $this->buyByPeriod($order, $plan);
+            }
 
-        $this->setSpeedLimit($plan->speed_limit);
+            switch ((int)$order->type) {
+                case 1:
+                    $this->openEvent(config('v2board.new_order_event_id', 0));
+                    break;
+                case 2:
+                    $this->openEvent(config('v2board.renew_order_event_id', 0));
+                    break;
+                case 3:
+                    $this->openEvent(config('v2board.change_order_event_id', 0));
+                    break;
+            }
 
-        if (!$this->user->save()) {
-            DB::rollBack();
-            abort(500, '开通失败');
-        }
-        $order->status = 3;
-        if (!$order->save()) {
-            DB::rollBack();
-            abort(500, '开通失败');
-        }
+            $this->setSpeedLimit($plan->speed_limit);
 
-        DB::commit();
+            if (!$this->user->save()) {
+                throw new \Exception('开通失败');
+            }
+            $order->status = 3;
+            if (!$order->save()) {
+                throw new \Exception('开通失败');
+            }
+        });
     }
 
 

@@ -16,7 +16,10 @@ class PaymentService
     {
         $this->method = $method;
         $this->class = '\\App\\Payments\\' . $this->method;
-        if (!class_exists($this->class)) abort(500, 'gate is not found');
+        // 安全检查：只允许字母数字和下划线，防止路径遍历
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->method) || !class_exists($this->class)) {
+            abort(500, 'gate is not found');
+        }
         if ($id) $payment = Payment::find($id)->toArray();
         if ($uuid) $payment = Payment::where('uuid', $uuid)->first()->toArray();
         $this->config = [];
