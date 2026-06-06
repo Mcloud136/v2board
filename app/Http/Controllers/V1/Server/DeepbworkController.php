@@ -103,7 +103,7 @@ class DeepbworkController extends Controller
         try {
             $json = $this->getV2RayConfig($nodeId, $localPort);
         } catch (\Exception $e) {
-            og::error($e->getmessage()); abort(500, 'internal server error');
+            \Log::error($e->getmessage()); abort(500, 'internal server error');
         }
 
         return(json_encode($json, JSON_UNESCAPED_UNICODE));

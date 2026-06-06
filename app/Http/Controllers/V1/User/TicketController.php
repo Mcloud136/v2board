@@ -99,7 +99,7 @@ class TicketController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            og::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
+            \Log::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
         }
     }
 

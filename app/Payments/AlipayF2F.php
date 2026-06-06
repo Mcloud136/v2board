@@ -57,7 +57,7 @@ class AlipayF2F {
                 'data' => $gateway->getQrCodeUrl()
             ];
         } catch (\Exception $e) {
-            og::error($e->getmessage()); abort(500, 'internal server error');
+            \Log::error($e->getmessage()); abort(500, 'internal server error');
         }
     }
 

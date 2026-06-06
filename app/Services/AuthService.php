@@ -22,9 +22,12 @@ class AuthService
     public function generateAuthData(Request $request)
     {
         $guid = Helper::guid();
+        $now = time();
         $authData = JWT::encode([
             'id' => $this->user->id,
             'session' => $guid,
+            'iat' => $now,
+            'exp' => $now + 86400, // 24 小时过期
         ], config('app.key'), 'HS256');
         self::addSession($this->user->id, $guid, [
             'ip' => $request->ip(),
@@ -53,7 +56,7 @@ class AuthService
                 ])
                     ->find($data['id']);
                 if (!$user) return false;
-                Cache::put($jwt, $user->toArray(), 3600);
+                Cache::put($jwt, $user->toArray(), 300);
             }
             return Cache::get($jwt);
         } catch (\Exception $e) {

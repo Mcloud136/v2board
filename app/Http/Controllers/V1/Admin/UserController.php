@@ -22,6 +22,17 @@ use Illuminate\Support\Facades\Cache;
 
 class UserController extends Controller
 {
+    /**
+     * 防止 CSV 公式注入：对以危险字符开头的单元格添加单引号前缀
+     */
+    private function sanitizeCsvCell($value): string
+    {
+        $value = (string)$value;
+        if (preg_match('/^[=+\-@\t\r\n]/', $value)) {
+            return "'" . $value;
+        }
+        return $value;
+    }
     public function resetSecret(Request $request)
     {
         $user = User::find($request->input('id'));
@@ -43,6 +54,7 @@ class UserController extends Controller
             'is_staff', 'token', 'uuid', 'telegram_id'
         ];
         if ($filters) {
+            $allowedConditions = ['=', '!=', '>', '<', '>=', '<=', 'like', 'in', 'not in'];
             foreach ($filters as $k => $filter) {
                 if (!in_array($filter['key'], $allowedKeys, true)) {
                     continue;
@@ -63,6 +75,10 @@ class UserController extends Controller
                 }
                 if ($filter['key'] === 'plan_id' && $filter['value'] == 'null') {
                     $builder->whereNull('plan_id');
+                    continue;
+                }
+                // 验证操作符
+                if (!in_array(strtolower($filter['condition']), $allowedConditions, true)) {
                     continue;
                 }
                 $builder->where($filter['key'], $filter['condition'], $filter['value']);
@@ -203,7 +219,17 @@ class UserController extends Controller
             $notUseFlow = (($user['transfer_enable'] - ($user['u'] + $user['d'])) / 1073741824) ?? 0;
             $planName = $user['plan_name'] ?? '无订阅';
             $subscribeUrl =  Helper::getSubscribeUrl($user['token']);
-            $data .= "{$user['email']},{$balance},{$commissionBalance},{$transferEnable}, {$deviceLimit}, {$notUseFlow},{$expireDate},{$planName},{$subscribeUrl}\r\n";
+            $data .= implode(',', [
+                $this->sanitizeCsvCell($user['email']),
+                $balance,
+                $commissionBalance,
+                $transferEnable,
+                $deviceLimit,
+                $notUseFlow,
+                $this->sanitizeCsvCell($expireDate),
+                $this->sanitizeCsvCell($planName),
+                $this->sanitizeCsvCell($subscribeUrl)
+            ]) . "\r\n";
 
         }
         return response("\xEF\xBB\xBF" . $data)
@@ -283,7 +309,14 @@ class UserController extends Controller
             $createDate = date('Y-m-d H:i:s', $user['created_at']);
             $password = $request->input('password') ?? $user['email'];
             $subscribeUrl = Helper::getSubscribeUrl($user['token']);
-            $data .= "{$user['email']},{$password},{$expireDate},{$user['uuid']},{$createDate},{$subscribeUrl}\r\n";
+            $data .= implode(',', [
+                $this->sanitizeCsvCell($user['email']),
+                $this->sanitizeCsvCell($password),
+                $this->sanitizeCsvCell($expireDate),
+                $user['uuid'],
+                $createDate,
+                $this->sanitizeCsvCell($subscribeUrl)
+            ]) . "\r\n";
         }
         return response("\xEF\xBB\xBF" . $data)
             ->header('Content-Type', 'text/csv; charset=UTF-8')

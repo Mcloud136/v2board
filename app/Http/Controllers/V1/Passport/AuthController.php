@@ -180,7 +180,12 @@ class AuthController extends Controller
     public function token2Login(Request $request)
     {
         if ($request->input('token')) {
-            $redirect = '/#/login?verify=' . $request->input('token') . '&redirect=' . ($request->input('redirect') ? $request->input('redirect') : 'dashboard');
+            $redirectParam = $request->input('redirect', 'dashboard');
+            // 防止开放重定向：只允许相对路径，不允许协议前缀
+            if (preg_match('/^https?:\/\//i', $redirectParam) || strpos($redirectParam, '//') === 0) {
+                $redirectParam = 'dashboard';
+            }
+            $redirect = '/#/login?verify=' . urlencode($request->input('token')) . '&redirect=' . urlencode($redirectParam);
             if (config('v2board.app_url')) {
                 $location = config('v2board.app_url') . $redirect;
             } else {

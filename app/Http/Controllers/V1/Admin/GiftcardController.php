@@ -81,7 +81,7 @@ class GiftcardController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            og::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
+            \Log::error($e->getmessage()); abort(500, '操作失败，请稍后重试');
         }
         $giftcardvalue = $giftcard['value'] ?? 0;
         $data = "名称,类型,数值,开始时间,结束时间,可用次数,礼品卡卡密,生成时间\r\n";
