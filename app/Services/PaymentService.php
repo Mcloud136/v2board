@@ -20,10 +20,15 @@ class PaymentService
         if (!preg_match('/^[a-zA-Z0-9_]+$/', $this->method) || !class_exists($this->class)) {
             abort(500, 'gate is not found');
         }
-        if ($id) $payment = Payment::find($id)->toArray();
-        if ($uuid) $payment = Payment::where('uuid', $uuid)->first()->toArray();
+        $payment = null;
+        if ($id) {
+            $payment = Payment::find($id);
+        } elseif ($uuid) {
+            $payment = Payment::where('uuid', $uuid)->first();
+        }
         $this->config = [];
-        if (isset($payment)) {
+        if ($payment) {
+            $payment = $payment->toArray();
             $this->config = $payment['config'];
             $this->config['enable'] = $payment['enable'];
             $this->config['id'] = $payment['id'];

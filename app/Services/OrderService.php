@@ -267,21 +267,23 @@ class OrderService
     public function cancel():bool
     {
         $order = $this->order;
-        DB::beginTransaction();
-        $order->status = 2;
-        if (!$order->save()) {
-            DB::rollBack();
+        try {
+            DB::transaction(function () use ($order) {
+                $order->status = 2;
+                if (!$order->save()) {
+                    throw new \Exception('Cancel failed');
+                }
+                if ($order->balance_amount) {
+                    $userService = new UserService();
+                    if (!$userService->addBalance($order->user_id, $order->balance_amount)) {
+                        throw new \Exception('Balance restore failed');
+                    }
+                }
+            });
+            return true;
+        } catch (\Exception $e) {
             return false;
         }
-        if ($order->balance_amount) {
-            $userService = new UserService();
-            if (!$userService->addBalance($order->user_id, $order->balance_amount)) {
-                DB::rollBack();
-                return false;
-            }
-        }
-        DB::commit();
-        return true;
     }
 
     private function setSpeedLimit($speedLimit)

@@ -107,10 +107,11 @@ class CheckRenewal extends Command
                         if (DB::transactionLevel() > 0) {
                             DB::rollback();
                         }
+                        \Log::error('自动续费失败: ' . $e->getMessage(), ['user_id' => $user->id]);
                         $user->auto_renewal = 0;
-                        if(!$user->save()){
-                            info('用户自动续费失败,调整设置失败', [$e->getMessage() , $user]);
-                        };
+                        if (!$user->save()) {
+                            \Log::error('关闭自动续费失败', ['user_id' => $user->id]);
+                        }
                     }
                 }
             });

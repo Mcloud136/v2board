@@ -201,6 +201,8 @@ class StatisticalService {
                     ->orderBy('record_at', 'ASC')
                     ->get();
             }
+            default:
+                return collect();
         }
     }
 
