@@ -38,14 +38,15 @@ class CheckTicket extends Command
      */
     public function handle()
     {
-        $tickets = Ticket::where('status', 0)
+        Ticket::where('status', 0)
             ->where('updated_at', '<=', time() - 24 * 3600)
             ->where('reply_status', 1)
-            ->get();
-        foreach ($tickets as $ticket) {
-            if ($ticket->user_id === $ticket->last_reply_user_id) continue;
-            $ticket->status = 1;
-            $ticket->save();
-        }
+            ->chunk(100, function ($tickets) {
+                foreach ($tickets as $ticket) {
+                    if ($ticket->user_id === $ticket->last_reply_user_id) continue;
+                    $ticket->status = 1;
+                    $ticket->save();
+                }
+            });
     }
 }
