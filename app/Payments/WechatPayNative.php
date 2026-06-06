@@ -52,7 +52,7 @@ class WechatPayNative {
         $response = $request->send();
         $response = $response->getData();
         if ($response['return_code'] !== 'SUCCESS') {
-            abort(500, $response['return_msg']);
+            \Log::error($response['return_msg'] ?? "Unknown error"); abort(500, "Payment processing failed");;
         }
         return [
             'type' => 0,

@@ -20,18 +20,26 @@ class OrderController extends Controller
 {
     private function filter(Request $request, &$builder)
     {
+        $allowedKeys = [
+            'user_id', 'plan_id', 'period', 'trade_no', 'status',
+            'total_amount', 'payment_id', 'commission_status',
+            'created_at', 'updated_at', 'paid_at', 'callback_no'
+        ];
+        $allowedConditions = ['=', '!=', '>', '<', '>=', '<=', 'like', 'in', 'not in'];
         if ($request->input('filter')) {
             foreach ($request->input('filter') as $filter) {
                 if ($filter['key'] === 'email') {
-                    $user = User::where('email', "%{$filter['value']}%")->first();
+                    $user = User::where('email', 'like', "%{$filter['value']}%")->first();
                     if (!$user) continue;
                     $builder->where('user_id', $user->id);
                     continue;
                 }
+                if (!in_array($filter['key'], $allowedKeys, true)) continue;
                 if ($filter['condition'] === '模糊') {
                     $filter['condition'] = 'like';
                     $filter['value'] = "%{$filter['value']}%";
                 }
+                if (!in_array(strtolower($filter['condition']), $allowedConditions, true)) continue;
                 $builder->where($filter['key'], $filter['condition'], $filter['value']);
             }
         }

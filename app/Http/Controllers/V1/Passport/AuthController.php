@@ -25,7 +25,7 @@ class AuthController extends Controller
         if ((int)config('v2board.register_limit_by_ip_enable', 0)) {
             $registerCountByIP = Cache::get(CacheKey::get('REGISTER_IP_RATE_LIMIT', $request->ip())) ?? 0;
             if ((int)$registerCountByIP >= (int)config('v2board.register_limit_count', 3)) {
-                abort(500, __('Register frequently, please try again after :minute minute', [
+                abort(429, __('Register frequently, please try again after :minute minute', [
                     'minute' => config('v2board.register_limit_expire', 60)
                 ]));
             }
@@ -141,7 +141,7 @@ class AuthController extends Controller
         if ((int)config('v2board.password_limit_enable', 1)) {
             $passwordErrorCount = (int)Cache::get(CacheKey::get('PASSWORD_ERROR_LIMIT', $email), 0);
             if ($passwordErrorCount >= (int)config('v2board.password_limit_count', 5)) {
-                abort(500, __('There are too many password errors, please try again after :minute minutes.', [
+                abort(429, __('There are too many password errors, please try again after :minute minutes.', [
                     'minute' => config('v2board.password_limit_expire', 60)
                 ]));
             }
@@ -169,6 +169,14 @@ class AuthController extends Controller
 
         if ($user->banned) {
             abort(500, __('Your account has been suspended'));
+        }
+
+        // 自动升级旧密码哈希（md5/sha256 → bcrypt）
+        if ($user->password_algo !== NULL) {
+            $user->password = password_hash($password, PASSWORD_DEFAULT);
+            $user->password_algo = NULL;
+            $user->password_salt = NULL;
+            $user->save();
         }
 
         $authService = new AuthService($user);
@@ -226,7 +234,11 @@ class AuthController extends Controller
         $code = Helper::guid();
         $key = CacheKey::get('TEMP_TOKEN', $code);
         Cache::put($key, $user['id'], 60);
-        $redirect = '/#/login?verify=' . $code . '&redirect=' . ($request->input('redirect') ? $request->input('redirect') : 'dashboard');
+        $redirectParam = $request->input('redirect', 'dashboard');
+        if (preg_match('/^https?:\/\//i', $redirectParam) || strpos($redirectParam, '//') === 0) {
+            $redirectParam = 'dashboard';
+        }
+        $redirect = '/#/login?verify=' . $code . '&redirect=' . urlencode($redirectParam);
         if (config('v2board.app_url')) {
             $url = config('v2board.app_url') . $redirect;
         } else {

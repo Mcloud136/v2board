@@ -54,7 +54,7 @@ class BEasyPaymentUSDT {
         $curl->close();
 
         if (!isset($result->status_code) || $result->status_code != 200) {
-            abort(500, "Failed to create order. Error: {$result->message}");
+            \Log::error($result->message ?? "Unknown error"); abort(500, "Payment processing failed");;
         }
 
         $paymentURL = $result->data->payment_url;

@@ -62,21 +62,22 @@ class MGate {
         $curl->post($this->config['mgate_url'] . '/v1/gateway/fetch', http_build_query($params));
         $result = $curl->response;
         if (!$result) {
-            abort(500, '网络异常');
+            \Log::error('MGate: network error');
+            abort(500, '支付处理失败');
         }
         if ($curl->error) {
             if (isset($result->errors)) {
-                $errors = (array)$result->errors;
-                abort(500, $errors[array_keys($errors)[0]][0]);
+                \Log::error('MGate: validation errors', (array)$result->errors);
             }
             if (isset($result->message)) {
-                abort(500, $result->message);
+                \Log::error('MGate: ' . $result->message);
             }
-            abort(500, '未知错误');
+            abort(500, '支付处理失败');
         }
         $curl->close();
         if (!isset($result->data->trade_no)) {
-            abort(500, '接口请求失败');
+            \Log::error('MGate: missing trade_no in response');
+            abort(500, '支付处理失败');
         }
         return [
             'type' => 1, // 0:qrcode 1:url

@@ -86,7 +86,7 @@ class StripeCheckout {
             $session = Session::create($params);
         } catch (\Exception $e) {
             info($e);
-            abort(500, "Failed to create order. Error: {$e->getMessage}");
+            \Log::error($e->getMessage()); abort(500, "Payment processing failed");;
         }
         return [
             'type' => 1, // 0:qrcode 1:url

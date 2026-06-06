@@ -445,7 +445,8 @@ class UserController extends Controller
             return response(['data' => true]);
         } catch (\Exception $e) {
             DB::rollBack();
-            abort(500, $e->getMessage());
+            \Log::error('Transfer failed: ' . $e->getMessage());
+            abort(500, 'Transfer failed');
         }
     }
 
@@ -459,7 +460,11 @@ class UserController extends Controller
         $code = Helper::guid();
         $key = CacheKey::get('TEMP_TOKEN', $code);
         Cache::put($key, $user->id, 60);
-        $redirect = '/#/login?verify=' . $code . '&redirect=' . ($request->input('redirect') ? $request->input('redirect') : 'dashboard');
+        $redirectParam = $request->input('redirect', 'dashboard');
+        if (preg_match('/^https?:\/\//i', $redirectParam) || strpos($redirectParam, '//') === 0) {
+            $redirectParam = 'dashboard';
+        }
+        $redirect = '/#/login?verify=' . $code . '&redirect=' . urlencode($redirectParam);
         if (config('v2board.app_url')) {
             $url = config('v2board.app_url') . $redirect;
         } else {
