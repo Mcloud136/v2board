@@ -32,11 +32,11 @@ echo ""
 
 git config --global --add safe.directory "$(pwd)"
 
-echo "[1/4] 拉取最新代码..."
+echo "[1/5] 拉取最新代码..."
 git fetch --all
 git reset --hard origin/master
 
-echo "[2/4] 安装 Composer 依赖..."
+echo "[2/5] 安装 Composer 依赖..."
 rm -f composer.phar
 # 兼容 wget 和 curl
 if command -v wget &> /dev/null; then
@@ -49,7 +49,7 @@ else
 fi
 php composer.phar install --no-dev --optimize-autoloader
 
-echo "[3/4] 清除缓存..."
+echo "[3/5] 清除缓存..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
@@ -60,16 +60,31 @@ if [ -f "/etc/init.d/bt" ]; then
   find "$(pwd)" -not -name ".user.ini" -not -path "$(pwd)/.git/*" -exec chown www:www {} + 2>/dev/null || true
 fi
 
-echo "[4/4] 运行更新脚本（含数据库迁移和缓存重建）..."
+echo "[4/5] 运行更新脚本（含数据库迁移和缓存重建）..."
 php artisan v2board:update
+
+echo "[5/5] 重启服务..."
+
+# 重启 PHP-FPM（容错：服务可能不存在）
+if systemctl is-active --quiet php-fpm-82 2>/dev/null; then
+    systemctl restart php-fpm-82 && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: systemctl restart php-fpm-82"
+else
+    echo "  ⚠️ php-fpm-82 服务未运行，跳过"
+fi
+
+# 重启 Nginx（容错：服务可能不存在）
+if systemctl is-active --quiet nginx 2>/dev/null; then
+    systemctl restart nginx && echo "  ✅ Nginx 已重启" || echo "  ⚠️ Nginx 重启失败，请手动执行: systemctl restart nginx"
+else
+    echo "  ⚠️ Nginx 服务未运行，跳过"
+fi
+
+# 重启队列（容错：Horizon 可能未运行）
+if [ -f artisan ]; then
+    php artisan horizon:terminate 2>/dev/null && echo "  ✅ 队列已重启" || echo "  ⚠️ Horizon 未运行，跳过"
+fi
 
 echo ""
 echo "=========================================="
-echo "  更新完成！"
+echo "  更新完成！所有服务已自动重启。"
 echo "=========================================="
-echo ""
-echo "[重要] 请手动执行以下操作："
-echo "  1. 重启 PHP-FPM: systemctl restart php-fpm-82"
-echo "  2. 重启 Nginx:   systemctl restart nginx"
-echo "  3. 重启队列:     php artisan horizon"
-echo ""
