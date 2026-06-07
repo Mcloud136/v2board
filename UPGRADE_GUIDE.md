@@ -96,9 +96,9 @@ php artisan route:cache
 php artisan horizon:terminate
 
 # 重启 PHP-FPM（根据实际安装方式选择）
-systemctl restart php8.2-fpm
+systemctl restart php-fpm-82
 # 或
-service php8.2-fpm restart
+service php-fpm-82 restart
 
 # 如果使用 Nginx
 systemctl restart nginx
@@ -215,7 +215,7 @@ php artisan horizon:supervisors
 tail -50 storage/logs/laravel.log
 
 # 查看 PHP-FPM 错误日志
-tail -50 /var/log/php8.2-fpm.log
+tail -50 /var/log/php-fpm-82.log
 
 # 查看 Nginx 错误日志
 tail -50 /var/log/nginx/error.log
