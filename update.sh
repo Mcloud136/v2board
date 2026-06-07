@@ -65,18 +65,22 @@ php artisan v2board:update
 
 echo "[5/5] 重启服务..."
 
-# 重启 PHP-FPM（容错：服务可能不存在）
-if systemctl is-active --quiet php-fpm-82 2>/dev/null; then
+# 重启 PHP-FPM（兼容宝塔面板）
+if [ -f "/etc/init.d/php-fpm-82" ]; then
+    /etc/init.d/php-fpm-82 restart && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: /etc/init.d/php-fpm-82 restart"
+elif systemctl is-active --quiet php-fpm-82 2>/dev/null; then
     systemctl restart php-fpm-82 && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: systemctl restart php-fpm-82"
 else
-    echo "  ⚠️ php-fpm-82 服务未运行，跳过"
+    echo "  ⚠️ php-fpm-82 服务未找到，跳过"
 fi
 
-# 重启 Nginx（容错：服务可能不存在）
-if systemctl is-active --quiet nginx 2>/dev/null; then
+# 重启 Nginx（兼容宝塔面板）
+if [ -f "/etc/init.d/nginx" ]; then
+    /etc/init.d/nginx restart && echo "  ✅ Nginx 已重启" || echo "  ⚠️ Nginx 重启失败，请手动执行: /etc/init.d/nginx restart"
+elif systemctl is-active --quiet nginx 2>/dev/null; then
     systemctl restart nginx && echo "  ✅ Nginx 已重启" || echo "  ⚠️ Nginx 重启失败，请手动执行: systemctl restart nginx"
 else
-    echo "  ⚠️ Nginx 服务未运行，跳过"
+    echo "  ⚠️ Nginx 服务未找到，跳过"
 fi
 
 # 重启队列（容错：Horizon 可能未运行）
