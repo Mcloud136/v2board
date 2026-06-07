@@ -105,9 +105,18 @@ class AuthService
 
     public function removeAllSession()
     {
-        $cacheKey = CacheKey::get("USER_SESSIONS", $this->user->id);
+        return self::clearUserSessions($this->user->id);
+    }
+
+    /**
+     * 清除指定用户的所有 session 和 JWT 缓存
+     * 可用于批量操作（封禁、删除等）而无需实例化 AuthService
+     */
+    public static function clearUserSessions(int $userId): bool
+    {
+        $cacheKey = CacheKey::get("USER_SESSIONS", $userId);
         $sessions = (array)Cache::get($cacheKey, []);
-        foreach ($sessions as $guid => $meta) {
+        foreach ($sessions as $meta) {
             if (isset($meta['auth_data'])) {
                 Cache::forget($meta['auth_data']);
             }

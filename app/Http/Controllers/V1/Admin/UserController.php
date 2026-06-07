@@ -362,16 +362,9 @@ class UserController extends Controller
                 return response(['data' => true]);
             }
             User::whereIn('id', $userIds)->update(['banned' => 1]);
-            // 清除 session 缩存，使被封用户立即失效
+            // 清除 session 缓存，使被封用户立即失效
             foreach ($userIds as $uid) {
-                $cacheKey = \App\Utils\CacheKey::get('USER_SESSIONS', $uid);
-                $sessions = (array) \Illuminate\Support\Facades\Cache::get($cacheKey, []);
-                foreach ($sessions as $meta) {
-                    if (isset($meta['auth_data'])) {
-                        \Illuminate\Support\Facades\Cache::forget($meta['auth_data']);
-                    }
-                }
-                \Illuminate\Support\Facades\Cache::forget($cacheKey);
+                AuthService::clearUserSessions($uid);
             }
         } catch (\Exception $e) {
             abort(500, '处理失败');
@@ -400,14 +393,7 @@ class UserController extends Controller
         try {
             // 清除所有被删用户的 session 缓存
             foreach ($userIds as $uid) {
-                $cacheKey = \App\Utils\CacheKey::get('USER_SESSIONS', $uid);
-                $sessions = (array) \Illuminate\Support\Facades\Cache::get($cacheKey, []);
-                foreach ($sessions as $meta) {
-                    if (isset($meta['auth_data'])) {
-                        \Illuminate\Support\Facades\Cache::forget($meta['auth_data']);
-                    }
-                }
-                \Illuminate\Support\Facades\Cache::forget($cacheKey);
+                AuthService::clearUserSessions($uid);
             }
             // 批量删除关联数据（单次 SQL 替代 N+1 循环）
             // 1. 删除工单消息（先获取 ticket ID）
