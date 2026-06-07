@@ -356,7 +356,7 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
-            // AuthenticatesRole 中间件已校验 banned 状态，无需逐个清理 session
+            // 中间件 AuthenticatesRole 会校验 banned 状态，即时生效
             $builder->update(['banned' => 1]);
         } catch (\Exception $e) {
             abort(500, '处理失败');

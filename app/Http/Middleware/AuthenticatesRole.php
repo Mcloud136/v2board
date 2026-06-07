@@ -15,6 +15,10 @@ class AuthenticatesRole
         $user = AuthService::decryptAuthData($authorization);
         if (!$user) abort(403, '未登录或登陆已过期');
 
+        if (!empty($user['banned'])) {
+            abort(403, '账号已被封禁');
+        }
+
         if ($role === 'admin' && !$user['is_admin']) {
             abort(403, '未登录或登陆已过期');
         }
