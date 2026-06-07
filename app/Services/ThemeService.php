@@ -31,7 +31,7 @@ class ThemeService
         // 消毒字符串值防止 PHP 代码注入
         foreach ($data as $k => $v) {
             if (is_string($v)) {
-                $data[$k] = str_replace(['<?php', '<?', '?>', '<?PHP', '<?='], '', $v);
+                $data[$k] = str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${'], '', $v);
             }
         }
 

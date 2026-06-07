@@ -114,9 +114,13 @@ class TelegramService {
         $curl->get($this->api . $method . '?' . http_build_query($params));
         $response = $curl->response;
         $curl->close();
-        if (!isset($response->ok)) abort(500, '请求失败');
+        if (!isset($response->ok)) {
+            \Log::error('Telegram API 请求失败');
+            abort(500, 'Telegram 请求失败');
+        }
         if (!$response->ok) {
-            abort(500, '来自TG的错误：' . $response->description);
+            \Log::error('Telegram API 错误: ' . ($response->description ?? 'unknown'));
+            abort(500, 'Telegram 请求失败');
         }
         return $response;
     }

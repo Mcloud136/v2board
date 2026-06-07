@@ -72,6 +72,14 @@ class ThemeController extends Controller
 
         File::ensureDirectoryExists(base_path() . '/config/theme/');
 
+        // 消毒字符串值防止 PHP 代码注入
+        $config = array_map(function ($v) {
+            if (is_string($v)) {
+                return str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${'], '', $v);
+            }
+            return $v;
+        }, $config);
+
         $data = var_export($config, 1);
         if (!File::put(base_path() . "/config/theme/{$payload['name']}.php", "<?php\n return $data ;")) {
             abort(500, '修改失败');

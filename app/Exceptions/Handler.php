@@ -51,7 +51,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if (str_contains($exception->getMessage(), 'theme')) {
+        if ($exception instanceof \InvalidArgumentException &&
+            str_contains($exception->getMessage(), 'theme')) {
             abort(500, "主题渲染失败。如更新主题，参数可能发生变化请重新配置主题后再试。");
         }
         return parent::render($request, $exception);
