@@ -120,7 +120,12 @@ class PaymentController extends Controller
         ]);
         DB::beginTransaction();
         foreach ($request->input('ids') as $k => $v) {
-            if (!Payment::find($v)->update(['sort' => $k + 1])) {
+            $payment = Payment::find($v);
+            if (!$payment) {
+                DB::rollBack();
+                abort(500, '支付方式不存在');
+            }
+            if (!$payment->update(['sort' => $k + 1])) {
                 DB::rollBack();
                 abort(500, '保存失败');
             }
