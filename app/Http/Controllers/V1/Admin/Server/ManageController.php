@@ -47,7 +47,12 @@ class ManageController extends Controller
         foreach ($params as $k => $v) {
             $model = 'App\\Models\\Server' . ucfirst($k);
             foreach($v as $id => $sort) {
-                if (!$model::find($id)->update(['sort' => $sort])) {
+                $server = $model::find($id);
+                if (!$server) {
+                    DB::rollBack();
+                    abort(500, '节点不存在');
+                }
+                if (!$server->update(['sort' => $sort])) {
                     DB::rollBack();
                     abort(500, '保存失败');
                 }

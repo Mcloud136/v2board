@@ -83,6 +83,10 @@ class KnowledgeController extends Controller
         try {
             foreach ($request->input('knowledge_ids') as $k => $v) {
                 $knowledge = Knowledge::find($v);
+                if (!$knowledge) {
+                    DB::rollBack();
+                    abort(500, '文章不存在');
+                }
                 $knowledge->timestamps = false;
                 $knowledge->update(['sort' => $k + 1]);
             }

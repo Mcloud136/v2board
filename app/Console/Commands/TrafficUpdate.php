@@ -59,9 +59,10 @@ class TrafficUpdate extends Command
             foreach ($users as $user) {
                 $upload = $uploads[$user->id] ?? 0;
                 $download = $downloads[$user->id] ?? 0;
+                // 使用 DB::raw 原子更新，避免并发读写不一致
                 User::where('id', $user->id)->update([
-                    'u' => $user->u + $upload,
-                    'd' => $user->d + $download,
+                    'u' => DB::raw('u + ' . (int)$upload),
+                    'd' => DB::raw('d + ' . (int)$download),
                     't' => $time,
                     'updated_at' => $time,
                 ]);

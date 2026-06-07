@@ -55,6 +55,7 @@ class TuicController extends Controller
 
     public function drop(Request $request)
     {
+        if (!$request->input('id')) abort(500, '参数错误');
         if ($request->input('id')) {
             $server = ServerTuic::find($request->input('id'));
             if (!$server) {

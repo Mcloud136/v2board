@@ -58,6 +58,7 @@ class GroupController extends Controller
 
     public function drop(Request $request)
     {
+        if (!$request->input('id')) abort(500, '参数错误');
         if ($request->input('id')) {
             $serverGroup = ServerGroup::find($request->input('id'));
             if (!$serverGroup) {
