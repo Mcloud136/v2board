@@ -232,7 +232,7 @@ class TicketController extends Controller
 				$u = $this->getFlowData($user->u); // 上传
 				$d = $this->getFlowData($user->d); // 下载
 				$expired_at = $user->expired_at ? date("Y-m-d H:i:s", $user->expired_at) : '永久'; // 到期时间
-				$ip_address = filter_var($request->ip(), FILTER_VALIDATE_IP) ?: 'unknown';
+				$ip_address = filter_var(request()->ip(), FILTER_VALIDATE_IP) ?: 'unknown';
 				$location = '无法确定用户地址';
 				if ($ip_address !== 'unknown') {
 					try {

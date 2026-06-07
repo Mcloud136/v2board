@@ -8,10 +8,35 @@ use App\Http\Requests\Staff\UserUpdate;
 use App\Jobs\SendEmailJob;
 use App\Models\Plan;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    private function filter(Request $request, $builder)
+    {
+        $filters = $request->input('filter');
+        $allowedKeys = [
+            'email', 'plan_id', 'group_id', 'banned', 'expired_at',
+            'transfer_enable', 'd', 'u', 'invite_user_id', 'created_at',
+            'last_login_at', 'balance', 'commission_balance', 'is_admin',
+            'is_staff', 'token', 'uuid', 'telegram_id'
+        ];
+        $allowedConditions = ['=', '!=', '>', '<', '>=', '<=', 'like', 'in', 'not in'];
+        if ($filters) {
+            foreach ($filters as $k => $filter) {
+                if (!in_array($filter['key'], $allowedKeys, true)) continue;
+                if ($filter['condition'] === '模糊') {
+                    $filter['condition'] = 'like';
+                    $filter['value'] = "%{$filter['value']}%";
+                }
+                if (!in_array(strtolower($filter['condition']), $allowedConditions, true)) continue;
+                $builder->where($filter['key'], $filter['condition'], $filter['value']);
+            }
+        }
+    }
+
     public function getUserInfoById(Request $request)
     {
         if (empty($request->input('id'))) {
@@ -93,9 +118,15 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
-            $builder->update([
-                'banned' => 1
-            ]);
+            $userIds = $builder->pluck('id')->toArray();
+            if (empty($userIds)) {
+                return response(['data' => true]);
+            }
+            User::whereIn('id', $userIds)->update(['banned' => 1]);
+            // 清除被封禁用户的 session 缓存
+            foreach ($userIds as $uid) {
+                AuthService::clearUserSessions($uid);
+            }
         } catch (\Exception $e) {
             abort(500, '处理失败');
         }

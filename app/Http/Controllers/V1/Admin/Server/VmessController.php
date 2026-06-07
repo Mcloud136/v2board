@@ -76,10 +76,10 @@ class VmessController extends Controller
     public function copy(Request $request)
     {
         $server = ServerVmess::find($request->input('id'));
-        $server->show = 0;
         if (!$server) {
             abort(500, '服务器不存在');
         }
+        $server->show = 0;
         if (!ServerVmess::create($server->toArray())) {
             abort(500, '复制失败');
         }

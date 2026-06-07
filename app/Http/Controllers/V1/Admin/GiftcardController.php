@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class GiftcardController extends Controller
 {
+    private function sanitizeCsvCell($value): string
+    {
+        $value = (string)$value;
+        if (preg_match('/^[=+\-@\t\r\n]/', $value)) {
+            return "'" . $value;
+        }
+        return $value;
+    }
+
     public function fetch(Request $request)
     {
         $current = $request->input('current', 1);
@@ -92,11 +101,21 @@ class GiftcardController extends Controller
             $endTime = date('Y-m-d H:i:s', $giftcard['ended_at']);
             $limitUse = $giftcard['limit_use'] ?? '不限制';
             $createTime = date('Y-m-d H:i:s', $giftcard['created_at']);
-            $data .= "{$giftcard['name']},{$type},{$value},{$startTime},{$endTime},{$limitUse},{$giftcard['code']},{$createTime}\r\n";
+            $data .= implode(',', [
+                $this->sanitizeCsvCell($giftcard['name']),
+                $type,
+                $value,
+                $startTime,
+                $endTime,
+                $limitUse,
+                $giftcard['code'],
+                $createTime
+            ]) . "\r\n";
         }
 
-        // Return the CSV data as a response
-       echo($data);
+        return response("\xEF\xBB\xBF" . $data)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="giftcards_' . date('YmdHis') . '.csv"');
     }
 
     public function drop(Request $request)

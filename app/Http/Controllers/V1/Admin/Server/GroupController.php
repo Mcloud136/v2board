@@ -45,6 +45,7 @@ class GroupController extends Controller
 
         if ($request->input('id')) {
             $serverGroup = ServerGroup::find($request->input('id'));
+            if (!$serverGroup) abort(500, '分组不存在');
         } else {
             $serverGroup = new ServerGroup();
         }

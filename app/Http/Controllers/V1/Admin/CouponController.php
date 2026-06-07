@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CouponGenerate;
-use App\Http\Requests\Admin\CouponSave;
 use App\Models\Coupon;
 use App\Utils\Helper;
 use Illuminate\Http\Request;
@@ -12,6 +11,15 @@ use Illuminate\Support\Facades\DB;
 
 class CouponController extends Controller
 {
+    private function sanitizeCsvCell($value): string
+    {
+        $value = (string)$value;
+        if (preg_match('/^[=+\-@\t\r\n]/', $value)) {
+            return "'" . $value;
+        }
+        return $value;
+    }
+
     public function fetch(Request $request)
     {
         $current = $request->input('current') ? $request->input('current') : 1;
@@ -112,7 +120,17 @@ class CouponController extends Controller
             $limitUse = $coupon['limit_use'] ?? '不限制';
             $createTime = date('Y-m-d H:i:s', $coupon['created_at']);
             $limitPlanIds = isset($coupon['limit_plan_ids']) ? implode("/", $coupon['limit_plan_ids']) : '不限制';
-            $data .= "{$coupon['name']},{$type},{$value},{$startTime},{$endTime},{$limitUse},{$limitPlanIds},{$coupon['code']},{$createTime}\r\n";
+            $data .= implode(',', [
+                $this->sanitizeCsvCell($coupon['name']),
+                $type,
+                $value,
+                $startTime,
+                $endTime,
+                $limitUse,
+                $limitPlanIds,
+                $coupon['code'],
+                $createTime
+            ]) . "\r\n";
         }
         return response("\xEF\xBB\xBF" . $data)
             ->header('Content-Type', 'text/csv; charset=UTF-8')
