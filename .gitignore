@@ -24,3 +24,5 @@ docker-compose.yml
 public/clients/*
 workerman.webman.php.pid
 workerman.log
+CLAUDE.md
+.claude/
