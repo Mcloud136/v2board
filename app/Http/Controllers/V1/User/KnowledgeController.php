@@ -48,9 +48,11 @@ class KnowledgeController extends Controller
             ->orderBy('sort', 'ASC');
         $keyword = $request->input('keyword');
         if ($keyword) {
-            $builder = $builder->where(function ($query) use ($keyword) {
-                $query->where('title', 'LIKE', "%{$keyword}%")
-                    ->orWhere('body', 'LIKE', "%{$keyword}%");
+            // 转义 LIKE 通配符防止搜索模式注入
+            $escaped = str_replace(['%', '_'], ['\\%', '\\_'], $keyword);
+            $builder = $builder->where(function ($query) use ($escaped) {
+                $query->where('title', 'LIKE', "%{$escaped}%")
+                    ->orWhere('body', 'LIKE', "%{$escaped}%");
             });
         }
 
