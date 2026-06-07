@@ -356,8 +356,23 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
-            // 中间件 AuthenticatesRole 会校验 banned 状态，即时生效
-            $builder->update(['banned' => 1]);
+            // 收集被封禁用户的 ID，用于清除 session 缓存
+            $userIds = $builder->pluck('id')->toArray();
+            if (empty($userIds)) {
+                return response(['data' => true]);
+            }
+            User::whereIn('id', $userIds)->update(['banned' => 1]);
+            // 清除 session 缩存，使被封用户立即失效
+            foreach ($userIds as $uid) {
+                $cacheKey = \App\Utils\CacheKey::get('USER_SESSIONS', $uid);
+                $sessions = (array) \Illuminate\Support\Facades\Cache::get($cacheKey, []);
+                foreach ($sessions as $meta) {
+                    if (isset($meta['auth_data'])) {
+                        \Illuminate\Support\Facades\Cache::forget($meta['auth_data']);
+                    }
+                }
+                \Illuminate\Support\Facades\Cache::forget($cacheKey);
+            }
         } catch (\Exception $e) {
             abort(500, '处理失败');
         }
@@ -383,6 +398,17 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
+            // 清除所有被删用户的 session 缓存
+            foreach ($userIds as $uid) {
+                $cacheKey = \App\Utils\CacheKey::get('USER_SESSIONS', $uid);
+                $sessions = (array) \Illuminate\Support\Facades\Cache::get($cacheKey, []);
+                foreach ($sessions as $meta) {
+                    if (isset($meta['auth_data'])) {
+                        \Illuminate\Support\Facades\Cache::forget($meta['auth_data']);
+                    }
+                }
+                \Illuminate\Support\Facades\Cache::forget($cacheKey);
+            }
             // 批量删除关联数据（单次 SQL 替代 N+1 循环）
             // 1. 删除工单消息（先获取 ticket ID）
             $ticketIds = Ticket::whereIn('user_id', $userIds)->pluck('id')->toArray();
