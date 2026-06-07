@@ -32,13 +32,13 @@ class EPay
             ],
             'private_key' => [
                 'label'       => '商户私钥',
-                'description' => '在商户后台生成 RSA 密钥对后获取的私钥',
-                'type'        => 'textarea',
+                'description' => '在商户后台生成 RSA 密钥对后获取的私钥（粘贴完整内容）',
+                'type'        => 'input',
             ],
             'public_key' => [
                 'label'       => '平台公钥',
-                'description' => '商户后台显示的平台公钥',
-                'type'        => 'textarea',
+                'description' => '商户后台显示的平台公钥（粘贴完整内容）',
+                'type'        => 'input',
             ],
         ];
     }
