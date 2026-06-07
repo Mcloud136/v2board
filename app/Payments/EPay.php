@@ -10,8 +10,18 @@ class EPay
 
     public function __construct($config)
     {
-        if (empty($config['url']) || empty($config['pid']) || empty($config['private_key']) || empty($config['public_key'])) {
-            throw new \InvalidArgumentException('EPay 配置缺少 url、pid、private_key 或 public_key');
+        if (empty($config['url']) || empty($config['pid'])) {
+            throw new \InvalidArgumentException('EPay 配置缺少 url 或 pid');
+        }
+
+        // V2 RSA 签名：需要 private_key 和 public_key
+        if (empty($config['private_key']) || empty($config['public_key'])) {
+            throw new \InvalidArgumentException(
+                'EPay 已升级为 V2 版本（RSA 签名）。请在管理后台 → 支付配置中更新 EPay：'
+                . '1. 删除旧的 key（商户密钥）字段 '
+                . '2. 填入 private_key（商户私钥）和 public_key（平台公钥）。'
+                . '密钥在易支付商户后台 → 个人资料 → API信息 中生成。'
+            );
         }
 
         $this->config = $config;
