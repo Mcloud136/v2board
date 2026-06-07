@@ -215,7 +215,7 @@ class ServerService
             $apiKey = config('v2board.server_token', '');
             $nodeId = (int) $v['id'];
             $server['install_command'] = sprintf(
-                'wget -N https://raw.githubusercontent.com/wyx2685/v2node/master/script/install.sh && bash install.sh --api-host %s --node-id %d --api-key %s',
+                'wget -N https://raw.githubusercontent.com/Mcloud136/v2node/master/script/install.sh && bash install.sh --api-host %s --node-id %d --api-key %s',
                 escapeshellarg((string) $apiHost),
                 $nodeId,
                 escapeshellarg((string) $apiKey)
