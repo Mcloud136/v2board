@@ -55,9 +55,9 @@ php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-# 宝塔面板权限修复（在 artisan 命令之前确保权限正确）
+# 宝塔面板权限修复（排除 .user.ini，该文件由 PHP-FPM 管理）
 if [ -f "/etc/init.d/bt" ]; then
-  chown -R www "$(pwd)"
+  find "$(pwd)" -not -name ".user.ini" -not -path "$(pwd)/.git/*" -exec chown www:www {} + 2>/dev/null || true
 fi
 
 echo "[4/4] 运行更新脚本（含数据库迁移和缓存重建）..."
