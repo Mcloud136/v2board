@@ -356,13 +356,8 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {
-            $builder->each(function ($user){
-                $authService = new AuthService($user);
-                $authService->removeAllSession();
-            });
-            $builder->update([
-                'banned' => 1
-            ]);
+            // AuthenticatesRole 中间件已校验 banned 状态，无需逐个清理 session
+            $builder->update(['banned' => 1]);
         } catch (\Exception $e) {
             abort(500, '处理失败');
         }
@@ -380,26 +375,33 @@ class UserController extends Controller
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
 
+        // 先收集所有要删除的用户 ID
+        $userIds = $builder->pluck('id')->toArray();
+        if (empty($userIds)) {
+            return response(['data' => true]);
+        }
+
         DB::beginTransaction();
         try {
-            $builder->each(function ($user){
-                $authService = new AuthService($user);
-                $authService->removeAllSession();
-                Order::where('user_id', $user->id)->delete();
-                InviteCode::where('user_id', $user->id)->delete();
-                $tickets = Ticket::where('user_id', $user->id)->get();
-                foreach($tickets as $ticket) {
-                    TicketMessage::where('ticket_id', $ticket->id)->delete();
-                }
-                Ticket::where('user_id', $user->id)->delete();
-                User::where('invite_user_id', $user->id)->update(['invite_user_id' => null]);
-            });
-            $builder->delete();
+            // 批量删除关联数据（单次 SQL 替代 N+1 循环）
+            // 1. 删除工单消息（先获取 ticket ID）
+            $ticketIds = Ticket::whereIn('user_id', $userIds)->pluck('id')->toArray();
+            if (!empty($ticketIds)) {
+                TicketMessage::whereIn('ticket_id', $ticketIds)->delete();
+            }
+            // 2. 批量删除订单、邀请码、工单
+            Order::whereIn('user_id', $userIds)->delete();
+            InviteCode::whereIn('user_id', $userIds)->delete();
+            Ticket::whereIn('user_id', $userIds)->delete();
+            // 3. 清除被邀请关系
+            User::whereIn('invite_user_id', $userIds)->update(['invite_user_id' => null]);
+            // 4. 删除用户
+            User::whereIn('id', $userIds)->delete();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             abort(500, '批量删除用户信息失败');
-        }  
+        }
 
         return response([
             'data' => true
