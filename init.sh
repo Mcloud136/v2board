@@ -12,7 +12,15 @@ fi
 echo "PHP 版本检查通过: $(php -v | head -n 1 | cut -d ' ' -f 2)"
 
 rm -f composer.phar
-wget -q https://github.com/composer/composer/releases/latest/download/composer.phar -O composer.phar
+# 兼容 wget 和 curl
+if command -v wget &> /dev/null; then
+    wget -q https://github.com/composer/composer/releases/latest/download/composer.phar -O composer.phar
+elif command -v curl &> /dev/null; then
+    curl -sL https://github.com/composer/composer/releases/latest/download/composer.phar -o composer.phar
+else
+    echo "错误：需要 wget 或 curl 来下载 composer"
+    exit 1
+fi
 php composer.phar install --no-dev --optimize-autoloader
 
 php artisan v2board:install

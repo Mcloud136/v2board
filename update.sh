@@ -27,37 +27,41 @@ echo ""
 
 # 备份提示
 echo "[提示] 建议更新前备份数据库和项目目录："
-echo "  mysqldump -u root -p v2board > v2board_backup_\$(date +%Y%m%d).sql"
+echo "  mysqldump -u root -p v2board > v2board_backup_$(date +%Y%m%d).sql"
 echo ""
 
 git config --global --add safe.directory "$(pwd)"
 
-echo "[1/5] 拉取最新代码..."
+echo "[1/4] 拉取最新代码..."
 git fetch --all
 git reset --hard origin/master
 
-echo "[2/5] 安装 Composer 依赖..."
+echo "[2/4] 安装 Composer 依赖..."
 rm -f composer.phar
-wget -q https://github.com/composer/composer/releases/latest/download/composer.phar -O composer.phar
+# 兼容 wget 和 curl
+if command -v wget &> /dev/null; then
+    wget -q https://github.com/composer/composer/releases/latest/download/composer.phar -O composer.phar
+elif command -v curl &> /dev/null; then
+    curl -sL https://github.com/composer/composer/releases/latest/download/composer.phar -o composer.phar
+else
+    echo "错误：需要 wget 或 curl 来下载 composer"
+    exit 1
+fi
 php composer.phar install --no-dev --optimize-autoloader
 
-echo "[3/5] 清除缓存..."
+echo "[3/4] 清除缓存..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-echo "[4/5] 重建缓存..."
-php artisan config:cache
-php artisan route:cache
-
-echo "[5/5] 运行更新脚本..."
-php artisan v2board:update
-
-# 宝塔面板权限修复
+# 宝塔面板权限修复（在 artisan 命令之前确保权限正确）
 if [ -f "/etc/init.d/bt" ]; then
   chown -R www "$(pwd)"
 fi
+
+echo "[4/4] 运行更新脚本（含数据库迁移和缓存重建）..."
+php artisan v2board:update
 
 echo ""
 echo "=========================================="
@@ -67,5 +71,5 @@ echo ""
 echo "[重要] 请手动执行以下操作："
 echo "  1. 重启 PHP-FPM: systemctl restart php8.2-fpm"
 echo "  2. 重启 Nginx:   systemctl restart nginx"
-echo "  3. 重启队列:     php artisan horizon:terminate"
+echo "  3. 重启队列:     php artisan horizon"
 echo ""

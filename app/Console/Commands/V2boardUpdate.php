@@ -59,7 +59,7 @@ class V2boardUpdate extends Command
             try {
                 DB::statement($item);
             } catch (\Exception $e) {
-                // 忽略 "already exists" 类错误，其他记录日志
+                // 忽略 "already exists" 和 "Duplicate" 类错误（幂等）
                 if (stripos($e->getMessage(), 'already exists') === false &&
                     stripos($e->getMessage(), 'Duplicate') === false) {
                     \Log::warning('SQL 执行警告: ' . $e->getMessage());
@@ -67,11 +67,19 @@ class V2boardUpdate extends Command
                 }
             }
         }
-        \Artisan::call('horizon:terminate');
+
+        // 重启队列（容错：Horizon 可能未运行）
+        try {
+            \Artisan::call('horizon:terminate');
+            $this->info('队列服务已重启。');
+        } catch (\Exception $e) {
+            $this->warn('队列服务重启失败（可能未运行），请手动重启: php artisan horizon');
+        }
+
         if ($errors > 0) {
-            $this->warn("更新完毕，但有 {$errors} 条 SQL 执行出现警告，请检查日志。");
+            $this->warn("更新完毕，但有 {$errors} 条 SQL 执行出现警告，请检查日志: storage/logs/laravel.log");
         } else {
-            $this->info('更新完毕，队列服务已重启，你无需进行任何操作。');
+            $this->info('更新完毕！你无需进行任何操作。');
         }
         return 0;
     }
