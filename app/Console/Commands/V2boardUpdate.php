@@ -59,10 +59,25 @@ class V2boardUpdate extends Command
             try {
                 DB::statement($item);
             } catch (\Exception $e) {
-                // 忽略 "already exists" 和 "Duplicate" 类错误（幂等）
-                if (stripos($e->getMessage(), 'already exists') === false &&
-                    stripos($e->getMessage(), 'Duplicate') === false) {
-                    \Log::warning('SQL 执行警告: ' . $e->getMessage());
+                $msg = $e->getMessage();
+                // 忽略幂等错误（已存在/已删除/不适用的迁移）
+                $ignored = [
+                    'already exists',    // 表/列已存在
+                    'Duplicate',         // 重复索引/列
+                    "Can't DROP",        // 列/索引已删除
+                    'Unknown column',    // 列已不存在
+                    "doesn't exist in table", // 索引引用的列不存在
+                    'Duplicate key name',
+                ];
+                $shouldIgnore = false;
+                foreach ($ignored as $keyword) {
+                    if (stripos($msg, $keyword) !== false) {
+                        $shouldIgnore = true;
+                        break;
+                    }
+                }
+                if (!$shouldIgnore) {
+                    \Log::warning('SQL 执行警告: ' . $msg);
                     $errors++;
                 }
             }
