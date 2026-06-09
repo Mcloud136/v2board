@@ -44,12 +44,13 @@ class TrafficUpdate extends Command
             return;
         }
         $uploads = Redis::hgetall('v2board_upload_traffic');
-        Redis::del('v2board_upload_traffic');
         $downloads = Redis::hgetall('v2board_download_traffic');
-        Redis::del('v2board_download_traffic');
         if (empty($uploads) && empty($downloads)) {
             return;
         }
+        // 读取完成后清空 Hash，为下一轮写入腾出空间
+        Redis::del('v2board_upload_traffic');
+        Redis::del('v2board_download_traffic');
 
         $users = User::whereIn('id', array_keys($downloads))->get(['id', 'u', 'd']);
         $time = time();

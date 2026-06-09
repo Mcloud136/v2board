@@ -43,5 +43,9 @@ class TrafficFetchJob implements ShouldQueue
             Redis::hincrby('v2board_upload_traffic', $userId, $this->data[$userId][0] * $this->server['rate']);
             Redis::hincrby('v2board_download_traffic', $userId, $this->data[$userId][1] * $this->server['rate']);
         }
+        // 设置 Hash 整体 TTL（5 分钟），避免未处理数据无限增长
+        // TrafficUpdate 每分钟处理一次，5 分钟 TTL 提供安全余量
+        Redis::expire('v2board_upload_traffic', 300);
+        Redis::expire('v2board_download_traffic', 300);
     }
 }
