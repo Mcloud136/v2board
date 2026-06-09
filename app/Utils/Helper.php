@@ -584,4 +584,14 @@ class Helper
         $config['mode'] = $settings['mode'] ?? 'auto';
         $config['extra'] = isset($settings['extra']) ? json_encode($settings['extra'], JSON_UNESCAPED_SLASHES) : null;
     }
+
+    /**
+     * 缓存查询 Plan（60 秒 TTL，减少高频读取的数据库压力）
+     */
+    public static function getCachedPlan(int $planId)
+    {
+        return Cache::remember("plan_{$planId}", 60, function () use ($planId) {
+            return \App\Models\Plan::find($planId);
+        });
+    }
 }
