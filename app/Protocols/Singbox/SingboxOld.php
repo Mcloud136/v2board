@@ -153,6 +153,19 @@ class SingboxOld
             $tlsSettings = $server['tls_settings'] ?? $server['tlsSettings'] ?? [];
             $tlsConfig['insecure'] = $config['allowInsecure'] = ((int)($tlsSettings['allow_insecure'] ?? $tlsSettings['allowInsecure'] ?? 0)) == 1 ? true : false;
             $tlsConfig['server_name'] = $tlsSettings['server_name'] ?? $tlsSettings['serverName'] ?? '';
+            if (!empty($tlsSettings['ech'])) {
+                if ($tlsSettings['ech'] === 'cloudflare') {
+                    $tlsConfig['ech'] = [
+                        'enabled' => true,
+                        'query_server_name' => 'cloudflare-ech.com'
+                    ];
+                } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
+                    $tlsConfig['ech'] = [
+                        'enabled' => true,
+                        'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
+                    ];
+                }
+            }
             $array['tls'] = $tlsConfig;
         }
         if ($server['network'] === 'tcp') {
@@ -211,6 +224,19 @@ class SingboxOld
                     "enabled" => true,
                     "fingerprint" => $fingerprints
                 ];
+                if (!empty($tlsSettings['ech'])) {
+                    if ($tlsSettings['ech'] === 'cloudflare') {
+                        $tlsConfig['ech'] = [
+                            'enabled' => true,
+                            'query_server_name' => 'cloudflare-ech.com'
+                        ];
+                    } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
+                        $tlsConfig['ech'] = [
+                            'enabled' => true,
+                            'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
+                        ];
+                    }
+                }
             }
             $array['tls'] = $tlsConfig;
         }
@@ -257,6 +283,19 @@ class SingboxOld
             'insecure' => ($server['allow_insecure'] ?? ($tlsSettings['allow_insecure'] ?? 0)) == 1 ? true : false,
             'server_name' => $server['server_name'] ?? ($tlsSettings['server_name'] ?? '')
         ];
+        if (!empty($tlsSettings['ech'])) {
+            if ($tlsSettings['ech'] === 'cloudflare') {
+                $array['tls']['ech'] = [
+                    'enabled' => true,
+                    'query_server_name' => 'cloudflare-ech.com'
+                ];
+            } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
+                $array['tls']['ech'] = [
+                    'enabled' => true,
+                    'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
+                ];
+            }
+        }
 
         if(isset($server['network']) && in_array($server['network'], ["grpc", "ws"])){
             $array['transport']['type'] = $server['network'];
@@ -323,6 +362,20 @@ class SingboxOld
                 'server_name' => $server['server_name']
             ]
         ];
+        $tlsSettings = $server['tls_settings'] ?? [];
+        if (!empty($tlsSettings['ech'])) {
+            if ($tlsSettings['ech'] === 'cloudflare') {
+                $array['tls']['ech'] = [
+                    'enabled' => true,
+                    'query_server_name' => 'cloudflare-ech.com'
+                ];
+            } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
+                $array['tls']['ech'] = [
+                    'enabled' => true,
+                    'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
+                ];
+            }
+        }
 
         if (is_null($server['version']) || $server['version'] == 1) {
             $array['auth_str'] = $password;
