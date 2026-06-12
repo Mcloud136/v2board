@@ -22,6 +22,14 @@ class TelegramController extends Controller
 
     public function unbind(Request $request)
     {
-        $user = User::where('user_id', $request->user['id'])->first();
+        $user = User::find($request->user['id']);
+        if (!$user) {
+            abort(500, __('The user does not exist'));
+        }
+        $user->telegram_id = null;
+        if (!$user->save()) {
+            abort(500, __('Unbind telegram failed'));
+        }
+        return response(['data' => true]);
     }
 }
