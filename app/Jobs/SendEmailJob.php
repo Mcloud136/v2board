@@ -17,6 +17,7 @@ class SendEmailJob implements ShouldQueue
     protected $params;
 
     public $tries = 3;
+    public $backoff = [5, 15, 30];
     public $timeout = 10;
     /**
      * Create a new job instance.

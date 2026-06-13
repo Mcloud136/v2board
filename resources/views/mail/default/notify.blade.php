@@ -19,7 +19,7 @@
                                 尊敬的用户您好！
                                 <br />
                                 <br />
-                                {!! nl2br($content) !!}
+                                {!! nl2br(e($content)) !!}
                             </td>
                         </tr>
                         <tr style="padding:40px;display:table-cell">

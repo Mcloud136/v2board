@@ -17,6 +17,7 @@ class TrafficFetchJob implements ShouldQueue
     protected $protocol;
 
     public $tries = 3;
+    public $backoff = [5, 15, 30];
     public $timeout = 10;
 
     /**

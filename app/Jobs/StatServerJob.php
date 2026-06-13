@@ -21,6 +21,7 @@ class StatServerJob implements ShouldQueue
     protected $recordType;
 
     public $tries = 3;
+    public $backoff = [5, 15, 30];
     public $timeout = 60;
 
     /**

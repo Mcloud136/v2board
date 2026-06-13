@@ -16,6 +16,7 @@ class OrderHandleJob implements ShouldQueue
     protected $tradeNo;
 
     public $tries = 3;
+    public $backoff = [5, 15, 30];
     public $timeout = 30;
     /**
      * Create a new job instance.

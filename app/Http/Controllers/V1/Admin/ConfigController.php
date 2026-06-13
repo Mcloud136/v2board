@@ -202,7 +202,7 @@ class ConfigController extends Controller
         // 消毒字符串值防止 PHP 代码注入
         $config = array_map(function ($v) {
             if (is_string($v)) {
-                return str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${'], '', $v);
+                return str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${', 'eval(', 'system(', 'exec(', 'passthru(', 'shell_exec(', 'proc_open(', 'popen(', 'assert(', 'file_put_contents(', 'file_get_contents('], '', $v);
             }
             return $v;
         }, $config);
