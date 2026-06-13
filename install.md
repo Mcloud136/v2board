@@ -16,13 +16,13 @@ wget -O install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && sudo 
 
 安装完成后登录宝塔面板，在「软件商店」中安装以下软件：
 
-☑️ Nginx（推荐最新版） ☑️ MySQL 5.7+ ☑️ PHP 8.2 ☑️ Redis
+☑️ Nginx（推荐最新版） ☑️ MySQL 5.7+ ☑️ PHP 8.5 ☑️ Redis
 
-> ⚠️ 本项目要求 PHP 8.2+，不支持 PHP 7.x 或 8.0/8.1。
+> ⚠️ 本项目要求 PHP 8.5+，不支持 PHP 7.x 或 8.0/8.1。
 
 ## 2. 安装 PHP 扩展
 
-宝塔面板 → 软件商店 → 找到 PHP 8.2 点击「设置」→「安装扩展」，安装以下扩展：
+宝塔面板 → 软件商店 → 找到 PHP 8.5 点击「设置」→「安装扩展」，安装以下扩展：
 
 - `redis`
 - `fileinfo`
@@ -32,7 +32,7 @@ wget -O install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && sudo 
 
 ## 3. 解除被禁止的函数
 
-宝塔面板 → 软件商店 → 找到 PHP 8.2 点击「设置」→「禁用函数」，将以下函数从列表中**删除**：
+宝塔面板 → 软件商店 → 找到 PHP 8.5 点击「设置」→「禁用函数」，将以下函数从列表中**删除**：
 
 - `putenv`
 - `proc_open`
@@ -47,7 +47,7 @@ wget -O install.sh https://download.bt.cn/install/install-ubuntu_6.0.sh && sudo 
 
 - **域名**：填入你指向服务器的域名（如 `api.example.com`）
 - **数据库**：选择 MySQL，记下数据库名、用户名、密码
-- **PHP 版本**：选择 PHP 8.2
+- **PHP 版本**：选择 PHP 8.5
 
 ## 5. 安装 V2Board
 
@@ -201,4 +201,4 @@ php -r "opcache_reset();"
 
 **Q：PHP 版本不对**
 
-A：本项目要求 PHP 8.2+，如果当前版本低于 8.2，需要在宝塔面板安装 PHP 8.2 并将站点切换到该版本。
+A：本项目要求 PHP 8.5+，如果当前版本低于 8.2，需要在宝塔面板安装 PHP 8.5 并将站点切换到该版本。

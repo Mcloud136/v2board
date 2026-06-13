@@ -1,15 +1,16 @@
-# V2Board Laravel 12 升级指南
+# V2Board Laravel 13 升级指南
 
 ## 一、升级前准备
 
 ### 1.1 环境要求
 
-| 项目 | 最低版本 | 检查命令 |
-|------|---------|---------|
-| PHP | 8.2+ | `php -v` |
-| Composer | 2.x | `composer --version` |
-| MySQL | 5.5+ | `mysql --version` |
-| Redis | - | `redis-cli ping` |
+| 项目 | 最低版本 | 推荐版本 | 检查命令 |
+|------|---------|---------|---------|
+| PHP | 8.3+ | **8.5** | `php -v` |
+| Composer | 2.x | 最新版 | `composer --version` |
+| MySQL | 5.7+ | 8.0+ | `mysql --version` |
+| Redis/Valkey | 6.0+ | 7.0+ | `redis-cli ping` |
+| Nginx | 1.20+ | **1.31** | `nginx -v` |
 
 ### 1.2 必需 PHP 扩展
 
@@ -30,6 +31,7 @@ php -r "echo ini_get('disable_functions');"
 - `proc_open`
 - `pcntl_alarm`
 - `pcntl_signal`
+- 所有 `pcntl_*` 函数（Horizon 队列需要）
 
 如果被禁用，编辑 `php.ini`，从 `disable_functions` 中移除这些函数，然后重启 PHP-FPM。
 
@@ -50,57 +52,44 @@ cp /path/to/v2board/.env /path/to/v2board/.env.backup
 
 ## 二、升级步骤
 
-### 2.1 拉取升级分支
+### 2.1 拉取最新代码
 
 ```bash
 cd /path/to/v2board
+git pull origin master
+```
 
-# 暂存本地改动（如有）
-git stash
+### 2.2 运行更新脚本
 
-# 拉取分支并升级
-git checkout master
+```bash
 bash update.sh
 ```
 
-### 2.2 安装依赖
+update.sh 会自动完成：
+1. 拉取最新代码
+2. 安装 Composer 依赖
+3. 清除旧缓存
+4. 运行数据库迁移
+5. 重启 PHP-FPM、Nginx、Horizon
+
+### 2.3 手动验证（如 update.sh 失败）
 
 ```bash
-# 安装/更新 Composer 依赖
+# 安装依赖
 composer install --no-dev --optimize-autoloader
 
-# 如果 PHP 版本检查失败，使用：
-# composer install --no-dev --optimize-autoloader --ignore-platform-req=ext-pcntl
-```
-
-### 2.3 清除旧缓存并重建
-
-```bash
+# 清除缓存
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-# 重新生成缓存
+# 重建缓存
 php artisan config:cache
-php artisan route:cache
 
-# 替换update.sh后执行
-./update.sh
-```
-
-### 2.4 重启服务
-
-```bash
-# 重启队列
+# 重启服务
 php artisan horizon:terminate
-
-# 重启 PHP-FPM（根据实际安装方式选择）
-systemctl restart php-fpm-82
-# 或
-service php-fpm-82 restart
-
-# 如果使用 Nginx
+systemctl restart php-fpm-85
 systemctl restart nginx
 ```
 
@@ -115,7 +104,7 @@ systemctl restart nginx
 ```bash
 # 验证 Laravel 版本
 php artisan --version
-# 预期输出：Laravel Framework 12.x.x
+# 预期输出：Laravel Framework 13.x.x
 
 # 验证路由数量
 php artisan route:list | wc -l
@@ -150,125 +139,101 @@ php artisan horizon:status
 |------|------|---------|
 | 1 | 访问管理后台页面 `/{secure_path}` | 正常加载后台界面 |
 | 2 | 管理员登录 | 登录成功，显示仪表盘 |
-| 3 | 获取系统状态 `GET /api/v1/{path}/system/getSystemStatus` | 返回系统信息 |
-| 4 | 查看用户列表 `GET /api/v1/{path}/user/fetch` | 用户列表正常分页 |
-| 5 | 查看套餐列表 `GET /api/v1/{path}/plan/fetch` | 套餐列表正常 |
-| 6 | 查看订单列表 `GET /api/v1/{path}/order/fetch` | 订单列表正常 |
-| 7 | 查看工单列表 `GET /api/v1/{path}/ticket/fetch` | 工单列表正常 |
-| 8 | 查看服务器列表 `GET /api/v1/{path}/server/manage/getNodes` | 节点列表正常 |
-| 9 | 查看统计数据 `GET /api/v1/{path}/stat/getStat` | 统计数据正常返回 |
-| 10 | 保存配置 `POST /api/v1/{path}/config/save` | 配置保存成功 |
+| 3 | 获取系统状态 | 返回系统信息 |
+| 4 | 查看用户列表 | 用户列表正常分页 |
+| 5 | 查看套餐列表 | 套餐列表正常 |
+| 6 | 查看订单列表 | 订单列表正常 |
+| 7 | 查看服务器列表 | 节点列表正常 |
+| 8 | 查看统计数据 | 统计数据正常返回 |
+| 9 | 保存配置 | 配置保存成功 |
 
 ### 3.5 订阅和支付测试
 
 | 步骤 | 操作 | 预期结果 |
 |------|------|---------|
-| 1 | 获取套餐 `GET /api/v1/user/plan/fetch` | 套餐列表正常 |
-| 2 | 获取订阅链接 `GET /api/v1/user/getSubscribe` | 返回正确的订阅 URL |
-| 3 | 客户端订阅 `GET /api/v1/client/subscribe` | 返回节点配置信息 |
-| 4 | 创建订单 `POST /api/v1/user/order/save` | 订单创建成功 |
-| 5 | 获取支付方式 `GET /api/v1/user/order/getPaymentMethod` | 支付方式列表正常 |
+| 1 | 获取订阅链接 | 返回正确的订阅内容 |
+| 2 | 创建订单 | 订单创建成功 |
+| 3 | 支付回调 | 支付状态正确更新 |
 
-### 3.6 Telegram Bot 测试
+---
 
-| 步骤 | 操作 | 预期结果 |
-|------|------|---------|
-| 1 | 获取 Bot 信息 `GET /api/v1/user/telegram/getBotInfo` | 返回 Bot 配置 |
-| 2 | 发送测试消息 | Telegram 收到消息 |
+## 四、Laravel 13 Breaking Changes
 
-### 3.7 定时任务测试
+### 4.1 PHP 8.3 最低要求
+
+Laravel 13 要求 PHP 8.3+。推荐使用 PHP 8.5。
+
+### 4.2 Symfony 8 组件
+
+所有 Symfony 组件从 7.x 升级到 8.x，包括：
+- console、error-handler、finder、http-foundation
+- http-kernel、mailer、mime、process、routing、uid、var-dumper
+
+### 4.3 PDO Fetch Modes
+
+查询结果的数组键名可能变化。如使用 `DB::select()` 或 `->toArray()`，请验证输出格式。
+
+### 4.4 Model Boot 限制
+
+不允许在 Model 的 `boot()` 方法中创建新的 Model 实例。
+
+### 4.5 URL 前缀连字符化
+
+`Route::prefix()` 生成的 URL 前缀自动连字符化。
+
+---
+
+## 五、回滚方案
+
+如升级失败，执行以下回滚：
 
 ```bash
-# 统计任务
-php artisan v2board:statistics --force
-# 预期：无报错，正常执行
+# 1. 停止服务
+systemctl stop php-fpm-85
+systemctl stop nginx
 
-# 订单检查
-php artisan check:order
-# 预期：无报错
+# 2. 恢复项目目录
+rm -rf /path/to/v2board
+cp -r /path/to/v2board_backup_$(date +%Y%m%d) /path/to/v2board
 
-# 流量更新
-php artisan traffic:update
-# 预期：无报错
-```
+# 3. 恢复数据库
+mysql -u root -p v2board < v2board_backup_$(date +%Y%m%d).sql
 
-### 3.8 队列测试
+# 4. 恢复 .env
+cp /path/to/.env.backup /path/to/v2board/.env
 
-```bash
-# 检查 Horizon 状态
-php artisan horizon:status
-
-# 查看队列是否有堆积
-php artisan horizon:supervisors
-
-# 手动发送测试邮件，确认邮件队列正常消费
+# 5. 重启服务
+systemctl start nginx
+systemctl start php-fpm-85
 ```
 
 ---
 
-## 四、常见问题排查
+## 六、常见问题
 
-### 4.1 白屏或 500 错误
+### Q: 升级后出现 500 错误
 
+A: 检查 Laravel 日志：
 ```bash
-# 查看 Laravel 日志
 tail -50 storage/logs/laravel.log
-
-# 查看 PHP-FPM 错误日志
-tail -50 /var/log/php-fpm-82.log
-
-# 查看 Nginx 错误日志
-tail -50 /var/log/nginx/error.log
 ```
 
-### 4.2 路由 404
+常见原因：
+1. PHP 版本低于 8.3
+2. 缺少 PHP 扩展
+3. 禁用函数未解除
 
+### Q: Horizon 队列不消费
+
+A: 重启 Horizon：
 ```bash
-# 清除路由缓存
-php artisan route:clear
-
-# 验证路由注册
-php artisan route:list | grep "你的路由"
-```
-
-### 4.3 数据库连接失败
-
-```bash
-# 检查 .env 数据库配置
-cat .env | grep DB_
-
-# 测试数据库连接
-php artisan migrate:status
-```
-
-### 4.4 Redis 连接失败
-
-```bash
-# 检查 Redis 是否运行
-redis-cli ping
-
-# 检查 .env Redis 配置
-cat .env | grep REDIS_
-```
-
-### 4.5 队列不消费
-
-```bash
-# 重启 Horizon
 php artisan horizon:terminate
-php artisan horizon &
-
-# 查看 Horizon 日志
-tail -50 storage/logs/horizon.log
 ```
 
-### 4.6 Composer 依赖冲突
+### Q: 邮件发送失败
 
+A: 检查邮件配置：
 ```bash
-# 清除 vendor 重新安装
-rm -rf vendor composer.lock
-composer install --no-dev
+php artisan tinker
+Mail::raw('test', function($msg) { $msg->to('test@example.com')->subject('Test'); });
 ```
-
----
-
