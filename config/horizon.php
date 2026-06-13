@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Str;
-use Linfo\Linfo;
-
-$lInfo = new Linfo();
-$parser = $lInfo->getParser();
+// Get total RAM in bytes (Linux only)
+$memInfo = file_get_contents('/proc/meminfo');
+preg_match('/MemTotal:\s+(\d+)\s+kB/', $memInfo, $matches);
+$totalRamBytes = isset($matches[1]) ? (int)$matches[1] * 1024 : 2 * 1024 * 1024 * 1024;
 
 return [
 
@@ -182,7 +182,7 @@ return [
                 ],
                 'balance' => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => (int)ceil($parser->getRam()['total'] / 1024 / 1024 / 1024 * 6),
+                'maxProcesses' => (int)ceil($totalRamBytes / 1024 / 1024 / 1024 * 6),
                 'tries' => 1,
                 'balanceCooldown' => 3,
             ],
