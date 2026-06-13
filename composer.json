@@ -18,7 +18,6 @@
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.21",
         "laravel/tinker": "^3.0",
-        "linfo/linfo": "^4.0",
         "paragonie/sodium_compat": "^2.0",
         "php-curl-class/php-curl-class": "^13.0",
         "rybakit/msgpack": "^0.10.0",
