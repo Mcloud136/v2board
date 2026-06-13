@@ -25,3 +25,4 @@ workerman.webman.php.pid
 workerman.log
 CLAUDE.md
 .claude/
+composer.lock
