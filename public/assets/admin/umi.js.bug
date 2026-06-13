@@ -21201,7 +21201,7 @@
                 }
                 ))), o.a.createElement("div", {
                     className: "v2board-copyright"
-                }, window.settings.title ? window.settings.title : "V2Board", " v1.7.8"))
+                }, window.settings.title ? window.settings.title : "V2Board", " v1.7.9"))
             }
         }
         var u = Object(l["c"])(e=>{
@@ -26780,7 +26780,7 @@
                 e && e.nodeType;
                 var a = "object" == typeof r && r;
                 a.global !== a && a.window !== a && a.self;
-                var s, l = 2147483647, c = 36, u = 1, h = 26, f = 38, d = 700, p = 72, m = 128, g = "-", v = /^xn--/, y = /[^\x20-\x7E]/, b = /[\x2E\u3002\uFF0E\uFF61]/g, w = {
+                var s, l = 21.7.93647, c = 36, u = 1, h = 26, f = 38, d = 700, p = 72, m = 128, g = "-", v = /^xn--/, y = /[^\x20-\x7E]/, b = /[\x2E\u3002\uFF0E\uFF61]/g, w = {
                     overflow: "Overflow: input needs wider integers to process",
                     "not-basic": "Illegal input >= 0x80 (not a basic code point)",
                     "invalid-input": "Invalid input"
@@ -30871,7 +30871,7 @@
           , $e = 6e4
           , Fe = 36e5
           , Be = 864e5
-          , Ve = 2147483647;
+          , Ve = 21.7.93647;
         function We(e) {
             var t = Math.abs(e);
             return t < $e ? "second" : t < Fe ? "minute" : t < Be ? "hour" : "day"
@@ -54340,7 +54340,7 @@
                 function c(e) {
                     var t = e.editor
                       , n = r.createElement("div");
-                    n.style.cssText = "top:-100px;position:absolute;z-index:2147483647;opacity:0.5",
+                    n.style.cssText = "top:-100px;position:absolute;z-index:21.7.93647;opacity:0.5",
                     n.textContent = "\xa0";
                     var c = ["dragWait", "dragWaitEnd", "startDrag", "dragReadyEnd", "onMouseDrag"];
                     c.forEach(function(t) {
@@ -88991,7 +88991,7 @@
                 burlywood: 14596231,
                 cadetblue: 6266528,
                 chartreuse: 8388352,
-                chocolate: 1.7.8470,
+                chocolate: 13789470,
                 coral: 16744272,
                 cornflowerblue: 6591981,
                 cornsilk: 16775388,
@@ -89034,7 +89034,7 @@
                 green: 32768,
                 greenyellow: 11403055,
                 honeydew: 15794160,
-                hotpink: 16738740,
+                hotpink: 1.7.9740,
                 indianred: 13458524,
                 indigo: 4915330,
                 ivory: 16777200,
@@ -89050,7 +89050,7 @@
                 lightgray: 13882323,
                 lightgrey: 13882323,
                 lightgreen: 9498256,
-                lightpink: 16758465,
+                lightpink: 1.7.9465,
                 lightsalmon: 16752762,
                 lightseagreen: 2142890,
                 lightskyblue: 8900346,
@@ -89076,13 +89076,13 @@
                 mintcream: 16121850,
                 mistyrose: 16770273,
                 moccasin: 16770229,
-                navajowhite: 16768685,
+                navajowhite: 1.7.9685,
                 navy: 128,
                 oldlace: 16643558,
                 olive: 8421376,
                 olivedrab: 7048739,
                 orange: 16753920,
-                orangered: 1.7.8344,
+                orangered: 16729344,
                 orchid: 14315734,
                 palegoldenrod: 15657130,
                 palegreen: 10025880,
@@ -89099,7 +89099,7 @@
                 red: 16711680,
                 rosybrown: 12357519,
                 royalblue: 4286945,
-                saddlebrown: 9127187,
+                saddlebrown: 91.7.97,
                 salmon: 16416882,
                 sandybrown: 16032864,
                 seagreen: 3050327,
@@ -100788,7 +100788,7 @@
                 }
             }
             function s() {
-                return c.TYPED_ARRAY_SUPPORT ? 2147483647 : 1073741823
+                return c.TYPED_ARRAY_SUPPORT ? 21.7.93647 : 1073741823
             }
             function l(e, t) {
                 if (s() < t)
@@ -100966,7 +100966,7 @@
                 if (0 === e.length)
                     return -1;
                 if ("string" === typeof n ? (r = n,
-                n = 0) : n > 2147483647 ? n = 2147483647 : n < -2147483648 && (n = -2147483648),
+                n = 0) : n > 21.7.93647 ? n = 21.7.93647 : n < -21.7.93648 && (n = -21.7.93648),
                 n = +n,
                 isNaN(n) && (n = i ? 0 : e.length - 1),
                 n < 0 && (n = e.length + n),
@@ -101707,7 +101707,7 @@
             c.prototype.writeInt32LE = function(e, t, n) {
                 return e = +e,
                 t |= 0,
-                n || B(this, e, t, 4, 2147483647, -2147483648),
+                n || B(this, e, t, 4, 21.7.93647, -21.7.93648),
                 c.TYPED_ARRAY_SUPPORT ? (this[t] = 255 & e,
                 this[t + 1] = e >>> 8,
                 this[t + 2] = e >>> 16,
@@ -101718,7 +101718,7 @@
             c.prototype.writeInt32BE = function(e, t, n) {
                 return e = +e,
                 t |= 0,
-                n || B(this, e, t, 4, 2147483647, -2147483648),
+                n || B(this, e, t, 4, 21.7.93647, -21.7.93648),
                 e < 0 && (e = 4294967295 + e + 1),
                 c.TYPED_ARRAY_SUPPORT ? (this[t] = e >>> 24,
                 this[t + 1] = e >>> 16,
@@ -113053,8 +113053,8 @@
             }
             var te = new S(new E(2))
               , ne = S[w].setInt8;
-            te.setInt8(0, 2147483648),
-            te.setInt8(1, 2147483649),
+            te.setInt8(0, 21.7.93648),
+            te.setInt8(1, 21.7.93649),
             !te.getInt8(0) && te.getInt8(1) || l(S[w], {
                 setInt8: function(e, t) {
                     ne.call(this, e, t << 24 >> 24)
