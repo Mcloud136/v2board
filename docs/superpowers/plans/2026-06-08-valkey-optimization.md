@@ -312,7 +312,7 @@ V2Board 支持使用 Valkey 替代 Redis，可获得多线程 I/O 和内存优�
 2. 停止 Redis：`systemctl stop redis && systemctl disable redis`
 3. 启动 Valkey：`systemctl start valkey && systemctl enable valkey`
 4. 在 .env 中启用客户端缓存：`REDIS_CLIENT_CACHE=true`
-5. 重启服务：`systemctl restart php-fpm-82 && php artisan horizon:terminate`
+5. 重启服务：`systemctl restart php-fpm-85 && php artisan horizon:terminate`
 
 ### 影响
 
