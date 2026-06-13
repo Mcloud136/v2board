@@ -66,12 +66,12 @@ php artisan v2board:update
 echo "[5/5] 重启服务..."
 
 # 重启 PHP-FPM（兼容宝塔面板）
-if [ -f "/etc/init.d/php-fpm-82" ]; then
-    /etc/init.d/php-fpm-82 restart && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: /etc/init.d/php-fpm-82 restart"
-elif systemctl is-active --quiet php-fpm-82 2>/dev/null; then
-    systemctl restart php-fpm-82 && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: systemctl restart php-fpm-82"
+if [ -f "/etc/init.d/php-fpm-85" ]; then
+    /etc/init.d/php-fpm-85 restart && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: /etc/init.d/php-fpm-85 restart"
+elif systemctl is-active --quiet php-fpm-85 2>/dev/null; then
+    systemctl restart php-fpm-85 && echo "  ✅ PHP-FPM 已重启" || echo "  ⚠️ PHP-FPM 重启失败，请手动执行: systemctl restart php-fpm-85"
 else
-    echo "  ⚠️ php-fpm-82 服务未找到，跳过"
+    echo "  ⚠️ php-fpm-85 服务未找到，跳过"
 fi
 
 # 重启 Nginx（兼容宝塔面板）
