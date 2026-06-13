@@ -26,5 +26,5 @@ php composer.phar install --no-dev --optimize-autoloader
 php artisan v2board:install
 
 if [ -f "/etc/init.d/bt" ]; then
-  chown -R www "$(pwd)"
+  chown -R www:www "$(pwd)"
 fi

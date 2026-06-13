@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 // Get total RAM in bytes (Linux only)
-$memInfo = file_get_contents('/proc/meminfo');
+$memInfo = @file_get_contents('/proc/meminfo');
 preg_match('/MemTotal:\s+(\d+)\s+kB/', $memInfo, $matches);
 $totalRamBytes = isset($matches[1]) ? (int)$matches[1] * 1024 : 2 * 1024 * 1024 * 1024;
 
