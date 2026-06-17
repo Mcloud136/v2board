@@ -21201,7 +21201,7 @@
                 }
                 ))), o.a.createElement("div", {
                     className: "v2board-copyright"
-                }, window.settings.title ? window.settings.title : "V2Board", " v1.7.8"))
+                }, window.settings.title ? window.settings.title : "V2Board", " v1.7.9"))
             }
         }
         var u = Object(l["c"])(e=>{
@@ -88991,7 +88991,7 @@
                 burlywood: 14596231,
                 cadetblue: 6266528,
                 chartreuse: 8388352,
-                chocolate: 1.7.8470,
+                chocolate: 13789470,
                 coral: 16744272,
                 cornflowerblue: 6591981,
                 cornsilk: 16775388,
@@ -89082,7 +89082,7 @@
                 olive: 8421376,
                 olivedrab: 7048739,
                 orange: 16753920,
-                orangered: 1.7.8344,
+                orangered: 16729344,
                 orchid: 14315734,
                 palegoldenrod: 15657130,
                 palegreen: 10025880,
