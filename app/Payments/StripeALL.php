@@ -144,7 +144,9 @@ class StripeALL {
                 request()->header('stripe-signature'),
                 $this->config['stripe_webhook_key']
             );
-        } catch (\Stripe\Error\SignatureVerification $e) {
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            abort(400);
+        } catch (\Stripe\Exception\UnexpectedValueException $e) {
             abort(400);
         }
         switch ($event->type) {

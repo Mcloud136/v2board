@@ -75,7 +75,9 @@ class StripeWepay {
                 request()->header('stripe-signature'),
                 $this->config['stripe_webhook_key']
             );
-        } catch (\Stripe\Error\SignatureVerification $e) {
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            abort(400);
+        } catch (\Stripe\Exception\UnexpectedValueException $e) {
             abort(400);
         }
         switch ($event->type) {
@@ -85,7 +87,8 @@ class StripeWepay {
                     'amount' => $object->amount,
                     'currency' => $object->currency,
                     'source' => $object->id,
-                    'metadata' => json_decode($object->metadata, true)
+                    // SDK v20：metadata 为 StripeObject，非 JSON 字符串，json_decode 会 TypeError 致扣款失败
+                    'metadata' => $object->metadata->toArray()
                 ]);
                 break;
             case 'charge.succeeded':
@@ -116,9 +119,10 @@ class StripeWepay {
                 'base' => $from
             ]);
             $result = $response->json();
-            return $result['rates'][$to] ?? 1;
+            // 无目标币种汇率返回 null，由调用方 abort，禁止默认 1 导致 1:1 少收费
+            return $result['rates'][$to] ?? null;
         } catch (\Exception $e) {
-            return 1;
+            return null;
         }
     }
 }
