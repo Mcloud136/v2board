@@ -151,3 +151,29 @@
 | 残留清理 | ✅ plans/coupons/users 全部 0 残留 |
 
 结论：管理面板读写功能全部正常，未发现新缺陷；测试中 3 个初报 FAIL 均为测试脚本对接口设计的误判（已逐一核实源码确认）。
+
+## 九、P1/P2/P3 全量修复实施（2026-08-11，基于独立审查报告）
+
+### 实施清单（共 13 个提交，测试 55 项/564 断言全绿）
+
+| 批次 | 修复项 | 核心改动 |
+|------|--------|---------|
+| 1 流量 | B2/B3/B4/B5 | TrafficUpdate 结算令牌+DB marker 表实现 exactly-once（新增 v2_traffic_settle_marker），提交前二次查重置锁；ResetTraffic 锁 try/finally 闭环+abort 改日志；TrafficFetchJob pipeline 原子写入；StatServerJob 重抛 | 
+| 2 支付 | B7/B8 | 4 个 Stripe 驱动汇率失败返回 null（原有 abort 分支生效，杜绝 1:1 少收）；metadata 改 toArray()（修复 source.chargeable 扣款 TypeError）；5 处 catch 改 SDK v20 异常类名 |
+| 3 调度/补齐 | B6/B9/B10/B11/B12 | check:commission withoutOverlapping+事务内行锁复检；补齐 getRanking/getStatRecord/setInviteUser（含 type 白名单），删 notice/update 死路由；分组删除全 8 协议检查；AlipayF2F H:i:s；composer php ^8.3 |
+| 4 P2 | B1/C1-C10 | mail.php 迁移 Laravel 13 mailers 结构+SendEmailJob purge/超时/tries；CACHE_STORE 等 env 双名兼容；日志默认 env 可配；CORS 收敛；TrustProxies env 可配；日志 warning+脱敏；黑名单消毒移除；CheckRenewal 异常分类+行锁；提醒邮件 Cache::add 去重；filter 白名单一致性；分页上限 500+排序白名单 |
+| 5 P3 | D1-D8 | 删 Test.php（含泄露测试密钥文件）/pm2.yaml/死 Request 类/Staff NoticeController；session secure+lax；cors.php 收敛；删统计死缓存方法；audit.ignore 移除（audit 仍 0 公告）；节点告警 6h 冷却 |
+
+### 生产验证（全部通过）
+
+- 结算演练：注入 111/222 → 增量精确落库，marker 表记录结算批次
+- 重置锁演练：锁存续期间 live 桶保留不结算，解锁后追回（111+55=166 精确）
+- 行为保持：log.channel=mysql（后台系统日志页不受影响）、mail.default=log（SMTP 凭据确认前维持现状）
+- 节点对接零影响：UniProxy/V2 接口 200，真实节点流量正常；首页 200；Horizon running；failed_jobs 无新增
+- composer audit 移除 ignore 后仍 0 公告
+
+### 待用户确认事项
+
+1. **邮件切换 SMTP**：确认 SMTP 凭据后，将生产 .env 的 MAIL_MAILER 从 log 改为 smtp（或在后台配置 v2board.email_host，Job 会自动切换）
+2. **Stripe 渠道**：B7/B8 修复在启用外币/Source 渠道时生效，当前生产未启用属预防性修复
+3. **GitHub secret 告警**：Test.php 已从 HEAD 移除，建议在 Stripe 控制台滚动该测试密钥后以 revoked 关闭告警
