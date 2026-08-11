@@ -23,9 +23,10 @@ class CouponController extends Controller
     public function fetch(Request $request)
     {
         $current = $request->input('current') ? $request->input('current') : 1;
-        $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
+        $pageSize = min(max((int)$request->input('pageSize'), 10), 500);
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'id';
+        // 排序列白名单，非法列回退 id
+        $sort = in_array($request->input('sort'), ['id', 'created_at', 'updated_at', 'started_at', 'ended_at', 'value']) ? $request->input('sort') : 'id';
         $builder = Coupon::orderBy($sort, $sortType);
         $total = $builder->count();
         $coupons = $builder->forPage($current, $pageSize)

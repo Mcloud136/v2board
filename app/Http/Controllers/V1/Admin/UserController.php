@@ -51,11 +51,19 @@ class UserController extends Controller
             'email', 'plan_id', 'group_id', 'banned', 'expired_at',
             'transfer_enable', 'd', 'u', 'invite_user_id', 'created_at',
             'last_login_at', 'balance', 'commission_balance', 'is_admin',
-            'is_staff', 'token', 'uuid', 'telegram_id'
+            'is_staff', 'token', 'uuid', 'telegram_id', 'device_limit', 'remarks'
         ];
         if ($filters) {
             $allowedConditions = ['=', '!=', '>', '<', '>=', '<=', 'like', 'in', 'not in'];
             foreach ($filters as $k => $filter) {
+                // 特殊键需在列白名单检查之前处理（否则永远不可达）
+                if ($filter['key'] === 'invite_by_email') {
+                    $user = User::where('email', $filter['condition'], $filter['value'])->first();
+                    $inviteUserId = isset($user->id) ? $user->id : 0;
+                    $builder->where('invite_user_id', $inviteUserId);
+                    unset($filters[$k]);
+                    continue;
+                }
                 if (!in_array($filter['key'], $allowedKeys, true)) {
                     continue;
                 }
@@ -65,13 +73,6 @@ class UserController extends Controller
                 }
                 if ($filter['key'] === 'd' || $filter['key'] === 'transfer_enable') {
                     $filter['value'] = $filter['value'] * 1073741824;
-                }
-                if ($filter['key'] === 'invite_by_email') {
-                    $user = User::where('email', $filter['condition'], $filter['value'])->first();
-                    $inviteUserId = isset($user->id) ? $user->id : 0;
-                    $builder->where('invite_user_id', $inviteUserId);
-                    unset($filters[$k]);
-                    continue;
                 }
                 if ($filter['key'] === 'plan_id' && $filter['value'] == 'null') {
                     $builder->whereNull('plan_id');
@@ -89,7 +90,7 @@ class UserController extends Controller
     public function fetch(UserFetch $request)
     {
         $current = $request->input('current') ? $request->input('current') : 1;
-        $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
+        $pageSize = min(max((int)$request->input('pageSize'), 10), 500);
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
         $allowedSorts = ['created_at', 'last_login_at', 'expired_at', 'balance', 'commission_balance', 'u', 'd', 'transfer_enable', 'id', 'email'];
         $sort = in_array($request->input('sort'), $allowedSorts) ? $request->input('sort') : 'created_at';

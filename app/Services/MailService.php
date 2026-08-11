@@ -14,8 +14,8 @@ class MailService
         if (!$user->remind_traffic) return;
         if (!$this->remindTrafficIsWarnValue($user->u, $user->d, $user->transfer_enable)) return;
         $flag = CacheKey::get('LAST_SEND_EMAIL_REMIND_TRAFFIC', $user->id);
-        if (Cache::get($flag)) return;
-        if (!Cache::put($flag, 1, 24 * 3600)) return;
+        // Cache::add 原子占位：并发/重跑时不会重复发送
+        if (!Cache::add($flag, 1, 24 * 3600)) return;
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('The traffic usage in :app_name has reached 95%', [
@@ -32,6 +32,9 @@ class MailService
     public function remindExpire(User $user)
     {
         if (!($user->expired_at !== NULL && ($user->expired_at - 86400) < time() && $user->expired_at > time())) return;
+        // 24h 去重：命令重跑/并发时不重复发送
+        $flag = CacheKey::get('LAST_SEND_EMAIL_REMIND_EXPIRE', $user->id);
+        if (!Cache::add($flag, 1, 24 * 3600)) return;
         SendEmailJob::dispatch([
             'email' => $user->email,
             'subject' => __('The service in :app_name is about to expire', [

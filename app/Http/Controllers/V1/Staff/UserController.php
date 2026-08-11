@@ -89,7 +89,7 @@ class UserController extends Controller
     public function sendMail(UserSendMail $request)
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $sort = in_array($request->input('sort'), ['created_at', 'last_login_at', 'expired_at', 'balance', 'u', 'd', 'transfer_enable', 'id', 'email']) ? $request->input('sort') : 'created_at';
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         $users = $builder->get();
@@ -114,7 +114,7 @@ class UserController extends Controller
     public function ban(Request $request)
     {
         $sortType = in_array($request->input('sort_type'), ['ASC', 'DESC']) ? $request->input('sort_type') : 'DESC';
-        $sort = $request->input('sort') ? $request->input('sort') : 'created_at';
+        $sort = in_array($request->input('sort'), ['created_at', 'last_login_at', 'expired_at', 'balance', 'u', 'd', 'transfer_enable', 'id', 'email']) ? $request->input('sort') : 'created_at';
         $builder = User::orderBy($sort, $sortType);
         $this->filter($request, $builder);
         try {

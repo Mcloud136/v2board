@@ -324,7 +324,7 @@ class StatController extends Controller
             'user_id' => 'required|integer'
         ]);
         $current = $request->input('current') ? $request->input('current') : 1;
-        $pageSize = $request->input('pageSize') >= 10 ? $request->input('pageSize') : 10;
+        $pageSize = min(max((int)$request->input('pageSize'), 10), 500);
         $builder = StatUser::orderBy('record_at', 'DESC')->where('user_id', $request->input('user_id'));
 
         $total = $builder->count();

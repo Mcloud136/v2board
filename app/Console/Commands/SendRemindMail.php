@@ -40,13 +40,16 @@ class SendRemindMail extends Command
     public function handle()
     {
         $mailService = new MailService();
-        User::chunk(200, function ($users) use ($mailService) {
-            foreach ($users as $user) {
-                if ($user->remind_expire) $mailService->remindExpire($user);
-                if (!($user->expired_at !== NULL && $user->expired_at < time()) && $user->remind_traffic) {
-                    $mailService->remindTraffic($user);
+        // 仅扫描开启了提醒的用户，避免全表扫描
+        User::where('remind_expire', 1)
+            ->orWhere('remind_traffic', 1)
+            ->chunk(200, function ($users) use ($mailService) {
+                foreach ($users as $user) {
+                    if ($user->remind_expire) $mailService->remindExpire($user);
+                    if (!($user->expired_at !== NULL && $user->expired_at < time()) && $user->remind_traffic) {
+                        $mailService->remindTraffic($user);
+                    }
                 }
-            }
-        });
+            });
     }
 }

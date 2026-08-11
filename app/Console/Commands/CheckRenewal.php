@@ -76,6 +76,8 @@ class CheckRenewal extends Command
                         }
 
                         DB::beginTransaction();
+                        // 行锁：防止余额读改写与充值/其他扣减并发丢失更新
+                        $user = User::lockForUpdate()->find($user->id);
                         $order = new Order();
                         $orderService = new OrderService($order);
                         $order->user_id = $user->id;
@@ -108,9 +110,14 @@ class CheckRenewal extends Command
                             DB::rollback();
                         }
                         \Log::error('自动续费失败: ' . $e->getMessage(), ['user_id' => $user->id]);
-                        $user->auto_renewal = 0;
-                        if (!$user->save()) {
-                            \Log::error('关闭自动续费失败', ['user_id' => $user->id]);
+                        // 仅业务性原因（无订单/无套餐/不可续费/余额不足）才关闭自动续费；
+                        // DB 抖动等瞬时故障不关，留待下一轮调度重试
+                        $businessReasons = ['No valid order', 'No such plan', 'This subscription cannot be renewed', 'No enough balance'];
+                        if (in_array($e->getMessage(), $businessReasons, true)) {
+                            $user->auto_renewal = 0;
+                            if (!$user->save()) {
+                                \Log::error('关闭自动续费失败', ['user_id' => $user->id]);
+                            }
                         }
                     }
                 }

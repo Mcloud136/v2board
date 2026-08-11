@@ -105,7 +105,7 @@ class SystemController extends Controller
 
     public function getSystemLog(Request $request) {
         $current = $request->input('current') ? $request->input('current') : 1;
-        $pageSize = $request->input('page_size') >= 10 ? $request->input('page_size') : 10;
+        $pageSize = min(max((int)$request->input('page_size'), 10), 500);
         $builder = LogModel::orderBy('created_at', 'DESC')
             ->setFilterAllowKeys('level');
         $total = $builder->count();
