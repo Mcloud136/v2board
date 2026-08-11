@@ -175,6 +175,15 @@ class EPay
         $result = openssl_verify($signString, base64_decode($sign), $key, OPENSSL_ALGO_SHA256);
         openssl_free_key($key);
 
+        if ($result !== 1) {
+            \Log::error('EPay RSA 验签失败', [
+                'signString' => $signString,
+                'sign' => $sign,
+                'verifyResult' => $result,
+                'params' => $params,
+            ]);
+        }
+
         return $result === 1;
     }
 
