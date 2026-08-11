@@ -24,7 +24,8 @@ class UniProxyController extends Controller
         if (empty($token)) {
             abort(500, 'token is null');
         }
-        if ($token !== config('v2board.server_token')) {
+        // 常量时间比较，避免时序侧信道
+        if (!hash_equals((string)config('v2board.server_token'), (string)$token)) {
             abort(500, 'token is error');
         }
         $this->nodeType = $request->input('node_type');

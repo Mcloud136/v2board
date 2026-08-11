@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ServerService;
 use Illuminate\Http\Request;
 use App\Utils\Helper;
+use App\Exceptions\ServerApiException;
 
 class ServerController extends Controller
 {
@@ -19,20 +20,12 @@ class ServerController extends Controller
 
         // token 为空（业务失败，不抛异常）
         if (empty($token)) {
-            response()->json([
-                'status' => 'fail',
-                'message' => 'token is null'
-            ], 200)->send();
-            exit;
+            throw new ServerApiException('token is null');
         }
 
-        // token 错误
-        if ($token !== config('v2board.server_token')) {
-            response()->json([
-                'status' => 'fail',
-                'message' => 'token is error'
-            ], 200)->send();
-            exit;
+        // token 错误（常量时间比较，避免时序侧信道）
+        if (!hash_equals((string)config('v2board.server_token'), (string)$token)) {
+            throw new ServerApiException('token is error');
         }
 
         $this->nodeId = $request->input('node_id');
@@ -41,11 +34,7 @@ class ServerController extends Controller
 
         // 节点不存在
         if (!$this->nodeInfo) {
-            response()->json([
-                'status' => 'fail',
-                'message' => 'server is not exist'
-            ], 200)->send();
-            exit;
+            throw new ServerApiException('server is not exist');
         }
     }
 

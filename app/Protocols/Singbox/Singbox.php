@@ -16,6 +16,30 @@ class Singbox
         $this->servers = $servers;
     }
 
+    /**
+     * 构建 ECH（Encrypted Client Hello）配置块，供各 build* 方法与 SingboxOld 共用
+     * 未配置或不满足条件时返回 null
+     */
+    public static function buildEchConfig(array $tlsSettings): ?array
+    {
+        if (empty($tlsSettings['ech'])) {
+            return null;
+        }
+        if ($tlsSettings['ech'] === 'cloudflare') {
+            return [
+                'enabled' => true,
+                'query_server_name' => 'cloudflare-ech.com'
+            ];
+        }
+        if ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
+            return [
+                'enabled' => true,
+                'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
+            ];
+        }
+        return null;
+    }
+
     public function handle()
     {
         $appName = config('v2board.app_name', 'V2Board');
@@ -161,18 +185,9 @@ class Singbox
             $tlsSettings = $server['tls_settings'] ?? $server['tlsSettings'] ?? [];
             $tlsConfig['insecure'] = ($tlsSettings['allow_insecure'] ?? ($tlsSettings['allowInsecure'] ?? 0)) == 1 ? true : false;
             $tlsConfig['server_name'] = $tlsSettings['server_name'] ?? $tlsSettings['serverName'] ?? '';
-            if (!empty($tlsSettings['ech'])) {
-                if ($tlsSettings['ech'] === 'cloudflare') {
-                    $tlsConfig['ech'] = [
-                        'enabled' => true,
-                        'query_server_name' => 'cloudflare-ech.com'
-                    ];
-                } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
-                    $tlsConfig['ech'] = [
-                        'enabled' => true,
-                        'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
-                    ];
-                }
+            $ech = self::buildEchConfig($tlsSettings);
+            if ($ech !== null) {
+                $tlsConfig['ech'] = $ech;
             }
             $array['tls'] = $tlsConfig;
         }
@@ -233,18 +248,9 @@ class Singbox
                     "enabled" => true,
                     "fingerprint" => $fingerprints
                 ];
-                if (!empty($tlsSettings['ech'])) {
-                    if ($tlsSettings['ech'] === 'cloudflare') {
-                        $tlsConfig['ech'] = [
-                            'enabled' => true,
-                            'query_server_name' => 'cloudflare-ech.com'
-                        ];
-                    } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
-                        $tlsConfig['ech'] = [
-                            'enabled' => true,
-                            'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
-                        ];
-                    }
+                $ech = self::buildEchConfig($tlsSettings);
+                if ($ech !== null) {
+                    $tlsConfig['ech'] = $ech;
                 }
             }
             $array['tls'] = $tlsConfig;
@@ -293,18 +299,9 @@ class Singbox
             'insecure' => ($server['allow_insecure'] ?? ($tlsSettings['allow_insecure'] ?? 0)) == 1 ? true : false,
             'server_name' => $server['server_name'] ?? ($tlsSettings['server_name'] ?? '')
         ];
-        if (!empty($tlsSettings['ech'])) {
-            if ($tlsSettings['ech'] === 'cloudflare') {
-                $tlsConfig['ech'] = [
-                    'enabled' => true,
-                    'query_server_name' => 'cloudflare-ech.com'
-                ];
-            } elseif ($tlsSettings['ech'] === 'custom' && !empty($tlsSettings['ech_config'])) {
-                $tlsConfig['ech'] = [
-                    'enabled' => true,
-                    'config' => is_array($tlsSettings['ech_config']) ? $tlsSettings['ech_config'] : [$tlsSettings['ech_config']]
-                ];
-            }
+        $ech = self::buildEchConfig($tlsSettings);
+        if ($ech !== null) {
+            $tlsConfig['ech'] = $ech;
         }
         $array['tls'] = $tlsConfig;
 

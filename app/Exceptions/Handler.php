@@ -51,6 +51,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof ServerApiException) {
+            // 节点 API 业务错误：保持 HTTP 200 + {status:'fail'} 的既有响应结构，兼容节点端
+            return response()->json([
+                'status' => 'fail',
+                'message' => $exception->getMessage(),
+            ], 200);
+        }
         if ($exception instanceof \InvalidArgumentException &&
             str_contains($exception->getMessage(), 'theme')) {
             abort(500, "主题渲染失败。如更新主题，参数可能发生变化请重新配置主题后再试。");

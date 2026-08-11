@@ -36,6 +36,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('check:commission')->everyFifteenMinutes();
         $schedule->command('check:ticket')->everyMinute();
         $schedule->command('check:renewal')->dailyAt('22:30');
+        // 节点掉线告警（部署前需确认生产 crontab 未外部调度该命令，避免重复告警）
+        $schedule->command('check:server')->everyFifteenMinutes()->withoutOverlapping();
         // reset
         $schedule->command('reset:traffic')->daily();
         $schedule->command('reset:log')->daily();
