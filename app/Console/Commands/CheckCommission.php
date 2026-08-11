@@ -60,22 +60,34 @@ class CheckCommission extends Command
 
     public function autoPayCommission()
     {
-        $orders = Order::where('commission_status', 1)
+        Order::where('commission_status', 1)
             ->where('invite_user_id', '!=', NULL)
-            ->get();
-        foreach ($orders as $order) {
-            DB::beginTransaction();
-            if (!$this->payHandle($order->invite_user_id, $order)) {
-                DB::rollBack();
-                continue;
-            }
-            $order->commission_status = 2;
-            if (!$order->save()) {
-                DB::rollBack();
-                continue;
-            }
-            DB::commit();
-        }
+            ->chunkById(100, function ($orders) {
+                foreach ($orders as $item) {
+                    DB::beginTransaction();
+                    try {
+                        // 行锁复检：调度重叠时仅第一个实例成功返佣，避免双倍返佣
+                        $order = Order::lockForUpdate()->find($item->id);
+                        if (!$order || (int)$order->commission_status !== 1) {
+                            DB::commit();
+                            continue;
+                        }
+                        if (!$this->payHandle($order->invite_user_id, $order)) {
+                            DB::rollBack();
+                            continue;
+                        }
+                        $order->commission_status = 2;
+                        if (!$order->save()) {
+                            DB::rollBack();
+                            continue;
+                        }
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        \Log::error('返佣处理失败: ' . $e->getMessage(), ['order_id' => $item->id]);
+                    }
+                }
+            });
     }
 
     public function payHandle($inviteUserId, Order $order)
