@@ -16,18 +16,20 @@ class SendEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $params;
 
-    public $tries = 3;
     public $backoff = [5, 15, 30];
-    public $timeout = 10;
+    // SMTP 握手+渲染+发送 10s 偏紧，超时被杀后重试会造成重复投递
+    public $timeout = 30;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($params, $queue = 'send_email')
+    public function __construct($params, $queue = 'send_email', $tries = 3)
     {
         $this->onQueue($queue);
         $this->params = $params;
+        // 验证码类邮件传 tries=1，避免重试重复发码
+        $this->tries = $tries;
     }
 
     /**
@@ -38,13 +40,19 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         if (config('v2board.email_host')) {
-            Config::set('mail.host', config('v2board.email_host'));
-            Config::set('mail.port', config('v2board.email_port'));
-            Config::set('mail.encryption', config('v2board.email_encryption'));
-            Config::set('mail.username', config('v2board.email_username'));
-            Config::set('mail.password', config('v2board.email_password'));
+            // Laravel 13 mailers 结构：运行时覆盖 smtp mailer 并强制切换为默认
+            Config::set('mail.default', 'smtp');
+            Config::set('mail.mailers.smtp.host', config('v2board.email_host'));
+            Config::set('mail.mailers.smtp.port', config('v2board.email_port'));
+            Config::set('mail.mailers.smtp.encryption', config('v2board.email_encryption'));
+            Config::set('mail.mailers.smtp.username', config('v2board.email_username'));
+            Config::set('mail.mailers.smtp.password', config('v2board.email_password'));
             Config::set('mail.from.address', config('v2board.email_from_address'));
             Config::set('mail.from.name', config('v2board.app_name', 'V2Board'));
+            // 长驻 worker 内 MailManager 会缓存已解析的 mailer，清除以使运行时配置生效
+            if (app()->bound('mail.manager')) {
+                app('mail.manager')->purge('smtp');
+            }
         }
         $params = $this->params;
         $email = $params['email'];

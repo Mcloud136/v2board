@@ -10,7 +10,8 @@ use App\Models\Log as LogModel;
 
 class MysqlLoggerHandler extends AbstractProcessingHandler
 {
-    public function __construct($level = Logger::DEBUG, bool $bubble = true)
+    // 仅 warning 及以上入库：减少全量写库压力，debug/info 不入 v2_log
+    public function __construct($level = Logger::WARNING, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
     }
@@ -23,6 +24,13 @@ class MysqlLoggerHandler extends AbstractProcessingHandler
                 $context['exception'] = (array)$context['exception'];
             }
             $requestData = request()->all() ??[];
+            // 敏感字段脱敏，避免密码/凭证随请求体落库
+            $sensitiveKeys = ['password', 'password_confirmation', 'old_password', 'new_password', 'auth_data', 'token', 'api_key', 'private_key'];
+            foreach ($requestData as $k => $v) {
+                if (in_array(strtolower((string)$k), $sensitiveKeys, true)) {
+                    $requestData[$k] = '******';
+                }
+            }
             $log = [
                 'title' => $record->message,
                 'level' => $record->level->getName(),
