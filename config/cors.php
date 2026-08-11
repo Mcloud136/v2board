@@ -19,7 +19,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // 框架 HandleCors 中间件未启用，实际跨域策略由自研 App\Http\Middleware\CORS 控制；此处收敛避免误读
+    'allowed_origins' => [],
 
     'allowed_origins_patterns' => [],
 

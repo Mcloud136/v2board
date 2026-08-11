@@ -29,7 +29,6 @@ class StaffRoute
             // Notice
             $router->get ('/notice/fetch', [AdminNoticeController::class, 'fetch']);
             $router->post('/notice/save', [AdminNoticeController::class, 'save']);
-            $router->post('/notice/update', [AdminNoticeController::class, 'update']);
             $router->post('/notice/drop', [AdminNoticeController::class, 'drop']);
         });
     }
