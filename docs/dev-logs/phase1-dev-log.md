@@ -112,3 +112,28 @@
   Laravel `abort(404)` 经 nginx `error_page 404 /404.html`（文件不存在）转为默认 HTML 404 页，节点按 JSON 解析即报 `invalid character '<'`。
 - **修复**：类名 `ltrim` 规范化 + 白名单 `strtolower` 大小写不敏感比较；部署后用真实节点流量验证 user/config/alivelist/push 全部恢复 200/304。
 - **教训**：节点对接类路由的任何拦截逻辑变更，上线前必须用节点实际调用的 URL 大小写形式做端到端验证；反射类名比较必须先规范化双方格式。
+
+## 七、服务器全功能点端到端验证（2026-08-11，60+ 检查点）
+
+验证方式：服务器内 Laravel 全栈派发（路由→中间件→控制器）+ nginx 真实链路，只读/无副作用探针。
+
+| 域 | 结果 |
+|----|------|
+| Web：首页主题渲染、admin secure path | ✅ 200 |
+| Passport：登录错误拒绝、注册参数校验、token2Login 无效令牌 | ✅ |
+| Guest：公共配置、伪造支付回调安全拦截、Telegram webhook 鉴权 | ✅ |
+| 用户端 17 个接口（JWT）：info/getSubscribe/订单/套餐/节点/邀请/公告/工单/会话等 | ✅ |
+| 管理端 16 个接口（管理员 JWT）：配置/套餐/用户/订单/节点/支付/统计/系统状态/队列等 | ✅ |
+| 越权防护：非管理员访问 admin 路由 403、非客服访问 staff 路由 403 | ✅ |
+| 节点 API：UniProxy user/config/alivelist（含大写形式）、V2 config、非法类名拦截、错误 token 拒绝、V2 错误响应兼容旧格式 | ✅ |
+| 订阅：sing-box 1.9.0/1.12.0（新旧生成器分流正确）、Clash/Shadowrocket/Quantumult X/Surge/v2rayN 全部 200 | ✅ |
+| 分组过滤：不同 group 用户均正常返回 | ✅ |
+| 调度器：traffic:update/check:order/check:server 等 10 项全部注册 | ✅ |
+| Horizon running；节点拉取/推送时间戳新鲜（<60s）；user1 流量结算延迟 19s | ✅ |
+
+发现并修复的上游遗留缺陷（非本次改造引入）：
+1. `User/KnowledgeController::getCategory` 路由已注册但方法缺失 → 用户帮助中心分类 500，已补齐实现；
+2. `Admin/StatController::getStat` 同类缺陷 → 管理端每日统计 500，已基于 v2_stat 补齐实现；
+3. 已知悉不影响业务的遗留项：`v2_server_log` 表不存在但 `ServerService::log()` 无调用方（死代码）；failed_jobs 存在一条 2026-05-22 的历史 StatUserJob 失败记录（远早于本次变更）。
+
+提交：`8dbc6d79`（缺失方法补齐，生产复验 200）。
