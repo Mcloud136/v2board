@@ -102,3 +102,13 @@
 - 生产 `.env` 未知项需在第一批部署前回填本日志。
 - FIX-08（stat_user 索引）为 DB 操作，完成后在第二节清单 7 打钩。
 - 后续迭代：订阅信息节点 ADR-001 触发条件；TUIC/Hysteria2 的 ECH 支持（需确认 sing-box 兼容性）。
+
+## 六、线上事故记录（2026-08-11，FIX-11 首版白名单缺陷）
+
+- **现象**：部署后各节点 v2node 报错 `decode user list error: jsontext: invalid character '<' at start of value`，用户列表拉取全部失败。
+- **根因**：FIX-11 首版 ServerRoute 白名单存在两个缺陷：
+  1. 声明类检查用带前导反斜杠的类名（`\App\...`）与 `ReflectionClass::getName()` 返回值（无前导反斜杠）做严格比较，**全部请求被误判拦截**（直接致命缺陷）；
+  2. 白名单严格区分大小写，而节点端历史上以 `UniProxy` 大写形式调用（nginx 日志可证），旧代码 `ucfirst()` 天然兼容而新白名单不兼容（兼容性缺陷）。
+  Laravel `abort(404)` 经 nginx `error_page 404 /404.html`（文件不存在）转为默认 HTML 404 页，节点按 JSON 解析即报 `invalid character '<'`。
+- **修复**：类名 `ltrim` 规范化 + 白名单 `strtolower` 大小写不敏感比较；部署后用真实节点流量验证 user/config/alivelist/push 全部恢复 200/304。
+- **教训**：节点对接类路由的任何拦截逻辑变更，上线前必须用节点实际调用的 URL 大小写形式做端到端验证；反射类名比较必须先规范化双方格式。
