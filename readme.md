@@ -5,6 +5,7 @@
 ## 项目简介
 
 本项目基于 [xiao佬二改v2board](https://github.com/wyx2685/v2board)，进行了框架升级、依赖更新、全面安全加固、性能优化、代码质量改进等全面改进。
+2026-08 又完成了一轮全链路架构审计与修复（支付幂等、流量结算原子化、节点 API 加固等），并在生产环境完成全功能点验证。
 
 ---
 
@@ -13,11 +14,13 @@
 | 指标 | 上游 (wyx2685) | 本项目 (Mcloud136) | 变化 |
 |------|---------------|-------------------|------|
 | 版本号 | 1.7.5.2685.2222 | **1.7.8.2026.0607** | 大版本升级 |
-| Laravel 版本 | 8.x（已停止维护） | **12.59.0** | +4 个大版本 |
+| Laravel 版本 | 8.x（已停止维护） | **13.24.0** | +5 个大版本 |
 | PHP 要求 | ^7.3 \|\| ^8.0 | **^8.2** | 最低版本提升 |
 | 安全修复 | — | **50+ 项** | 全面安全加固 |
-| 自动化测试 | 无 | **18 个安全测试** | 435 个断言 |
-| 代码审查 | 无 | **6 轮深度审查** | 评分 4.5→9.5/10 |
+| 架构审计修复（2026-08） | — | **P0–P3 全量修复** | 幂等/原子结算/节点加固 |
+| 依赖安全扫描 | — | **0 公告** | 17 项漏洞全部清零 |
+| 自动化测试 | 无 | **9 个测试文件，50 个测试** | 538 个断言 |
+| 代码审查 | 无 | **6 轮深度审查 + 全链路审计** | 评分 4.5→9.5/10 |
 
 ---
 
@@ -25,20 +28,24 @@
 
 | 项目 | 上游 | 本项目 | 提升 |
 |------|------|--------|------|
-| Laravel | ^8.0 | **^12.0** | +4 个大版本，安全性大幅提升 |
+| Laravel | ^8.0 | **^13.0**（实装 13.24.0） | +5 个大版本，安全性大幅提升 |
 | PHP | ^7.3 \|\| ^8.0 | **^8.2** | 性能提升 ~30%，安全性 |
 | laravel/horizon | ^5.9.6 | **^5.21** | 队列管理改进 |
 | laravel/tinker | ^2.5 | **^3.0** | CLI 调试工具升级 |
-| stripe/stripe-php | ^v14.9.0 | **^20.0** | 支付 API 最新版 |
-| php-curl-class | ^8.6 | **^12.0** | HTTP 客户端升级 |
+| stripe/stripe-php | ^v14.9.0 | **^20.0**（实装 20.3.1） | 支付 API 最新版 |
+| guzzlehttp/guzzle | ^7.4.3 | **^7.4.3**（实装 7.15.3） | 2026-08 安全修复至无漏洞版本 |
+| php-curl-class | ^8.6 | **^13.0** | HTTP 客户端升级 |
 | rybakit/msgpack | ^0.9.1 | **^0.10.0** | 序列化协议升级 |
 | paragonie/sodium_compat | ^1.20 | **^2.0** | 加密库升级 |
 | symfony/yaml | ^4.3 | **^8.0** | YAML 解析升级 |
-| firebase/php-jwt | ^6.3\|\|^7.0 | **^8.0** | JWT 认证标准化 |
+| firebase/php-jwt | ^6.3\|\|^7.0 | **^7.0** | JWT 认证标准化 |
+| google/recaptcha | ^1.5 | **^1.5** | 验证码校验 |
 | fideloper/proxy | ^4.4 | **已删除** | 废弃包，改用内置 |
 | facade/ignition | ^2.3.6 | **spatie/laravel-ignition ^2.4** | 安全替代 |
 | nunomaduro/collision | ^4.3 | **^8.0** | 错误处理升级 |
 | phpunit/phpunit | ^9.0 | **^11.0** | 测试框架升级 |
+
+> composer.lock 已恢复版本库管理（构建可复现）；`composer audit` 安全公告 **0 项**（2026-08 清理 guzzle/psr7/commonmark 共 17 项漏洞，含 3 项高危）。
 
 ---
 
@@ -189,11 +196,64 @@
 
 ---
 
-## 七、自动化测试
+## 七、架构审计升级（2026-08，全链路审计后的系统性修复）
 
-| 测试文件 | 测试数 | 断言数 | 覆盖范围 |
-|----------|--------|--------|----------|
-| SecurityFixesTest.php | 18 | 435 | CSV 注入、CORS、JWT、SQL 注入、Open Redirect、安全头、banned 校验、端口范围、订单号格式 |
+基于对注册登录、订阅下发、协议生成、流量结算、支付回调、队列、缓存、后台管理等全链路的架构审计，按 P0→P3 实施修复，全部在生产环境实测验证。
+
+### P0（资损/计费/安全）
+
+| 修复项 | 问题 | 方案 |
+|--------|------|------|
+| 支付回调幂等双闸口 | 重复回调/调度重放可致订单重复开通 | `paid()` 条件更新（affected rows 唯一闸口）+ `open()` 事务内行锁复检；重复回调不再重复开通/重复通知 |
+| 流量结算原子化 | hgetall→del 竞态丢流量；落库前删桶致 DB 失败时数据丢失 | RENAME 换桶：残留桶优先追回、落库成功后才删桶；调度停摆可追回 |
+| 流量 Hash TTL 兜底化 | 5 分钟 TTL 致队列积压时全量丢流量 | 放宽至 86400s 仅作泄漏兜底，可追回优先 |
+| 封禁即时失效闭环 | 批量封禁/删除后会话残留 | 全部接入 clearUserSessions，新增批量版（单次 MGET），实测封禁后 JWT 立即失效 |
+
+### P1（兼容/一致性）
+
+| 修复项 | 问题 | 方案 |
+|--------|------|------|
+| sing-box 版本分流 | 字符串比较致 1.9/1.10 误入新生成器 | 改用 version_compare |
+| 缓存键防碰撞 | 邮箱键剥离字符后碰撞，限流/验证码跨账户污染 | 字符串键改 sha256，整型键保持可读 |
+| 下单并发原子化 | 未完成订单检查与插入非原子 | 事务内用户行锁 + 复检 |
+| 补齐缺失路由实现 | user/knowledge/getCategory、admin/stat/getStat 路由已注册但方法缺失（上游遗留） | 按项目数据模型补齐实现 |
+
+### P2（可维护性/告警）
+
+| 修复项 | 方案 |
+|--------|------|
+| 节点 API 加固 | token 改 hash_equals 常量时间比较；动态路由类白名单 + 声明方法过滤；V2 接口异常规范化（保持节点端响应格式兼容） |
+| ECH 构建去重 | Singbox::buildEchConfig 共享方法替换 7 处复制块 |
+| 节点掉线告警 | check:server 入调度（每 15 分钟），离线节点 Telegram 告警 |
+
+### P3（清理）
+
+| 修复项 | 内容 |
+|--------|------|
+| 死代码清理 | webman.php/start.php/WEBMANPID 分支、Singbox.php.bak 移除 |
+| 安慰剂配置移除 | Redis options.cache（框架不消费）删除；Horizon 补 production 环境块 |
+| 构建可复现 | composer.lock 恢复版本库 |
+| 观测增强 | EPay 回调 RSA 验签失败记录完整现场日志（诊断付款未开通/伪造回调取证） |
+| 订阅性能 | 节点配置按协议聚合缓存（60s TTL）+ 在线状态批量 MGET |
+
+> 详细审计结论与验证记录见 `docs/architecture/architecture-audit-2026-08.md` 与 `docs/dev-logs/phase1-dev-log.md`。
+
+---
+
+## 八、自动化测试
+
+| 测试文件 | 覆盖范围 |
+|----------|----------|
+| SecurityFixesTest.php | CSV 注入、CORS、JWT、SQL 注入、Open Redirect、安全头、banned 校验、端口范围、订单号格式 |
+| OrderServicePaidTest.php | 支付幂等闸口（重复回调拒绝、dispatch 失败回置） |
+| TrafficUpdateCommandTest.php | RENAME 换桶结算（残留追回、DB 失败不删桶、用户集并集） |
+| AuthServiceBatchTest.php | 批量会话清理（封禁即时失效） |
+| CacheKeyTest.php | 缓存键防碰撞（邮箱碰撞/整型直通/字符集安全） |
+| SingboxVersionDispatchTest.php | sing-box 版本分流边界（1.9.0/1.10.9/1.12.0） |
+| SingboxEchTest.php | ECH 配置生成（cloudflare/custom/未配置，含共享构建方法） |
+| DepositBonusTest.php | 充值档位赠送边界 |
+
+当前规模：**50 个测试，538 个断言**（PHPUnit 11，脚手架已适配）。
 
 ### 测试覆盖项
 
@@ -213,7 +273,7 @@
 
 ---
 
-## 八、更新脚本改进
+## 九、更新脚本改进
 
 ### update.sh（全新重写）
 
@@ -241,7 +301,7 @@
 
 ---
 
-## 九、Clash 规则精简
+## 十、Clash 规则精简
 
 | 文件 | 上游 | 本项目 | 变化 |
 |------|------|--------|------|
@@ -250,7 +310,7 @@
 
 ---
 
-## 十、环境配置更新
+## 十一、环境配置更新
 
 | 项目 | 上游 | 本项目 |
 |------|------|--------|
@@ -265,25 +325,28 @@
 
 | 指标 | 数值 |
 |------|------|
-| 框架版本提升 | 8.x → 12.x（+4 个大版本） |
-| 依赖包更新 | 14 个包升级，2 个废弃包移除，1 个替换 |
-| 安全修复总数 | **50+ 项** |
+| 框架版本提升 | 8.x → 13.x（+5 个大版本） |
+| 依赖包更新 | 15+ 个包升级，2 个废弃包移除，1 个替换 |
+| 安全修复总数 | **50+ 项**（另加 2026-08 审计修复 13 项） |
 | 高危安全修复 | **27 项** |
 | 中危安全修复 | **18 项** |
 | 低危修复 | **5+ 项** |
-| 性能优化 | **8 项** |
+| 架构审计修复 | **P0×4 / P1×4 / P2×3 / P3×6**，生产实测验证 |
+| 依赖安全扫描 | composer audit **0 公告**（清理 17 项含 3 高危） |
+| 性能优化 | **8 项**（另加订阅链路聚合缓存） |
 | 框架适配改造 | **8 项** |
-| 支付网关修复 | **11 个网关** |
+| 支付网关修复 | **11 个网关**（另加 EPay 验签失败观测） |
 | 路由现代化 | 177 条路由转换 |
-| 自动化测试 | 18 个测试，435 个断言 |
-| 安全扫描指标 | **全部清零** |
+| 自动化测试 | 9 个测试文件，50 个测试，538 个断言 |
 | 代码审查评分 | 4.5 → **9.5/10** |
-| 新增文件 | SecurityHeaders.php, SecurityFixesTest.php |
+| 新增文件 | SecurityHeaders.php, ServerApiException.php, 7 个核心链路测试 |
 | Clash 规则精简 | 78% |
 
 ## Document
 [安装步骤](https://github.com/Mcloud136/v2board/blob/master/install.md)
 [更新步骤](https://github.com/Mcloud136/v2board/blob/master/UPGRADE_GUIDE.md)
+[架构审计报告（2026-08）](https://github.com/Mcloud136/v2board/blob/master/docs/architecture/architecture-audit-2026-08.md)
+[开发日志](https://github.com/Mcloud136/v2board/blob/master/docs/dev-logs/phase1-dev-log.md)
 
 ## How to Feedback
 Follow the template in the issue to submit your question correctly, and we will have someone follow up with you.
