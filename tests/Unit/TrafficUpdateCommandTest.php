@@ -51,7 +51,7 @@ class TrafficUpdateCommandTest extends TestCase
         $this->seedUser(2, 0, 0); // 仅有上行流量的用户也必须被结算（用户集取并集）
 
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0);
-        // 首轮残留桶检查（两桶均空 → 无害清理）
+        // 首轮残留桶检查（两桶均空 → 直接返回，无任何写操作）
         Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
         // 换桶
@@ -117,10 +117,9 @@ class TrafficUpdateCommandTest extends TestCase
         $this->seedUser(1, 100, 200);
 
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0)->once();
-        // 首轮残留检查（空）
+        // 首轮残留检查（空，直接返回）
         Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
-        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
         Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(1)->once();
         Redis::shouldReceive('rename')->with('v2board_upload_traffic', 'v2board_upload_traffic:swap')->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0)->once();
@@ -130,13 +129,8 @@ class TrafficUpdateCommandTest extends TestCase
         Redis::shouldReceive('hgetall')->with('v2board_upload_traffic:swap')->andReturn(['1' => '777'])->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
         Redis::shouldReceive('get')->with('v2board_traffic_settle_token')->andReturn('ts_lock')->once();
-        DB::shouldReceive('beginTransaction')->once();
-        $qb = Mockery::mock();
-        $qb->shouldReceive('insert')->once();
-        DB::shouldReceive('table')->with('v2_traffic_settle_marker')->andReturn($qb)->once();
-        // 提交前二次检查：重置锁出现 → 回滚放弃本轮
+        // 提交前二次检查：重置锁出现 → 回滚放弃本轮（真实 sqlite 事务，marker 随回滚不落库）
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(1)->once();
-        DB::shouldReceive('rollBack')->once();
 
         (new TrafficUpdate())->handle();
 
@@ -152,10 +146,10 @@ class TrafficUpdateCommandTest extends TestCase
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0);
         Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(0);
         Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0);
-        // 空桶清理的 del（无害），除此之外不应有任何写操作
-        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
+        // 空桶路径无结算无写操作
         Redis::shouldReceive('rename')->never();
         Redis::shouldReceive('hgetall')->never();
+        Redis::shouldReceive('del')->never();
 
         (new TrafficUpdate())->handle();
         $this->assertTrue(true);

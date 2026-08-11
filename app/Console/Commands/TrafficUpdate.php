@@ -91,8 +91,7 @@ class TrafficUpdate extends Command
         $uploads = Redis::exists($uploadSwap) ? (Redis::hgetall($uploadSwap) ?: []) : [];
         $downloads = Redis::exists($downloadSwap) ? (Redis::hgetall($downloadSwap) ?: []) : [];
         if (empty($uploads) && empty($downloads)) {
-            // 空桶直接清理（del 不存在的键无害）
-            Redis::del($uploadSwap, $downloadSwap, $tokenKey);
+            // 空桶无需结算；令牌若有 TTL 自然过期，下次换桶会重新生成，无副作用
             return;
         }
 
