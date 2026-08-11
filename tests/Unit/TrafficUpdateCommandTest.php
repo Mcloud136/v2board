@@ -4,12 +4,15 @@ namespace Tests\Unit;
 
 use App\Console\Commands\TrafficUpdate;
 use App\Models\User;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Schema;
+use Mockery;
 use Tests\TestCase;
 
 /**
- * FIX-02：流量结算 RENAME 换桶原子化
+ * FIX-B3/B2：流量结算 exactly-once（结算令牌 + DB marker）
  * Redis 以 facade mock 驱动，落库用内存 sqlite 隔离生产库
  */
 class TrafficUpdateCommandTest extends TestCase
@@ -31,6 +34,10 @@ class TrafficUpdateCommandTest extends TestCase
             $table->integer('created_at')->nullable();
             $table->integer('updated_at')->nullable();
         });
+        Schema::create('v2_traffic_settle_marker', function ($table) {
+            $table->string('token', 80)->primary();
+            $table->integer('settled_at');
+        });
     }
 
     private function seedUser(int $id, int $u, int $d): void
@@ -44,23 +51,23 @@ class TrafficUpdateCommandTest extends TestCase
         $this->seedUser(2, 0, 0); // 仅有上行流量的用户也必须被结算（用户集取并集）
 
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0);
-        // 换桶阶段：live 存在、swap 不存在，执行 rename
+        // 首轮残留桶检查（两桶均空 → 无害清理）
         Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
+        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
+        // 换桶
         Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(1)->once();
         Redis::shouldReceive('rename')->with('v2board_upload_traffic', 'v2board_upload_traffic:swap')->once();
-        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(1)->once();
         Redis::shouldReceive('rename')->with('v2board_download_traffic', 'v2board_download_traffic:swap')->once();
+        // 结算令牌生成
+        Redis::shouldReceive('exists')->with('v2board_traffic_settle_token')->andReturn(0)->once();
+        Redis::shouldReceive('setex')->with('v2board_traffic_settle_token', 86400, Mockery::type('string'))->once();
         // 读取 swap 快照
         Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(1)->once();
         Redis::shouldReceive('hgetall')->with('v2board_upload_traffic:swap')->andReturn(['2' => '1000'])->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(1)->once();
         Redis::shouldReceive('hgetall')->with('v2board_download_traffic:swap')->andReturn(['1' => '2000'])->once();
-        // 落库成功后清理
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(1)->once();
-        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap')->once();
-        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(1)->once();
-        Redis::shouldReceive('del')->with('v2board_download_traffic:swap')->once();
+        Redis::shouldReceive('get')->with('v2board_traffic_settle_token')->andReturn('ts_test')->once();
 
         (new TrafficUpdate())->handle();
 
@@ -69,39 +76,86 @@ class TrafficUpdateCommandTest extends TestCase
         $this->assertSame(2200, (int)$user1->d); // 200 + 2000
         $this->assertSame(100, (int)$user1->u);
         $this->assertSame(1000, (int)$user2->u); // 仅上行用户被结算
+        // marker 与增量同事务落库
+        $this->assertDatabaseHas('v2_traffic_settle_marker', ['token' => 'ts_test']);
     }
 
-    public function test_leftover_swap_bucket_is_drained_before_rename(): void
+    public function test_duplicate_marker_skips_settlement_and_cleans_bucket(): void
     {
+        $this->seedUser(1, 100, 200);
+
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0);
-        // 上轮崩溃残留 swap 桶：优先合并 live 数据而不是 rename 覆盖
+        // 残留 swap 桶（上轮 commit 后、删桶前崩溃的场景）
         Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(1)->once();
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(1)->once();
-        Redis::shouldReceive('hgetall')->with('v2board_upload_traffic')->andReturn(['1' => '5'])->once();
-        Redis::shouldReceive('hincrby')->with('v2board_upload_traffic:swap', '1', 5)->once();
-        Redis::shouldReceive('del')->with('v2board_upload_traffic')->once();
+        Redis::shouldReceive('hgetall')->with('v2board_upload_traffic:swap')->andReturn(['1' => '500'])->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
+        Redis::shouldReceive('get')->with('v2board_traffic_settle_token')->andReturn('ts_leftover')->once();
+        // marker 主键冲突 → 判定已结算，仅清桶不重复计费
+        DB::shouldReceive('beginTransaction')->once();
+        $qb = Mockery::mock();
+        $qb->shouldReceive('insert')->andThrow(
+            new QueryException('sqlite_testing', 'insert into marker', [], new \Exception('Duplicate entry'))
+        );
+        DB::shouldReceive('table')->with('v2_traffic_settle_marker')->andReturn($qb)->once();
+        DB::shouldReceive('rollBack')->once();
+        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
+        // handle 继续：无 live 数据且 swap 已清理 → 结束
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(0)->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0)->once();
-        // 两个 swap 桶均无最终数据（download 无残留、upload 被 drain 后无 hgetall 数据场景走空）
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(1)->once();
-        Redis::shouldReceive('hgetall')->with('v2board_upload_traffic:swap')->andReturn([])->once();
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
 
         (new TrafficUpdate())->handle();
-        $this->assertTrue(true); // 断言点：上述 mock 序列全部按序命中（Mockery 校验）
+
+        $user1 = User::find(1);
+        $this->assertSame(100, (int)$user1->u); // 未重复结算
+        $this->assertSame(200, (int)$user1->d);
+    }
+
+    public function test_reset_lock_second_check_aborts_round_keeping_swap(): void
+    {
+        $this->seedUser(1, 100, 200);
+
+        Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0)->once();
+        // 首轮残留检查（空）
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
+        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
+        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(1)->once();
+        Redis::shouldReceive('rename')->with('v2board_upload_traffic', 'v2board_upload_traffic:swap')->once();
+        Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0)->once();
+        Redis::shouldReceive('exists')->with('v2board_traffic_settle_token')->andReturn(0)->once();
+        Redis::shouldReceive('setex')->with('v2board_traffic_settle_token', 86400, Mockery::type('string'))->once();
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(1)->once();
+        Redis::shouldReceive('hgetall')->with('v2board_upload_traffic:swap')->andReturn(['1' => '777'])->once();
+        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
+        Redis::shouldReceive('get')->with('v2board_traffic_settle_token')->andReturn('ts_lock')->once();
+        DB::shouldReceive('beginTransaction')->once();
+        $qb = Mockery::mock();
+        $qb->shouldReceive('insert')->once();
+        DB::shouldReceive('table')->with('v2_traffic_settle_marker')->andReturn($qb)->once();
+        // 提交前二次检查：重置锁出现 → 回滚放弃本轮
+        Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(1)->once();
+        DB::shouldReceive('rollBack')->once();
+
+        (new TrafficUpdate())->handle();
+
+        $user1 = User::find(1);
+        $this->assertSame(100, (int)$user1->u); // 本轮放弃，未结算
+        $this->assertDatabaseMissing('v2_traffic_settle_marker', ['token' => 'ts_lock']);
     }
 
     public function test_early_return_when_no_data(): void
     {
         Redis::shouldReceive('exists')->with('traffic_reset_lock')->andReturn(0);
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(0)->once();
-        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
-        Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0)->once();
-        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0)->once();
-        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0)->once();
-        // 无数据不应触发任何 del
-        Redis::shouldReceive('del')->never();
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic:swap')->andReturn(0);
+        Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(0);
+        Redis::shouldReceive('exists')->with('v2board_upload_traffic')->andReturn(0);
+        Redis::shouldReceive('exists')->with('v2board_download_traffic')->andReturn(0);
+        // 空桶清理的 del（无害），除此之外不应有任何写操作
+        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
+        Redis::shouldReceive('rename')->never();
+        Redis::shouldReceive('hgetall')->never();
 
         (new TrafficUpdate())->handle();
         $this->assertTrue(true);

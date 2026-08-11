@@ -46,67 +46,71 @@ class ResetTraffic extends Command
     public function handle()
     {
         Redis::setex('traffic_reset_lock', 300, 1);
-        $resetMethods = Plan::select(
-            DB::raw("GROUP_CONCAT(`id`) as plan_ids"),
-            DB::raw("reset_traffic_method as method")
-        )
-            ->groupBy('reset_traffic_method')
-            ->get()
-            ->toArray();
-        foreach ($resetMethods as $resetMethod) {
-            $planIds = explode(',', $resetMethod['plan_ids']);
-            switch (true) {
-                case ($resetMethod['method'] === NULL): {
-                    $resetTrafficMethod = config('v2board.reset_traffic_method', 0);
-                    $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
-                    switch ((int)$resetTrafficMethod) {
-                        // month first day
-                        case 0:
-                            $this->resetByMonthFirstDay($builder);
-                            break;
-                        // expire day
-                        case 1:
-                            $this->resetByExpireDay($builder);
-                            break;
-                        // no action
-                        case 2:
-                            break;
-                        // year first day
-                        case 3:
-                            $this->resetByYearFirstDay($builder);
-                            break;
-                        // year expire day
-                        case 4:
-                            $this->resetByExpireYear($builder);
+        try {
+            $resetMethods = Plan::select(
+                DB::raw("GROUP_CONCAT(`id`) as plan_ids"),
+                DB::raw("reset_traffic_method as method")
+            )
+                ->groupBy('reset_traffic_method')
+                ->get()
+                ->toArray();
+            foreach ($resetMethods as $resetMethod) {
+                $planIds = explode(',', $resetMethod['plan_ids']);
+                switch (true) {
+                    case ($resetMethod['method'] === NULL): {
+                        $resetTrafficMethod = config('v2board.reset_traffic_method', 0);
+                        $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
+                        switch ((int)$resetTrafficMethod) {
+                            // month first day
+                            case 0:
+                                $this->resetByMonthFirstDay($builder);
+                                break;
+                            // expire day
+                            case 1:
+                                $this->resetByExpireDay($builder);
+                                break;
+                            // no action
+                            case 2:
+                                break;
+                            // year first day
+                            case 3:
+                                $this->resetByYearFirstDay($builder);
+                                break;
+                            // year expire day
+                            case 4:
+                                $this->resetByExpireYear($builder);
+                        }
+                        break;
                     }
-                    break;
-                }
-                case ($resetMethod['method'] === 0): {
-                    $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
-                    $this->resetByMonthFirstDay($builder);
-                    break;
-                }
-                case ($resetMethod['method'] === 1): {
-                    $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
-                    $this->resetByExpireDay($builder);
-                    break;
-                }
-                case ($resetMethod['method'] === 2): {
-                    break;
-                }
-                case ($resetMethod['method'] === 3): {
-                    $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
-                    $this->resetByYearFirstDay($builder);
-                    break;
-                }
-                case ($resetMethod['method'] === 4): {
-                    $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
-                    $this->resetByExpireYear($builder);
-                    break;
+                    case ($resetMethod['method'] === 0): {
+                        $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
+                        $this->resetByMonthFirstDay($builder);
+                        break;
+                    }
+                    case ($resetMethod['method'] === 1): {
+                        $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
+                        $this->resetByExpireDay($builder);
+                        break;
+                    }
+                    case ($resetMethod['method'] === 2): {
+                        break;
+                    }
+                    case ($resetMethod['method'] === 3): {
+                        $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
+                        $this->resetByYearFirstDay($builder);
+                        break;
+                    }
+                    case ($resetMethod['method'] === 4): {
+                        $builder = with(clone($this->builder))->whereIn('plan_id', $planIds);
+                        $this->resetByExpireYear($builder);
+                        break;
+                    }
                 }
             }
+        } finally {
+            // 无论成功失败都释放锁，避免 abort/异常导致锁残留停摆流量结算
+            Redis::del('traffic_reset_lock');
         }
-        Redis::del('traffic_reset_lock');
     }
 
     private function resetByExpireYear($builder): void
@@ -191,7 +195,8 @@ class ResetTraffic extends Command
                     );
                     $telegramService->sendMessageWithAdmin($message);
                     \Log::error('用户流量重置失败: ' . $e->getMessage());
-                    abort(500, '用户流量重置失败');
+                    // 命令上下文不应 abort（抛 HttpException 会中断调度），锁由 finally 保证释放
+                    return;
                 }
                 sleep(5);
             }

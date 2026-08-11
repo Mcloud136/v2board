@@ -640,3 +640,10 @@ CREATE TABLE `v2_server_v2node` (
 
 ALTER TABLE `v2_server_route`
 CHANGE `action_value` `action_value` text NULL AFTER `action`;
+
+-- 2026-08 流量结算 exactly-once 标记表（FIX-B3，幂等防重复计费）
+CREATE TABLE IF NOT EXISTS `v2_traffic_settle_marker` (
+    `token` varchar(80) NOT NULL,
+    `settled_at` int(11) NOT NULL,
+    PRIMARY KEY (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

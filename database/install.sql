@@ -516,6 +516,13 @@ CREATE TABLE `v2_stat_user` (
                                 KEY `server_rate` (`server_rate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `v2_traffic_settle_marker`;
+CREATE TABLE `v2_traffic_settle_marker` (
+                                            `token` varchar(80) NOT NULL,
+                                            `settled_at` int(11) NOT NULL,
+                                            PRIMARY KEY (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 DROP TABLE IF EXISTS `v2_ticket`;
 CREATE TABLE `v2_ticket` (
