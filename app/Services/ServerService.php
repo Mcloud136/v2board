@@ -35,7 +35,11 @@ class ServerService
     private function getAvailableServersByType(string $type, User $user, ?callable $postProcess = null): array
     {
         $modelClass = self::SERVER_MODELS[$type];
-        $servers = $modelClass::orderBy('sort', 'ASC')->get();
+        // 订阅热点路径优化：按协议聚合缓存全量节点配置（短 TTL）。
+        // 管理端变更最多 60s 生效；订阅输出自带 updated_at 维度的协议缓存键，不影响客户端节点缓存正确性
+        $servers = Cache::remember(self::serversCacheKey($type), 60, function () use ($modelClass) {
+            return $modelClass::orderBy('sort', 'ASC')->get();
+        });
         $result = [];
         $cacheType = strtoupper($type);
 
@@ -156,7 +160,10 @@ class ServerService
     private function getAllServersByType(string $type, ?callable $postProcess = null): array
     {
         $modelClass = self::SERVER_MODELS[$type];
-        $servers = $modelClass::orderBy('sort', 'ASC')->get()->toArray();
+        // 与订阅链路共用同一份短 TTL 缓存，避免管理端列表额外全表查询
+        $servers = Cache::remember(self::serversCacheKey($type), 60, function () use ($modelClass) {
+            return $modelClass::orderBy('sort', 'ASC')->get();
+        })->toArray();
         foreach ($servers as $k => $v) {
             $servers[$k]['type'] = $type;
             if ($postProcess) {
@@ -164,6 +171,25 @@ class ServerService
             }
         }
         return $servers;
+    }
+
+    /**
+     * 节点配置缓存键（未走 CacheKey::get：其白名单面向动态值，此处为固定键）
+     */
+    private static function serversCacheKey(string $type): string
+    {
+        return 'v2board_servers_' . $type;
+    }
+
+    /**
+     * 管理端节点变更后主动失效缓存，避免等待 TTL 自然过期
+     */
+    public static function flushServersCache(?string $type = null): void
+    {
+        $types = $type !== null ? [$type] : array_keys(self::SERVER_MODELS);
+        foreach ($types as $t) {
+            Cache::forget(self::serversCacheKey($t));
+        }
     }
 
     public function getAllShadowsocks()

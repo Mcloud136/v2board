@@ -10,6 +10,7 @@
 .env
 .env.backup
 .phpunit.result.cache
+.phpunit.cache/
 .idea
 .lock
 Homestead.json
@@ -25,4 +26,3 @@ workerman.webman.php.pid
 workerman.log
 CLAUDE.md
 .claude/
-composer.lock

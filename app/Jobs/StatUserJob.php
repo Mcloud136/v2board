@@ -43,6 +43,8 @@ class StatUserJob implements ShouldQueue
      */
     public function handle()
     {
+        // 统计口径：报表记录原始流量（不乘节点倍率 rate）；
+        // 用户流量余额结算在 TrafficFetchJob/TrafficUpdate 中按 rate 计算，两者口径不同属设计意图
         $recordAt = strtotime(date('Y-m-d'));
 
         $existingData = StatUser::where('record_at', $recordAt)

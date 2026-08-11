@@ -1,5 +1,11 @@
 # Valkey 流量统计优化实施计划
 
+> **⚠️ 已被取代（2026-08）**：本计划的“字段级 TTL”实际实现为整 Hash `expire(300)`，
+> 存在调度停摆 >5 分钟即全量丢流量的风险，且 hgetall→del 竞态未消除。
+> 已由审计修复方案 FIX-02/FIX-03 取代：`TrafficUpdate` 改用 RENAME 换桶原子结算
+> （落库成功后才删桶，崩溃可追回），Hash TTL 放宽至 86400 仅作兜底。
+> 本文档仅作历史归档。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 消除 Redis DEL 操作导致的流量丢失窗口，利用 Valkey Hash 字段级 TTL 实现自动过期

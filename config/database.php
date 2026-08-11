@@ -124,12 +124,6 @@ return [
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
             'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
-            // Valkey 客户端缓存（需要 Valkey 7.x+ 和 predis 2.2+）
-            // 启用后热数据从本地内存读取，减少 Redis/Valkey 网络往返
-            'cache' => [
-                'enabled' => env('REDIS_CLIENT_CACHE', false),
-                'ttl' => 60,
-            ],
         ],
 
         'default' => [

@@ -59,6 +59,8 @@ class ManageController extends Controller
             }
         }
         DB::commit();
+        // 排序变更后主动失效节点配置缓存（各协议 Controller 的 save/update/drop 由 60s TTL 自然收敛）
+        ServerService::flushServersCache();
         return response([
             'data' => true
         ]);
