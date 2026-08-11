@@ -43,12 +43,17 @@ class OrderHandleJob implements ShouldQueue
 
         $orderService = new OrderService($order);
         switch ($order->status) {
-            case 0:
+            case Order::STATUS_PENDING:
                 if ($order->created_at <= (time() - 3600 * 2)) {
                     $orderService->cancel();
                 }
                 break;
-            case 1:
+            case Order::STATUS_PAID:
+                // check:order 每分钟重放已支付订单，open() 内部行锁闸口保证只开通一次；
+                // 对长期停留的订单记录日志便于观察 Job 丢失/异常
+                if ($order->updated_at && $order->updated_at < time() - 86400) {
+                    \Log::warning('订单停留已支付状态超过 24 小时', ['trade_no' => $order->trade_no]);
+                }
                 $orderService->open();
                 break;
         }

@@ -31,9 +31,14 @@ class OrderService
         $order = $this->order;
         $this->user = User::find($order->user_id);
         if (!$this->user) abort(500, '用户不存在');
-        if ($order->type == 9) {
+        if ($order->type == Order::TYPE_DEPOSIT) {
             DB::transaction(function () use ($order) {
-                $this->user->balance += $order->total_amount + $this->getbounus($order->total_amount);
+                // 幂等闸口二：行锁 + 状态复检，原子拦截并发 Job 与 check:order 重放
+                $locked = Order::lockForUpdate()->find($order->id);
+                if (!$locked || $locked->status !== Order::STATUS_PAID) return;
+                $order = $locked;
+                $this->order = $locked;
+                $this->user->balance += $order->total_amount + self::getDepositBonus($order->total_amount);
                 if (!$this->user->save()) {
                     throw new \Exception('充值失败');
                 }
@@ -49,6 +54,12 @@ class OrderService
         if (!$plan) abort(500, '订阅计划不存在');
 
         DB::transaction(function () use ($order, $plan) {
+            // 幂等闸口二：行锁 + 状态复检，原子拦截并发 Job 与 check:order 重放
+            $locked = Order::lockForUpdate()->find($order->id);
+            if (!$locked || $locked->status !== Order::STATUS_PAID) return;
+            $order = $locked;
+            $this->order = $locked;
+
             if ($order->refund_amount) {
                 $this->user->balance = $this->user->balance + $order->refund_amount;
             }
@@ -71,13 +82,13 @@ class OrderService
             }
 
             switch ((int)$order->type) {
-                case 1:
+                case Order::TYPE_NEW:
                     $this->openEvent(config('v2board.new_order_event_id', 0));
                     break;
-                case 2:
+                case Order::TYPE_RENEW:
                     $this->openEvent(config('v2board.renew_order_event_id', 0));
                     break;
-                case 3:
+                case Order::TYPE_CHANGE:
                     $this->openEvent(config('v2board.change_order_event_id', 0));
                     break;
             }
@@ -248,18 +259,32 @@ class OrderService
         $order->surplus_order_ids = array_column($orders, 'id');
     }
 
-    public function paid(string $callbackNo)
+    /**
+     * 标记订单已支付（幂等闸口一）
+     * 使用条件更新的 affected rows 作为唯一闸口：仅成功完成 待支付->已支付 转换的请求返回 true
+     *
+     * @return bool true=本次完成支付转换；false=已处理过或转换失败（调用方应对网关返回成功，防止无限重试）
+     */
+    public function paid(string $callbackNo): bool
     {
         $order = $this->order;
-        if ($order->status !== Order::STATUS_PENDING) return true;
-        $order->status = 1;
-        $order->paid_at = time();
-        $order->callback_no = $callbackNo;
-        if (!$order->save()) return false;
+        $affected = Order::where('trade_no', $order->trade_no)
+            ->where('status', Order::STATUS_PENDING)
+            ->update([
+                'status' => Order::STATUS_PAID,
+                'paid_at' => time(),
+                'callback_no' => $callbackNo,
+            ]);
+        if ($affected !== 1) return false;
+        $order->status = Order::STATUS_PAID;
         try {
             OrderHandleJob::dispatch($order->trade_no);
         } catch (\Exception $e) {
             \Log::error('订单处理任务分发失败: ' . $e->getMessage(), ['trade_no' => $order->trade_no]);
+            // 分发失败回置待支付，交由网关重试与 check:order 兜底
+            Order::where('trade_no', $order->trade_no)
+                ->where('status', Order::STATUS_PAID)
+                ->update(['status' => Order::STATUS_PENDING]);
             return false;
         }
         return true;
@@ -301,7 +326,7 @@ class OrderService
     private function buyByPeriod(Order $order, Plan $plan)
     {
         // change plan process
-        if ((int)$order->type === 3) {
+        if ((int)$order->type === Order::TYPE_CHANGE) {
             $this->user->expired_at = time();
         }
         $this->user->transfer_enable = $plan->transfer_enable * 1073741824;
@@ -309,14 +334,14 @@ class OrderService
         // 从一次性转换到循环
         if ($this->user->expired_at === NULL) $this->buyByResetTraffic();
         // 新购
-        if ($order->type === 1) $this->buyByResetTraffic();
+        if ($order->type === Order::TYPE_NEW) $this->buyByResetTraffic();
 
         // 到期当天续费刷新流量
         $expireDay = date('d', $this->user->expired_at);
         $expireMonth = date('m', $this->user->expired_at);
         $today = date('d');
         $currentMonth = date('m');
-        if ($order->type === 2 && $expireMonth == $currentMonth && $expireDay === $today ) {
+        if ($order->type === Order::TYPE_RENEW && $expireMonth == $currentMonth && $expireDay === $today ) {
             $this->buyByResetTraffic();
         }
 
@@ -376,8 +401,19 @@ class OrderService
         }
     }
 
-    private function getbounus($total_amount) {
-        $deposit_bounus = config('v2board.deposit_bounus', []);
+    /**
+     * 充值档位赠送计算（配置键 deposit_bounus，前端依赖该键名，勿改）
+     * 提升为公共静态方法，供 User/OrderController 等复用，消除重复实现
+     */
+    public static function getDepositBonus($total_amount) {
+        return self::calcDepositBonus(config('v2board.deposit_bounus', []), $total_amount);
+    }
+
+    /**
+     * 档位赠送纯计算核心（不依赖 config，便于单元测试）
+     * 档位格式 "金额:赠送比例"，金额单位元，内部统一转为分比较
+     */
+    public static function calcDepositBonus($deposit_bounus, $total_amount) {
         if (empty($deposit_bounus) || $deposit_bounus[0] === null) {
             return 0;
         }

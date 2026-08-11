@@ -32,10 +32,12 @@ class PaymentController extends Controller
         if (!$order) {
             abort(500, 'order is not found');
         }
-        if ($order->status !== 0) return true;
         $orderService = new OrderService($order);
+        // paid() 内部以条件更新作为幂等闸口：仅完成转换的请求返回 true，
+        // 重复回调不会重复开通，也不会重复发送 Telegram 通知
         if (!$orderService->paid($callbackNo)) {
-            return false;
+            // 已处理过或转换失败：对网关返回成功，防止无限重试
+            return true;
         }
         $telegramService = new TelegramService();
         $message = sprintf(
