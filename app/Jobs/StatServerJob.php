@@ -83,6 +83,8 @@ class StatServerJob implements ShouldQueue
         } catch (\Exception $e) {
             DB::rollback();
             \Log::error('节点统计数据失败: ' . $e->getMessage());
+            // 重抛交给队列重试（tries/backoff），避免统计数据静默丢失
+            throw $e;
         }
     }
 }

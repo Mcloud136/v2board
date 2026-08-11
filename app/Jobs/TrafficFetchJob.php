@@ -41,13 +41,15 @@ class TrafficFetchJob implements ShouldQueue
     public function handle()
     {
         // 计费口径：用户流量余额按节点倍率 rate 结算（StatUserJob/StatServerJob 记录原始值，仅用于报表）
-        foreach(array_keys($this->data) as $userId){
-            Redis::hincrby('v2board_upload_traffic', $userId, $this->data[$userId][0] * $this->server['rate']);
-            Redis::hincrby('v2board_download_traffic', $userId, $this->data[$userId][1] * $this->server['rate']);
-        }
-        // 长 TTL 仅作内存泄漏兜底：正常情况 traffic:update 每分钟 RENAME 清空；
-        // 写入方每次刷新 TTL，仅在调度停摆超过 24 小时才丢失累计流量（可追回优先于防泄漏）
-        Redis::expire('v2board_upload_traffic', 86400);
-        Redis::expire('v2board_download_traffic', 86400);
+        // pipeline 原子提交：本批写入全有或全无，重试不会重复累加（幂等）
+        Redis::pipeline(function ($pipe) {
+            foreach (array_keys($this->data) as $userId) {
+                $pipe->hincrby('v2board_upload_traffic', $userId, $this->data[$userId][0] * $this->server['rate']);
+                $pipe->hincrby('v2board_download_traffic', $userId, $this->data[$userId][1] * $this->server['rate']);
+            }
+            // 长 TTL 仅作内存泄漏兜底：正常情况 traffic:update 每分钟 RENAME 清空
+            $pipe->expire('v2board_upload_traffic', 86400);
+            $pipe->expire('v2board_download_traffic', 86400);
+        });
     }
 }
