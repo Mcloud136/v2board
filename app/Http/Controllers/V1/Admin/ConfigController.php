@@ -190,21 +190,11 @@ class ConfigController extends Controller
         $data = $request->validated();
         $config = config('v2board');
         foreach (ConfigSave::RULES as $k => $v) {
-            if (!in_array($k, array_keys(ConfigSave::RULES))) {
-                unset($config[$k]);
-                continue;
-            }
             if (array_key_exists($k, $data)) {
                 $config[$k] = $data[$k];
             }
         }
-        // 消毒字符串值防止 PHP 代码注入
-        $config = array_map(function ($v) {
-            if (is_string($v)) {
-                return str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${', 'eval(', 'system(', 'exec(', 'passthru(', 'shell_exec(', 'proc_open(', 'popen(', 'assert(', 'file_put_contents(', 'file_get_contents('], '', $v);
-            }
-            return $v;
-        }, $config);
+        // 注入防护依赖 var_export 对字符串的完整转义（黑名单曾误伤含特殊字符的合法配置值，已移除）
         $data = var_export($config, 1);
         if (!File::put(base_path() . '/config/v2board.php', "<?php\n return $data ;")) {
             abort(500, '修改失败');

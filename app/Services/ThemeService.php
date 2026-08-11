@@ -28,13 +28,7 @@ class ThemeService
             $data[$config['field_name']] = isset($config['default_value']) ? $config['default_value'] : '';
         }
 
-        // 消毒字符串值防止 PHP 代码注入
-        foreach ($data as $k => $v) {
-            if (is_string($v)) {
-                $data[$k] = str_replace(['<?php', '<?', '?>', '<?PHP', '<?=', '`', '${'], '', $v);
-            }
-        }
-
+        // 注入防护依赖 var_export 对字符串的完整转义（黑名单曾误伤合法默认值，已移除）
         $data = var_export($data, 1);
         try {
             if (!File::put(base_path() . "/config/theme/{$this->theme}.php", "<?php\n return $data ;")) {

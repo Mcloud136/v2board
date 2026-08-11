@@ -8,13 +8,8 @@ class CORS
 {
     public function handle($request, Closure $next)
     {
+        // 仅信任 Origin 头；不再以 Referer 充当 origin（非标准行为且扩大反射面）
         $origin = $request->header('origin');
-        if (empty($origin)) {
-            $referer = $request->header('referer');
-            if (!empty($referer) && preg_match("/^((https|http):\/\/)?([^\/]+)/i", $referer, $matches)) {
-                $origin = $matches[0];
-            }
-        }
 
         $allowedOrigin = $this->isAllowedOrigin($origin);
 
@@ -54,16 +49,18 @@ class CORS
 
         $originHost = parse_url($origin, PHP_URL_HOST);
         if (!$originHost) return null;
+        $originHost = strtolower($originHost);
 
         foreach ($allowedOrigins as $allowed) {
-            $allowed = trim($allowed, '/');
-            // 支持通配符 *.example.com
+            $allowed = strtolower(trim($allowed, '/'));
+            // 通配符 *.example.com 仅匹配单级子域（防止任意层级子域绕过）
             if (strpos($allowed, '*.') === 0) {
                 $suffix = substr($allowed, 1); // .example.com
-                if (substr($originHost, -strlen($suffix)) === $suffix) {
+                if (substr($originHost, -strlen($suffix)) === $suffix
+                    && substr_count(substr($originHost, 0, -strlen($suffix)), '.') === 0) {
                     return $origin;
                 }
-            } elseif ($originHost === $allowed || $origin === $allowed) {
+            } elseif ($originHost === $allowed || strtolower($origin) === $allowed) {
                 return $origin;
             }
         }
