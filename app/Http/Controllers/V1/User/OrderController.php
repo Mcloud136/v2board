@@ -51,7 +51,7 @@ class OrderController extends Controller
                 'id' => 0,
                 'name' => 'deposit'
             ];
-            $order->bounus = $this->getbounus($order->total_amount);
+            $order->bounus = OrderService::getDepositBonus($order->total_amount);
             $order->get_amount = $order->total_amount + $order->bounus;
 
             return response([
@@ -74,9 +74,6 @@ class OrderController extends Controller
     public function save(OrderSave $request)
     {
         $userService = new UserService();
-        if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
-            abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
-        }
         if ($request->input('plan_id') == 0) {
             $amount = $request->input('deposit_amount');
             if ($amount <= 0) {
@@ -85,8 +82,13 @@ class OrderController extends Controller
             if ($amount >= 9999999 ) {
                 abort(500, __('Deposit amount too large, please contact the administrator'));
             }
-            $user = User::find($request->user['id']);
             DB::beginTransaction();
+            // 用户行锁 + 事务内复检未完成订单，检查与插入原子化，防并发双开订单
+            $user = User::where('id', $request->user['id'])->lockForUpdate()->first();
+            if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
+                DB::rollBack();
+                abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
+            }
             $order = new Order();
             $orderService = new OrderService($order);
             $order->user_id = $request->user['id'];
@@ -112,6 +114,7 @@ class OrderController extends Controller
         $planService = new PlanService($request->input('plan_id'));
 
         $plan = $planService->plan;
+        // 事务外的轻量预读仅用于非并发敏感校验；事务内重新行锁读取作为权威状态
         $user = User::find($request->user['id']);
 
         if (!$plan) {
@@ -148,6 +151,12 @@ class OrderController extends Controller
         }
 
         DB::beginTransaction();
+        // 用户行锁 + 事务内复检未完成订单，检查与插入原子化，防并发双开订单
+        $user = User::where('id', $request->user['id'])->lockForUpdate()->first();
+        if ($userService->isNotCompleteOrderByUserId($request->user['id'])) {
+            DB::rollBack();
+            abort(500, __('You have an unpaid or pending order, please try again later or cancel it'));
+        }
         $order = new Order();
         $orderService = new OrderService($order);
         $order->user_id = $request->user['id'];
@@ -297,24 +306,5 @@ class OrderController extends Controller
         return response([
             'data' => true
         ]);
-    }
-
-    private function getbounus($total_amount) {
-        $deposit_bounus = config('v2board.deposit_bounus', []);
-        if (empty($deposit_bounus) || $deposit_bounus[0] === null) {
-            return 0;
-        }
-        $add = 0;
-        foreach ($deposit_bounus as $tier) {
-            list($amount, $bounus) = explode(':', $tier);
-            $amount = (float)$amount * 100;
-            $bounus = (float)$bounus * 100;
-            $amount = (int)$amount;
-            $bounus = (int)$bounus;
-            if ($total_amount >= $amount) {
-                $add = max($add, $bounus);
-            }
-        }
-        return $add;
     }
 }

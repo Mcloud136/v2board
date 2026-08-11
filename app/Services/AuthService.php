@@ -123,4 +123,32 @@ class AuthService
         }
         return Cache::forget($cacheKey);
     }
+
+    /**
+     * 批量清除多个用户的 session 和 JWT 缓存
+     * 相比逐个调用 clearUserSessions：会话读取合并为一次 MGET，
+     * 避免大批量封禁/删除时的串行 Redis 往返
+     */
+    public static function clearUserSessionsBatch(array $userIds): void
+    {
+        if (empty($userIds)) return;
+        $sessionKeys = [];
+        foreach ($userIds as $userId) {
+            $sessionKeys[] = CacheKey::get("USER_SESSIONS", $userId);
+        }
+        $authKeys = [];
+        foreach (Cache::many($sessionKeys) as $sessions) {
+            foreach ((array)$sessions as $meta) {
+                if (isset($meta['auth_data'])) {
+                    $authKeys[] = $meta['auth_data'];
+                }
+            }
+        }
+        foreach ($authKeys as $authKey) {
+            Cache::forget($authKey);
+        }
+        foreach ($sessionKeys as $sessionKey) {
+            Cache::forget($sessionKey);
+        }
+    }
 }

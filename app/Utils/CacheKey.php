@@ -46,8 +46,12 @@ class CacheKey
         if (!in_array($key, array_keys(self::KEYS))) {
             abort(500, 'key is not in cache key list');
         }
-        // 清洗 uniqueValue 防止缓存键注入
-        $safeValue = is_string($uniqueValue) ? preg_replace('/[^a-zA-Z0-9_\-]/', '', $uniqueValue) : $uniqueValue;
-        return $key . '_' . $safeValue;
+        // 字符串值用 sha256 散列：既防缓存键注入，又避免剥离字符导致的键碰撞
+        // （旧实现剥离 @ . 等字符后，a.b@c.com 与 ab@c.com 会归一为同一键，
+        // 造成登录限流/邮箱验证码跨账户污染）；整型值（用户 ID 等）保持可读拼接
+        if (is_string($uniqueValue)) {
+            return $key . '_' . substr(hash('sha256', $uniqueValue), 0, 32);
+        }
+        return $key . '_' . $uniqueValue;
     }
 }

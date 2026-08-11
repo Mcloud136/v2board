@@ -123,10 +123,8 @@ class UserController extends Controller
                 return response(['data' => true]);
             }
             User::whereIn('id', $userIds)->update(['banned' => 1]);
-            // 清除被封禁用户的 session 缓存
-            foreach ($userIds as $uid) {
-                AuthService::clearUserSessions($uid);
-            }
+            // 清除被封禁用户的 session 缓存（批量 MGET 代替串行往返）
+            AuthService::clearUserSessionsBatch($userIds);
         } catch (\Exception $e) {
             abort(500, '处理失败');
         }

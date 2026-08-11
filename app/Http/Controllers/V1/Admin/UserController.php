@@ -365,10 +365,8 @@ class UserController extends Controller
                 return response(['data' => true]);
             }
             User::whereIn('id', $userIds)->update(['banned' => 1]);
-            // 清除 session 缓存，使被封用户立即失效
-            foreach ($userIds as $uid) {
-                AuthService::clearUserSessions($uid);
-            }
+            // 清除 session 缓存，使被封用户立即失效（批量 MGET 代替串行往返）
+            AuthService::clearUserSessionsBatch($userIds);
         } catch (\Exception $e) {
             abort(500, '处理失败');
         }
@@ -394,10 +392,8 @@ class UserController extends Controller
 
         DB::beginTransaction();
         try {
-            // 清除所有被删用户的 session 缓存
-            foreach ($userIds as $uid) {
-                AuthService::clearUserSessions($uid);
-            }
+            // 清除所有被删用户的 session 缓存（批量 MGET 代替串行往返）
+            AuthService::clearUserSessionsBatch($userIds);
             // 批量删除关联数据（单次 SQL 替代 N+1 循环）
             // 1. 删除工单消息（先获取 ticket ID）
             $ticketIds = Ticket::whereIn('user_id', $userIds)->pluck('id')->toArray();

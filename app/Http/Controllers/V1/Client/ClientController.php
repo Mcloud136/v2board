@@ -14,6 +14,18 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
+    /**
+     * sing-box 版本分流决策：>= 1.12.0 用新生成器，否则用旧生成器
+     * 版本号必须用 version_compare 比较：字符串比较会把 1.9.0 误判为 >= 1.12.0
+     */
+    public static function resolveSingboxClass(?string $version): string
+    {
+        if (!is_null($version) && version_compare($version, '1.12.0', '>=')) {
+            return Singbox::class;
+        }
+        return SingboxOld::class;
+    }
+
     public function subscribe(Request $request)
     {
         $flag = $request->input('flag')
@@ -41,12 +53,8 @@ class ClientController extends Controller
                     if (preg_match('/sing-box\s+([0-9.]+)/i', $flag, $matches)) {
                         $version = $matches[1];
                     }
-                    if (!is_null($version) && $version >= '1.12.0') {
-                        $class = new Singbox($user, $servers);
-                    } else {
-                        $class = new SingboxOld($user, $servers);
-                    }
-                    return $class->handle();
+                    $class = self::resolveSingboxClass($version);
+                    return (new $class($user, $servers))->handle();
                 }
             }
             $class = new General($user, $servers);
