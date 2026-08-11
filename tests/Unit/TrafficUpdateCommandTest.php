@@ -68,6 +68,8 @@ class TrafficUpdateCommandTest extends TestCase
         Redis::shouldReceive('exists')->with('v2board_download_traffic:swap')->andReturn(1)->once();
         Redis::shouldReceive('hgetall')->with('v2board_download_traffic:swap')->andReturn(['1' => '2000'])->once();
         Redis::shouldReceive('get')->with('v2board_traffic_settle_token')->andReturn('ts_test')->once();
+        // 提交成功后清理 swap 桶与令牌
+        Redis::shouldReceive('del')->with('v2board_upload_traffic:swap', 'v2board_download_traffic:swap', 'v2board_traffic_settle_token')->once();
 
         (new TrafficUpdate())->handle();
 
