@@ -148,4 +148,63 @@ class SingboxEchTest extends TestCase
         $this->assertArrayHasKey('ech', $result['tls']);
         $this->assertTrue($result['tls']['ech']['enabled']);
     }
+
+    // ─── FIX-12：共享构建方法 buildEchConfig ─────────────────────
+
+    public function test_build_ech_config_cloudflare(): void
+    {
+        $ech = \App\Protocols\Singbox\Singbox::buildEchConfig(['ech' => 'cloudflare']);
+        $this->assertSame([
+            'enabled' => true,
+            'query_server_name' => 'cloudflare-ech.com',
+        ], $ech);
+    }
+
+    public function test_build_ech_config_custom_string_wrapped_as_array(): void
+    {
+        $ech = \App\Protocols\Singbox\Singbox::buildEchConfig([
+            'ech' => 'custom',
+            'ech_config' => 'AEX+DQBBqw...',
+        ]);
+        $this->assertTrue($ech['enabled']);
+        $this->assertSame(['AEX+DQBBqw...'], $ech['config']);
+    }
+
+    public function test_build_ech_config_custom_array_kept(): void
+    {
+        $ech = \App\Protocols\Singbox\Singbox::buildEchConfig([
+            'ech' => 'custom',
+            'ech_config' => ['cfg1', 'cfg2'],
+        ]);
+        $this->assertSame(['cfg1', 'cfg2'], $ech['config']);
+    }
+
+    public function test_build_ech_config_returns_null_when_not_configured(): void
+    {
+        $this->assertNull(\App\Protocols\Singbox\Singbox::buildEchConfig([]));
+        $this->assertNull(\App\Protocols\Singbox\Singbox::buildEchConfig(['ech' => '']));
+        // custom 但未提供配置：不下发无效字段
+        $this->assertNull(\App\Protocols\Singbox\Singbox::buildEchConfig(['ech' => 'custom']));
+        $this->assertNull(\App\Protocols\Singbox\Singbox::buildEchConfig(['ech' => 'unknown_mode']));
+    }
+
+    public function test_new_singbox_vless_uses_shared_ech_builder(): void
+    {
+        $server = $this->buildServer('vless', [
+            'tls_settings' => [
+                'server_name' => 'example.com',
+                'allow_insecure' => 0,
+                'ech' => 'cloudflare',
+                'fingerprint' => 'chrome',
+            ],
+        ]);
+
+        $user = (object)['id' => 1, 'uuid' => 'test-uuid'];
+        $class = new \App\Protocols\Singbox\Singbox($user, [$server]);
+        $method = new \ReflectionMethod($class, 'buildVless');
+        $result = $method->invoke($class, 'test-uuid', $server);
+
+        $this->assertArrayHasKey('ech', $result['tls']);
+        $this->assertSame('cloudflare-ech.com', $result['tls']['ech']['query_server_name']);
+    }
 }
