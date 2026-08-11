@@ -240,6 +240,34 @@ class UserController extends Controller
             ->header('Content-Disposition', 'attachment; filename="users_' . date('YmdHis') . '.csv"');
     }
 
+    // 设置/清除用户邀请人（修复路由指向不存在方法）
+    public function setInviteUser(Request $request)
+    {
+        $user = User::find($request->input('id'));
+        if (!$user) {
+            abort(500, '用户不存在');
+        }
+        $inviteEmail = $request->input('invite_user_email');
+        $inviteUserId = null;
+        if ($inviteEmail) {
+            $inviter = User::where('email', $inviteEmail)->first();
+            if (!$inviter) {
+                abort(500, '邀请人不存在');
+            }
+            if ($inviter->id === $user->id) {
+                abort(500, '不能将自己设为邀请人');
+            }
+            $inviteUserId = $inviter->id;
+        }
+        $user->invite_user_id = $inviteUserId;
+        if (!$user->save()) {
+            abort(500, '保存失败');
+        }
+        return response([
+            'data' => true
+        ]);
+    }
+
     public function generate(UserGenerate $request)
     {
         if ($request->input('email_prefix')) {

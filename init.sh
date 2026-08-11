@@ -9,8 +9,8 @@ echo ""
 # PHP 版本检查（必须在安装依赖之前）
 php_main_version=$(php -v | head -n 1 | cut -d ' ' -f 2 | cut -d '.' -f 1)
 php_sub_version=$(php -v | head -n 1 | cut -d ' ' -f 2 | cut -d '.' -f 2)
-if [ "$php_main_version" -lt 8 ] || ([ "$php_main_version" -eq 8 ] && [ "$php_sub_version" -lt 2 ]); then
-    echo "错误: 需要 PHP 8.2+，当前版本: $(php -v | head -n 1 | cut -d ' ' -f 2)"
+if [ "$php_main_version" -lt 8 ] || ([ "$php_main_version" -eq 8 ] && [ "$php_sub_version" -lt 3 ]); then
+    echo "错误: 需要 PHP 8.3+，当前版本: $(php -v | head -n 1 | cut -d ' ' -f 2)"
     exit 1
 fi
 echo "✅ PHP 版本检查通过: $(php -v | head -n 1 | cut -d ' ' -f 2)"

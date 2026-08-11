@@ -18,6 +18,7 @@ use App\Models\StatServer;
 use App\Models\StatUser;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Services\StatisticalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -76,6 +77,39 @@ class StatController extends Controller
         return [
             'data' => $statistics
         ];
+    }
+
+    // 排行榜（包装 StatisticalService，type 白名单校验，修复路由指向不存在方法）
+    public function getRanking(Request $request)
+    {
+        $type = $request->input('type');
+        $allowedTypes = ['server_traffic_rank', 'user_consumption_rank', 'invite_rank'];
+        if (!in_array($type, $allowedTypes, true)) {
+            abort(500, '类型不合法');
+        }
+        $limit = min(max((int)$request->input('limit', 20), 1), 100);
+        $statisticalService = new StatisticalService();
+        $statisticalService->setStartAt(strtotime(date('Y-m-d', time() - 30 * 86400)));
+        $statisticalService->setEndAt(strtotime(date('Y-m-d')));
+        return response([
+            'data' => $statisticalService->getRanking($type, $limit)
+        ]);
+    }
+
+    // 统计记录（type 白名单校验，修复路由指向不存在方法）
+    public function getStatRecord(Request $request)
+    {
+        $type = $request->input('type');
+        $allowedTypes = ['paid_total', 'commission_total', 'register_count'];
+        if (!in_array($type, $allowedTypes, true)) {
+            abort(500, '类型不合法');
+        }
+        $statisticalService = new StatisticalService();
+        $statisticalService->setStartAt(strtotime(date('Y-m-d', time() - 30 * 86400)));
+        $statisticalService->setEndAt(strtotime(date('Y-m-d')));
+        return response([
+            'data' => $statisticalService->getStatRecord($type)
+        ]);
     }
 
     public function getOrder(Request $request)

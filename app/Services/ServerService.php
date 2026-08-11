@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Cache;
 
 class ServerService
 {
-    private const SERVER_MODELS = [
+    // 8 种支持的节点类型，新增类型只需在此注册（public 供分组删除等全协议遍历复用）
+    public const SERVER_MODELS = [
         'shadowsocks' => ServerShadowsocks::class,
         'vmess'       => ServerVmess::class,
         'trojan'      => ServerTrojan::class,

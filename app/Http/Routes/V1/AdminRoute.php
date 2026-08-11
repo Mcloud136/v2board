@@ -154,7 +154,6 @@ class AdminRoute
             // Notice
             $router->get ('/notice/fetch', [NoticeController::class, 'fetch']);
             $router->post('/notice/save', [NoticeController::class, 'save']);
-            $router->post('/notice/update', [NoticeController::class, 'update']);
             $router->post('/notice/drop', [NoticeController::class, 'drop']);
             $router->post('/notice/show', [NoticeController::class, 'show']);
             // Ticket

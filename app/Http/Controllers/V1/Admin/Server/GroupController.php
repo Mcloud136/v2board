@@ -66,17 +66,12 @@ class GroupController extends Controller
             }
         }
 
-        $servers = ServerVmess::all();
-        foreach ($servers as $server) {
-            if (in_array($request->input('id'), $server->group_id)) {
-                abort(500, '该组已被节点所使用，无法删除');
-            }
-        }
-
-        $servers = ServerVless::all();
-        foreach ($servers as $server) {
-            if (in_array($request->input('id'), $server->group_id)) {
-                abort(500, '该组已被节点所使用，无法删除');
+        // 全 8 种协议节点引用检查（复用 ServerService::SERVER_MODELS，避免新协议遗漏致悬空引用）
+        foreach (ServerService::SERVER_MODELS as $model) {
+            foreach ($model::all() as $server) {
+                if (in_array($request->input('id'), $server->group_id ?? [])) {
+                    abort(500, '该组已被节点所使用，无法删除');
+                }
             }
         }
 
