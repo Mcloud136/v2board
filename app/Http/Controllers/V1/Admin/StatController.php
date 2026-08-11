@@ -65,6 +65,19 @@ class StatController extends Controller
         ];
     }
 
+    /**
+     * 近 31 天平台每日统计（订单/佣金/收款/注册/邀请/流量，来自 v2board:statistics 汇总的 v2_stat）
+     */
+    public function getStat(Request $request)
+    {
+        $statistics = Stat::orderBy('record_at', 'DESC')
+            ->limit(31)
+            ->get();
+        return [
+            'data' => $statistics
+        ];
+    }
+
     public function getOrder(Request $request)
     {
         $statistics = Stat::where('record_type', 'd')
