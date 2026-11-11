@@ -26,3 +26,4 @@ workerman.webman.php.pid
 workerman.log
 CLAUDE.md
 .claude/
+/.user.ini
