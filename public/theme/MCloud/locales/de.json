@@ -1,0 +1,903 @@
+{
+  "auth": {
+    "features": {
+      "first": {
+        "description": "Airbus verwendet Hochgeschwindigkeits-Dedizierungsverbindung mit Hochgeschwindigkeit, um ein stabiles Netzwerk-, Hochgeschwindigkeits- und Millisekunden-Reaktionsgeschwindigkeit zu gewährleisten",
+        "title": "Hochgeschwindigkeitsdedizierte Leitungsverbindung mit Hochgeschwindigkeit"
+      },
+      "second": {
+        "description": "OpenAI CHATGPT, Google Bard, Middlebury und andere AI Services Unbegrenzte Zugriff, intelligente Beschleunigung",
+        "title": "KI intelligente Beschleunigung"
+      },
+      "third": {
+        "description": "Unterstützt Streaming Media -Entsperren wie Netflix, YouTube, Hulu, BBC iPlayer, Amazon Prime Video usw.",
+        "title": "Streaming -Medien entsperren"
+      }
+    },
+    "logout": "Melden Sie sich aus",
+    "message": {
+      "LoggedIn": "Angemeldet",
+      "loginPlease": "Bitte vervollständigen Sie zuerst die Anmeldung"
+    },
+    "title": "Verbinden Sie die Welt von hier aus\nAirbus - Genießen Sie die globale Netzwerkbeschleunigung"
+  },
+  "bill": {
+    "balance": "Saldozahlung",
+    "discount": "Für bestehende Pakete ermäßigt",
+    "discountTips": "Das Originalpaket zieht den Preis des Vorbestellpakets ab. Je mehr Sie erstatten, desto weniger kompensieren Sie und die Rückerstattung wird dem Kontostand zurückerstattet.",
+    "handlingFee": "Bearbeitungsgebühr",
+    "original": "Originalpreis",
+    "payButton": "Jetzt bezahlen",
+    "payIconText": "Sichere Zahlung",
+    "payment": "Zahlungsmethode",
+    "preferential": "Rabatt",
+    "realPrice": "Tatsächlicher Zahlungsbetrag",
+    "title": "Rechnungen bezahlen"
+  },
+  "client": {
+    "android": {
+      "description": "Alle Android -Serien wie Huawei / Xiaomi / Oppo",
+      "title": "Android -Kunde"
+    },
+    "btn": "Jetzt herunterladen",
+    "homePage": {
+      "description": "Der selbst entwickelte Client unterstützt alle Terminalgeräte wie Windows, MacOS, iOS, Android usw. und deckt alle gesamten Terminalgeräte ab.",
+      "title": "Alle Terminalunterstützung\nKlicken Sie auf das Symbol unten, um herunterzuladen"
+    },
+    "ios": {
+      "description": "iPhone/iPad Full Range",
+      "title": "iOS -Kunde"
+    },
+    "knowledgeAll": "Alle Tutorials",
+    "knowledgePage": "Kunden -Tutorial",
+    "mac": {
+      "description": "Intel / Apple Silicon Full Series",
+      "title": "MacOS -Client"
+    },
+    "windows": {
+      "description": "32/64-Bit Full Series",
+      "title": "Windows Client"
+    }
+  },
+  "coupon": {
+    "button": "Gutscheine überprüfen",
+    "comment": "Folgen Sie dem offiziellen Telegrammkanal, um die neuesten Rabattinformationen zu erhalten",
+    "placeholder": "👋 einen Gutschein haben? Bitte geben Sie es hier ein, wenn nicht, ignorieren Sie es",
+    "title": "Gutscheine",
+    "message": {
+      "empty": "Bitte geben Sie einen Gutschein ein",
+      "invalid": "Ungültiger Gutschein",
+      "mismatch": "Der Gutschein gilt nicht für diesen Zyklus. Bitte ersetzen Sie den Zyklus und überprüfen Sie ihn erneut.",
+      "success": "Die Gutscheinüberprüfung war erfolgreich"
+    }
+  },
+  "couponExchange": {
+    "checkButton": "Überprüfungs -CDKey",
+    "exchangeButton": "Paket einlösen",
+    "menu": "CDKey -Erlösung",
+    "message": {
+      "empty": "Bitte geben Sie CDKey ein",
+      "error": "Die Erlösung von Rabattcode fehlgeschlagen",
+      "incorrectType": "Dieser CDKey kann für Pakete nicht eingelöst werden",
+      "notPeriod": "Dieser CDKey enthält keine Zyklen",
+      "notPlan": "Dieser CDKey enthält kein Paket",
+      "success": "{Plan} Paket erfolgreich einlösen"
+    },
+    "placeholder": "Bitte geben Sie den CDKEY -Erlösungscode ein",
+    "title": "CDKey"
+  },
+  "currency": {
+    "symbol": "¥",
+    "unit": "Yuan"
+  },
+  "footer": {
+    "copyRight": "© 2025 Airbuddy Alle Rechte vorbehalten",
+    "links": {
+      "1": {
+        "text": "Alternative Stelle",
+        "url": "https://baidu.com"
+      },
+      "2": {
+        "text": "Treten Sie Telegrammkanal bei",
+        "url": "https://t.me/themebuddy"
+      },
+      "3": {
+        "text": "Wenden Sie sich an Telegram -Kundendienst",
+        "url": "https://t.me/themebuddy"
+      }
+    }
+  },
+  "giftcard": {
+    "button": "Jetzt einlösen",
+    "menu": "Schenkungskartenerlösung",
+    "message": {
+      "balance": "Erfolgreich einlösen, Konto erhöhen Betrag: {Saldo} Yuan",
+      "empty": "Bitte geben Sie den Redemption -Code für Geschenkkarten ein",
+      "error": "Die Erlösung des Geschenkkartens ist fehlgeschlagen",
+      "plan": "Einlösen erfolgreich, neues Abonnementpaket wird hinzugefügt, Dauer: {Zeit} Tage",
+      "reset": "Einlösen erfolgreich, das Abonnement den Verkehr erfolgreich zurücksetzen",
+      "time": "Erfolgreiche Abonnementzeit erhöht: {Zeit} Tage",
+      "traffic": "Erfolgreiche Abonnementverkehr erhöht: {Verkehr} GB"
+    },
+    "placeholder": "Bitte geben Sie den Redemption -Code für Geschenkkarten ein",
+    "title": "Geschenkkarte"
+  },
+  "home": {
+    "matrix": {
+      "description": "Abdeckung globaler Video -Websites, Entsperren Sie alle, unbegrenzten Zugriff auf alle globalen Apps wie Chatgpt, Telegram, YouTube usw.",
+      "title": "Streaming -Medien ist vollständig freigeschaltet\nUnbegrenzter kostenloser Zugang zu globalen Apps"
+    },
+    "nodes": {
+      "country": {
+        "cn-hk": "Hongkong, China",
+        "ca": "Kanada",
+        "de": "Deutschland",
+        "in": "Indien",
+        "en": "England",
+        "us": "USA",
+        "kr": "Südkorea",
+        "kp": "Nordkorea",
+        "jp": "Japan",
+        "aq": "Antarktis",
+        "sg": "Singapur",
+        "tw": "Taiwan, China",
+        "th": "Thailand",
+        "vn": "Vietnam",
+        "my": "Malaysia",
+        "ph": "die Philippinen",
+        "id": "Indonesien",
+        "tr": "Türkiye",
+        "ru": "Russland",
+        "fr": "Frankreich",
+        "es": "Spanien",
+        "it": "Italien",
+        "br": "Brasilien",
+        "mx": "Mexiko",
+        "ar": "Argentinien",
+        "au": "Australien",
+        "nz": "Neuseeland",
+        "za": "Südafrika",
+        "eg": "Ägypten",
+        "il": "Israel",
+        "ae": "Vereinigte Arabische Emirate",
+        "fi": "Finnland",
+        "se": "Schweden",
+        "dk": "Dänemark",
+        "nl": "Niederlande",
+        "be": "Belgien",
+        "no": "Norwegen",
+        "rs": "Serbien",
+        "rw": "Ruanda",
+        "sa": "Saudi-Arabien",
+        "sb": "Solomonen",
+        "sc": "Seychellen",
+        "sd": "Sudan",
+        "sh": "St. Helena Island",
+        "si": "Slowenien",
+        "sk": "Slowakei",
+        "sl": "Sierra Leone",
+        "sm": "San Marino",
+        "sn": "Senegal",
+        "so": "Somalia",
+        "sr": "Surinam",
+        "ss": "Südsudan",
+        "su": "die Sowjetunion",
+        "sv": "El Salvador",
+        "sx": "Heiliger Martin der Niederlande",
+        "sy": "Syrien",
+        "sz": "Swasiland",
+        "td": "Tschad",
+        "tg": "Togo",
+        "tj": "Tadschikistan",
+        "tk": "ToKelao",
+        "tl": "Timor-Leste",
+        "tm": "Turkmenistan",
+        "tn": "Tunesien",
+        "to": "Tonga",
+        "tv": "Tuvalu",
+        "tz": "Tansania",
+        "ua": "Ukraine",
+        "ug": "Uganda",
+        "uk": "VEREINIGTES KÖNIGREICH.",
+        "uy": "Uruguay",
+        "uz": "Usbekistan",
+        "va": "Vatikan",
+        "ve": "Venezuela",
+        "vu": "Vanuatu",
+        "ws": "Samoa",
+        "xk": "Kosovo",
+        "ye": "Jemen",
+        "yt": "Mayot",
+        "yu": "Jugoslawien",
+        "zm": "Sambia",
+        "zw": "Simbabwe"
+      },
+      "description": "1.000 mehr Hochgeschwindigkeitserver auf der ganzen Welt, genießen Sie jederzeit schnelle und stabile Links",
+      "title": "Globale Knoten, Hochgeschwindigkeit und stabile Verbindungen"
+    },
+    "poster": {
+      "button": "Erfahrung jetzt",
+      "description": "Erhalten Sie eine Einzugs-Zugangsfähigkeit von bis zu 2000 Mbit / s, die mit Hunderten von Inhaltsanbietern auf der ganzen Welt verbunden sind",
+      "features": {
+        "1": "Streaming -Medien entsperren",
+        "2": "Voller Transitknoten",
+        "3": "Alle Terminalunterstützung",
+        "4": "Tunnelverschlüsselung",
+        "5": "Halten Sie die Linie für immer",
+        "6": "Dedizierte Linienbeschleunigung"
+      },
+      "title": "Airrocket\nGenießen Sie die globale Netzwerkbeschleunigung ohne Limit"
+    },
+    "privacy": {
+      "description": "Vollständige Transitknoten, Tunnelverschlüsselung, Schutz Ihrer Privatsphäre, sichere Verschlüsselung, niemals auslaufen",
+      "steps": {
+        "node": "Globale Hochverteidigungsknoten",
+        "safe": "Tunnelverschlüsselung",
+        "target": "Dienste in Übersee",
+        "transfer": "Hochgeschwindigkeits-Transitservice",
+        "user": "Ihr Gerät"
+      },
+      "title": "Datenschutzschutz, Sicherheitsverschlüsselung"
+    },
+    "service": {
+      "button": {
+        "text": "Wenden Sie sich an den Kundendienst",
+        "url": "https://t.me/themebuddy"
+      },
+      "description": "Wenn Sie Fragen haben, wenden Sie sich an mehrere Kontaktinformationen, Netzwerkingenieure sind jederzeit auf Anruf und werden jederzeit verfügbar sein und niemals den Kontakt verlieren.",
+      "title": "7x24 Stunden schneller Antwort auf den Kundendienst"
+    },
+    "shop": {
+      "button": "Kaufe es jetzt",
+      "description": "Globale IEPL -Leitungsknoten, monatliche/vierteljährliche/jährliche Abonnementpakete, genießen Sie mehr Rabatte",
+      "plans": {
+        "cycle": {
+          "1": {
+            "features": {
+              "ad": "Jährliche Zahlung von RMB 45.68",
+              "list": "Verkehr: 100 g monatlicher Verkehr, jeden Monat zurückgesetzt\nAusrüstung: 3 Geräte sind gleichzeitig online\nBandbreite: Geschwindigkeitsbegrenzung 100 Mbit / s\nLinie: Hochgeschwindigkeitsknoten\nKnoten: 32 Länder/Region Knoten",
+              "title": "Paketfunktionen"
+            },
+            "name": "Basis-Hochgeschwindigkeitspaket",
+            "price": "9.99",
+            "priceTime": "Mond",
+            "sid": "5"
+          },
+          "2": {
+            "features": {
+              "ad": "Jährliche Zahlung von RMB 57.68",
+              "list": "Verkehr: 300 g monatlicher Verkehr, jeden Monat zurückgesetzt\nAusrüstung: 6 Geräte sind gleichzeitig online\nBandbreite: Geschwindigkeitsbegrenzung 300 Mbit / s\nZeile: IEPL Dedizierte Zeilenknoten + Relaistunnel\nKnoten: 65 Länder/Region Knoten",
+              "title": "Paketfunktionen"
+            },
+            "name": "Standard -professionelles Paket",
+            "price": "19.99",
+            "priceTime": "Mond",
+            "sid": "6"
+          },
+          "3": {
+            "features": {
+              "ad": "Jährliche Zahlung von RMB 177.68",
+              "list": "Verkehr: 1000 GB Verkehr pro Monat, jeden Monat zurücksetzen\nAusrüstung: Keine Grenze für die Anzahl der Geräte\nBandbreite: Geschwindigkeitsbegrenzung 1000 Mbit / s\nZeile: IEPL Dedizierte Zeilenknoten + Relaistunnel + Enterprise Dedized Line\nKnoten: 108 Länder/Regionen Knoten\nStreaming -Medien entsperren",
+              "title": "Paketfunktionen"
+            },
+            "name": "Premium -Flaggschiff -Paket",
+            "price": "29.99",
+            "priceTime": "Mond",
+            "sid": "7"
+          }
+        },
+        "flow": {
+          "1": {
+            "features": {
+              "ad": "Permanent unbegrenztes Verkehrspaket",
+              "list": "Verkehr: 100 GB dauerhafter Verkehr, anhalten, sobald er aufgebraucht ist\nAusrüstung: Keine Grenze für die Anzahl der Geräte\nBandbreite: Geschwindigkeitsbegrenzung 1000 Mbit / s\nZeile: IEPL Dedizierte Zeilenknoten + Relaistunnel + Enterprise Dedized Line\nKnoten: 108 Länder/Regionen Knoten",
+              "title": "Paketfunktionen"
+            },
+            "name": "Rocket 100 GB",
+            "price": "99",
+            "priceTime": "dauerhaft",
+            "sid": "8"
+          },
+          "2": {
+            "features": {
+              "ad": "Permanent unbegrenztes Verkehrspaket",
+              "list": "Verkehr: 100 GB dauerhafter Verkehr, anhalten, sobald er aufgebraucht ist\nAusrüstung: Keine Grenze für die Anzahl der Geräte\nBandbreite: Geschwindigkeitsbegrenzung 1000 Mbit / s\nZeile: IEPL Dedizierte Zeilenknoten + Relaistunnel + Enterprise Dedized Line\nKnoten: 108 Länder/Regionen Knoten",
+              "title": "Paketfunktionen"
+            },
+            "name": "Rakete 500 GB",
+            "price": "239",
+            "priceTime": "dauerhaft",
+            "sid": "9"
+          },
+          "3": {
+            "features": {
+              "ad": "Permanent unbegrenztes Verkehrspaket",
+              "list": "Verkehr: 100 GB dauerhafter Verkehr, anhalten, sobald er aufgebraucht ist\nAusrüstung: Keine Grenze für die Anzahl der Geräte\nBandbreite: Geschwindigkeitsbegrenzung 1000 Mbit / s\nZeile: IEPL Dedizierte Zeilenknoten + Relaistunnel + Enterprise Dedized Line\nKnoten: 108 Länder/Regionen Knoten",
+              "title": "Paketfunktionen"
+            },
+            "name": "Rocket 1000 GB",
+            "price": "489",
+            "priceTime": "dauerhaft",
+            "sid": "10"
+          }
+        },
+        "switch": {
+          "cycle": "Periodisches Abonnement",
+          "flow": "Zahlen Sie nach Volumen"
+        }
+      },
+      "title": "Kaufen Sie Pakete und genießen Sie die globale Netzwerkbeschleunigung"
+    }
+  },
+  "invite": {
+    "banner": {
+      "button": "Jetzt einladern",
+      "description": "Verdienen Sie sofort Geld und erhalten Sie einen großzügigen Cashback der Kommission",
+      "title": "Freunde einladen\nVerdiene großzügige Provisionen"
+    },
+    "codeList": {
+      "button": "Generieren Sie Einladungscode",
+      "copy": "Kopieren Sie den Link zum Einladungscode",
+      "empty": "Noch kein Einladungscode",
+      "item": "Einladungscode",
+      "tips": "Kopieren Sie den Einladungslink und teilen Sie ihn mit Freunden. Wenn Sie sich über den Link registrieren, erhalten Sie eine Provision",
+      "title": "Einladungscode -Verwaltung"
+    },
+    "message": {
+      "codeCopySuccess": "Der Einladungscode wurde erfolgreich kopiert",
+      "codeCreateSuccess": "Der Einladungscode wurde erfolgreich generiert"
+    },
+    "recordList": {
+      "commission": "Kommission",
+      "createdTime": "Schöpfungszeit",
+      "empty": "Noch keine Provisionsaufzeichnung",
+      "orderAmount": "Bestellmenge",
+      "title": "Provision Record"
+    },
+    "wallet": {
+      "button": {
+        "transfer": "Überweisen",
+        "withdraw": "Rückzug"
+      },
+      "confirm": "Bestätigungskommissionen",
+      "description": "Aktueller Provisionsbilanz",
+      "people": "Anzahl der Einladungen",
+      "proportion": "Provisionsverhältnis",
+      "title": "Einladungskommission",
+      "total": "Angesammelte Kommission",
+      "transfer": {
+        "balance": "Betrag überweisen",
+        "error": {
+          "empty": "Der Überweisungsbetrag muss größer als 0 sein"
+        },
+        "max": "Maximal übertragbare Menge",
+        "submit": "Jetzt übertragen",
+        "success": "Übertragung der Promotion Commission, um erfolgreich auszugleichen",
+        "title": "Übertragung von Provision"
+      },
+      "withdraw": {
+        "account": "Auszahlungskonto",
+        "description": "Die Auszahlung wird den aktuellen Provisionsbetrag freigelassen, und der Auszahlungsbetrag wird innerhalb von 1-3 Arbeitstagen hinterlegt.",
+        "method": "Rückzugsmethode",
+        "submit": "Jetzt Bargeld abheben",
+        "success": "Fördern Sie die Bewerbung zur Auszahlung der Kommission erfolgreich",
+        "title": "Rücknahme von Provision"
+      }
+    }
+  },
+  "login": {
+    "description": "Hochgeschwindigkeitsnetzwerk, das die Welt abdeckt",
+    "email": {
+      "placeholder": "Bitte geben Sie Ihre E -Mail -Adresse ein",
+      "rules": {
+        "required": "Bitte geben Sie die richtige E -Mail -Adresse ein"
+      }
+    },
+    "password": {
+      "placeholder": "Bitte geben Sie Ihr Passwort ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie Ihr Passwort ein"
+      }
+    },
+    "register": "Haben Sie noch keinen Account? Klicken Sie hier, um sich zu registrieren",
+    "remember": "Denken Sie an das Passwort",
+    "reset": "das Passwort vergessen?",
+    "submit": "Einloggen",
+    "success": "Erfolgreich anmelden",
+    "title": "Melden Sie sich bei Airbus an"
+  },
+  "node": {
+    "banner": {
+      "button": "Wenden Sie sich an den Kundendienst",
+      "title": "Kein geeigneter Knoten? Klicken Sie auf die Schaltfläche unten, um den Kundendienst zu kontaktieren, um sich anzupassen"
+    },
+    "check": "Neuere Tests",
+    "empty": "Es sind keine Knoten verfügbar",
+    "rate": "Multipliziert",
+    "ss": "Replikationsknoten -SS -Link"
+  },
+  "notice": {
+    "clickText": "Klicken Sie auf, um Details anzuzeigen",
+    "coupon": {
+      "btnText": "Klicken Sie hier, um die Erneuerung des Gutscheins zu erhalten",
+      "countText": "Ereignis bleibt:",
+      "title": "Ich habe dich schon lange nicht mehr gesehen\nBegrenzte Zeiterneuerung Rabatt"
+    },
+    "empty": "Noch keine Benachrichtigung",
+    "iconBox": {
+      "button": "Alle Benachrichtigungen anzeigen",
+      "more": "Lasten Sie mehr Benachrichtigungen",
+      "title": "Alle Benachrichtigungen"
+    },
+    "newUser": {
+      "btnText": "Klicken Sie hier, um den Gutschein zu erhalten und die Bestellung aufzugeben",
+      "countText": "Countdown zum Ereignis:",
+      "title": "Newcomer Meeting Geschenk\nBegrenzter Zeitrabatt"
+    },
+    "obj": {
+      "balance": "Cash -Gutscheine",
+      "balanceSuffix": "Yuan",
+      "discount": "Rabatt -Gutscheine",
+      "discountSuffix": "falten"
+    },
+    "special": {
+      "btnText": "Klicken Sie hier, um den Gutschein zu erhalten und die Bestellung aufzugeben",
+      "countText": "Countdown zum Ereignis:",
+      "title": "Feiertags -Sonderangebot\nBegrenzter Zeitrabatt"
+    },
+    "top": "Wichtige Bekanntmachung"
+  },
+  "order": {
+    "button": {
+      "cancel": "Eine Bestellung stornieren",
+      "detail": "Überprüfen Sie die Details"
+    },
+    "deposit": "nachfüllen",
+    "detail": {
+      "createdTime": "Bestellzeit",
+      "message": {
+        "cancelError": "Auftragsstornierung fehlgeschlagen",
+        "cancelSuccess": "Stornierung erfolgreich bestellen",
+        "copyError": "Die Zahlungsadresse nicht kopiert",
+        "copySuccess": "Kopieren der Zahlungsadresse erfolgreich"
+      },
+      "qrcodeTips": "Bitte öffnen Sie WeChat/Alipay, um den Code zum Zahlen zu scannen",
+      "payCopy": "Kopieren Sie die Zahlungsadresse",
+      "payTips": "Bitte vervollständigen Sie die Zahlung im Scan -Code oder auf der neu geöffneten Zahlungsseite. Wenn es keine automatische Weiterleitung gibt, kopieren Sie bitte die oben genannte Zahlungsadresse manuell, um sie zu öffnen. Bitte stornieren Sie die Bestellungen in der Zahlung nicht nach Belieben, vermeiden Sie wiederholte Zahlungen oder nicht in der Lage, den Zahlungsstatus zurückzurufen",
+      "payUrl": "Zahlungsadresse",
+      "payWaiting": "Warten Sie, bis die Bestellung bezahlt wird",
+      "planInfo": "Combo",
+      "title": "Bestelldetails",
+      "tradeNo": "Bestellnummer"
+    },
+    "list": {
+      "action": "arbeiten",
+      "amount": "Bestellmenge",
+      "empty": "Noch kein Bestellaufzeichnung",
+      "number": "#",
+      "order": "Informationen bestellen",
+      "status": "Bestellstatus"
+    },
+    "message": {
+      "cancelSuccess": "Stornierung erfolgreich bestellen",
+      "copyPayUrlError": "Die Zahlungsadresse nicht kopiert",
+      "copyPayUrlSuccess": "Kopieren der Zahlungsadresse erfolgreich"
+    },
+    "payPending": {
+      "copyPayUrl": "Kopieren Sie den Zahlungslink",
+      "linkButton": "Klicken Sie hier, um zum Bezahlung zu springen",
+      "tips": "Bitte stornieren Sie die Bestellungen in der Zahlung nicht nach Belieben, vermeiden Sie wiederholte Zahlungen oder Unfähigkeit, den Zahlungsstatus zurückzurufen.",
+      "title": "Sie haben eine Bestellung, um bezahlt zu werden",
+      "url": "Zahlungsadresse"
+    },
+    "status": {
+      "cancelled": "Abgesagt",
+      "completed": "Vollendet",
+      "discounted": "Veraltet",
+      "paid": "Öffnung",
+      "pending": "Bezahlt werden"
+    },
+    "title": "Befehl"
+  },
+  "page": {
+    "auth": "Login/Register",
+    "base": {
+      "dashboard": "Mein Panel",
+      "knowledge": "Nutzungstutorial",
+      "label": "Base"
+    },
+    "commercial": {
+      "invite": "Meine Einladung",
+      "label": "Finanzen",
+      "order": "Meine Bestellung"
+    },
+    "download": "herunterladen",
+    "home": "Titelseite",
+    "menus": {
+      "all": "Alle Speisekarte",
+      "close": "Menü schließen"
+    },
+    "person": {
+      "label": "persönlich",
+      "profile": "Kontoeinstellungen",
+      "ticket": "Serviceauftrag",
+      "traffic": "Verkehrsaufnahme"
+    },
+    "subscribe": {
+      "label": "Abonnement",
+      "node": "Knotenstatus",
+      "shop": "Kaufen Sie ein Paket"
+    }
+  },
+  "plan": {
+    "device": "Anzahl der Geräte",
+    "deviceUnit": "Turm",
+    "name": "Paketname",
+    "period": "Paketzyklus",
+    "periodList": {
+      "half_year_price": "Ein halbes Jahr",
+      "month_price": "Monatliche Zahlung",
+      "onetime_price": "Einmalig",
+      "quarter_price": "Vierteljährliche Zahlung",
+      "reset_price": "Setzen Sie das Paket zurück",
+      "three_year_price": "Drei Jahre",
+      "two_year_price": "Zwei Jahre",
+      "year_price": "Jährliche Zahlung"
+    },
+    "periodUnit": {
+      "half_year_price": "Ein halbes Jahr",
+      "month_price": "Mond",
+      "onetime_price": "Einmalig",
+      "quarter_price": "Jahreszeit",
+      "reset_price": "Setzen Sie das Paket zurück",
+      "three_year_price": "Drei Jahre",
+      "two_year_price": "Zwei Jahre",
+      "year_price": "Jahr"
+    },
+    "speed": "Bandbreitenrate",
+    "speedUnLimit": "Keine Geschwindigkeitsbegrenzung",
+    "traffic": "Verpackungsverkehr"
+  },
+  "profile": {
+    "wallet": {
+      "balance": {
+        "account": "Kontostand",
+        "invite": "Provisionsbilanz"
+      },
+      "button": "nachfüllen",
+      "description": "Beinhaltet die verfügbare Brieftaschenbalance und die Brieftaschenbalance der Kommission",
+      "recharge": {
+        "balance": "Betrag aufladen",
+        "newLabel": "Gleichgewicht nach dem Aufladen",
+        "oldLabel": "Aktueller Gleichgewicht",
+        "submit": "Jetzt aufladen",
+        "title": "Bilanzaufladung"
+      },
+      "title": "Meine Brieftasche"
+    }
+  },
+  "register": {
+    "code": {
+      "button": "Überprüfungscode senden",
+      "placeholder": "Bitte geben Sie den E -Mail -Überprüfungscode ein"
+    },
+    "description": "Verbinden Sie die Welt von hier aus",
+    "email": {
+      "placeholder": "Bitte geben Sie Ihre E -Mail -Adresse ein",
+      "rules": {
+        "required": "Bitte geben Sie die richtige E -Mail -Adresse ein"
+      }
+    },
+    "invite": {
+      "placeholder": "Bitte geben Sie den Einladungscode ein",
+      "rules": {
+        "required": "Einladungscode muss eingegeben werden"
+      }
+    },
+    "login": "Haben Sie bereits ein Konto? Klicken Sie auf, um sich anzumelden",
+    "password": {
+      "placeholder": "Bitte geben Sie Ihr Anmeldekennwort ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie Ihr Passwort ein"
+      }
+    },
+    "password2": {
+      "placeholder": "Bitte geben Sie Ihr Anmeldekennwort erneut ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie Ihr Anmeldekennwort erneut ein",
+        "same": "Die zweimal eingegebenen Passwörter sind inkonsistent"
+      }
+    },
+    "submit": "registrieren",
+    "success": "Erfolgreich registriert",
+    "title": "Registrieren Sie Airbus"
+  },
+  "reset": {
+    "changePwdByEmail": "Passwort ändern (E -Mail -Überprüfung)",
+    "changePwdByOldPwd": "Passwort ändern (alte Passwortüberprüfung)",
+    "code": {
+      "button": "Überprüfungscode senden",
+      "label": "E -Mail -Überprüfungscode",
+      "placeholder": "Bitte geben Sie den E -Mail -Überprüfungscode ein",
+      "success": "Der Verifizierungscode wurde erfolgreich an Ihre E -Mail -Adresse gesendet"
+    },
+    "description": "Setzen Sie Ihr Anmeldekennwort zurück",
+    "email": {
+      "placeholder": "Bitte geben Sie Ihre E -Mail -Adresse ein",
+      "rules": {
+        "required": "Bitte geben Sie die richtige E -Mail -Adresse ein"
+      }
+    },
+    "login": "Kehren Sie zum Login zurück",
+    "password": {
+      "label": "Geben Sie ein neues Passwort ein",
+      "placeholder": "Bitte geben Sie Ihr neues Anmeldekennwort ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie Ihr Passwort ein"
+      }
+    },
+    "passwordConfirm": {
+      "label": "Bestätigen Sie das neue Passwort",
+      "placeholder": "Bitte geben Sie das neue Anmeldekennwort erneut ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie das neue Anmeldekennwort erneut ein",
+        "same": "Die zweimal eingegebenen Passwörter sind inkonsistent"
+      }
+    },
+    "passwordOld": {
+      "label": "Geben Sie das ursprüngliche Passwort ein",
+      "placeholder": "Bitte geben Sie Ihr ursprüngliches Login -Passwort ein",
+      "rules": {
+        "min": "Passwortlänge beträgt mindestens 8 Ziffern",
+        "required": "Bitte geben Sie Ihr Passwort ein"
+      }
+    },
+    "submit": "Passwort zurücksetzen",
+    "success": "Passwort erfolgreich zurücksetzen",
+    "title": "Passwort zurücksetzen"
+  },
+  "shop": {
+    "period": "Zahlungszyklus",
+    "confirm": {
+      "description": "Bitte bestätigen Sie Ihre Bestellinformationen, die Preise für jede Zahlungsmethode können variieren",
+      "title": "Bestätigen Sie die Bestellung",
+      "override": {
+        "title": "Sind Sie sicher das Paket ändern?",
+        "content": "Bitte beachten Sie, dass das Ändern des Pakets dazu führt, dass das aktuelle Paket vom neuen Paket abgedeckt wird",
+        "okText": "Sicher",
+        "cancelText": "Stornieren"
+      }
+    },
+    "custom": {
+      "button": "Wenden Sie sich an den Kundendienst",
+      "title": "Sie haben kein geeignetes Paket? Klicken Sie auf die Schaltfläche unten, um den Kundendienst zu kontaktieren, um sich anzupassen"
+    },
+    "cycle": {
+      "description": "Vollständige IEPL -Dedized -Line -Knoten, monatliche/vierteljährliche/jährliche Abonnementpakete, genießen Sie weitere Rabatte",
+      "features": {
+        "more": "Weitere Funktionen sehen",
+        "title": "Merkmale"
+      },
+      "month": "Monatliche Zahlung",
+      "switchSuffix": "Preis",
+      "tag": "🔥 Heißer Verkauf",
+      "title": "Periodisches Abonnement",
+      "year": "Jährliche Zahlung",
+      "yearByMonth": "Jährliche Zahlung von {Rabatt}, nur monatlich: {monatprice} yuan",
+      "yearByPrice": "Jährliche Zahlung {DiscountSubtract} yuan"
+    },
+    "empty": "Keine Pakete zum Kauf erhältlich",
+    "flow": {
+      "button": "Kaufe es jetzt",
+      "description": "Alle IEPL -dedizierten Linienknoten, die durch den Verkehr in Rechnung gestellt, keine Zeitlimit, bezahlt durch die tatsächliche Nutzung",
+      "features": {
+        "more": "Weitere Funktionen sehen",
+        "title": "Paketfunktionen"
+      },
+      "tag": "🔥 Empfohlen",
+      "tips": "Unbegrenzter Verkehrspaket",
+      "title": "Zahlen Sie nach Volumen"
+    },
+    "hasToPayOrder": "Sie haben eine Bestellung nicht bezahlt",
+    "routerButton": "Jetzt abonnieren"
+  },
+  "subscribe": {
+    "empty": "Kostenlos kein Abonnement",
+    "expire": {
+      "empty": "Dauerhaft effektiv",
+      "expired": "Das Paket ist abgelaufen",
+      "expireSoon": "Das Paket bleibt übrig",
+      "expireUnit": "Himmel",
+      "title": "Ablaufzeit"
+    },
+    "message": {
+      "linkCopySuccess": "Abonnement -Link erfolgreich kopiert"
+    },
+    "renewal": {
+      "close": "Die automatische Erneuerung wurde ausgeschaltet",
+      "loading": "Automatischer Erneuerungsstatus wechseln ...",
+      "open": "Die automatische Erneuerung wurde aktiviert",
+      "title": "Automatische Erneuerung"
+    },
+    "reset": {
+      "description": "{Resetday} Queen Reset",
+      "descriptionForToday": "Heute zurücksetzen",
+      "empty": "Kein Reset erforderlich",
+      "title": "Verkehrsresetzeit"
+    },
+    "shortcut": {
+      "apps": {
+        "clash": {
+          "comment": "Für Clash-Clash für Windows/Mac/Android/Linux für Drittanbieter-Clients",
+          "title": "Zusammenstoß"
+        },
+        "export": "Import in",
+        "quantumult": {
+          "comment": "Für Kunden von Drittanbietern Quantumult / Quantumult X für iOS / iPhone / iPad / Mac / Android",
+          "title": "Quantenum"
+        },
+        "shadowrocket": {
+          "comment": "Für Kunden von Drittanbietern ShadowRocket für iOS/iPhone/iPad/Mac",
+          "title": "ShadowRocket"
+        },
+        "singbox": {
+          "comment": "Für Kunden von Drittanbietern Singbox für iOS / iPhone / iPad / Mac",
+          "title": "Singbox"
+        },
+        "surfboard": {
+          "comment": "Geeignet für Kunden von Drittanbietern Surfboard für Android",
+          "title": "Surfbrett"
+        },
+        "surge": {
+          "comment": "Für Kunden von Drittanbietern steigen für Windows / Mac / Android",
+          "title": "Anstieg"
+        },
+        "title": "Schnell in Kunden von Drittanbietern importieren"
+      },
+      "link": {
+        "button": "Kopieren Sie den Abonnement -Link",
+        "title": "Abonnement -Link"
+      },
+      "qrcode": {
+        "tips": "Scannen Sie den QR -Code, um das Abonnement in den Importieren zu\nShadowRocket/Clash und andere Kunden"
+      },
+      "reset": {
+        "button": "Abonnement zurücksetzen",
+        "modal": {
+          "cancel": "Stornieren",
+          "content": "Sie können dies tun, wenn Ihre Abonnementadresse oder Informationen durchgesickert sind. Nach dem Zurücksetzen ändert sich Ihr UUID und Ihr Abonnement und Sie müssen das Abonnement neu importieren.",
+          "ok": "Sicher",
+          "success": "Setzen Sie den Abonnement -Link erfolgreich zurück",
+          "title": "Sind Sie sicher, dass Sie den Abonnement -Link zurücksetzen möchten?"
+        },
+        "success": "Erfolgreich zurücksetzen"
+      },
+      "title": "Abonnementzentrum"
+    },
+    "title": "Mein Abonnement"
+  },
+  "ticket": {
+    "create": "Erstellen Sie ein Ticket",
+    "form": {
+      "cancelText": "Stornieren",
+      "level": "Ticketstufe",
+      "message": "Arbeitsauftragsinhalt",
+      "okText": "einreichen",
+      "subject": "Ticketthema",
+      "tips": {
+        "empty": "Bitte geben Sie die vollständigen Arbeitsauftragsinformationen ein",
+        "loading": "Eine Arbeitsauftrag einreichen ...",
+        "success": "Einreichung der Arbeitsauftrag erfolgreich"
+      },
+      "title": "Erstellen Sie ein neues Ticket"
+    },
+    "level": {
+      "0": "normal",
+      "1": "wichtig",
+      "2": "dringend"
+    },
+    "status": {
+      "0": "Warten auf Antwort",
+      "1": "Antwortete",
+      "2": "Geschlossen"
+    },
+    "table": {
+      "action": "arbeiten",
+      "close": "Schließung",
+      "createdAt": "Schöpfungszeit",
+      "empty": "Noch kein Arbeitsauftragsaufzeichnung",
+      "level": "Ticketstufe",
+      "see": "Überprüfen",
+      "status": "Ticketstatus",
+      "subject": "Thema",
+      "updatedAt": "Letzte Antwortzeit"
+    },
+    "talk": {
+      "admin": "Administrator",
+      "me": "ICH",
+      "placeholder": "Geben Sie Inhalte ein, um auf die Arbeitsauftrag zu antworten",
+      "submit": "schicken"
+    },
+    "title": "Wenn Sie Fragen haben, erstellen Sie bitte ein Arbeitsticket und kontaktieren Sie uns"
+  },
+  "traffic": {
+    "description": {
+      "cycle": "Das aktuelle Abonnement wird monatlich berechnet, {Resetday} wird in Zukunft den Verkehr zurücksetzen, {Ablaufzeit} wird ausfallen",
+      "oneTime": "Das aktuelle Abonnement wird durch den Verkehr berechnet und der Verkehr ist dauerhaft gültig und wird beim Gebrauch angehalten"
+    },
+    "remaining": "Verbleibender Datenverkehr",
+    "statistics": "Verkehrsstatistiken abonnieren",
+    "table": {
+      "date": "Datum",
+      "downloadUsage": "Total Download -Verkehr",
+      "empty": "Noch kein Verkehrsrekord",
+      "inner": {
+        "downloadUsage": "Datenverkehr herunterladen",
+        "rate": "Abzugsrate",
+        "rateUnit": "Doppelt",
+        "total": "Totaler Verkehr",
+        "uploadUsage": "Laden Sie den Verkehr hoch"
+      },
+      "total": "Totaler Verkehr",
+      "uploadUsage": "Totaler Upload -Verkehr"
+    },
+    "total": "Totaler Verkehr",
+    "used": "Gebrauchter Verkehr"
+  },
+  "welcomeCard": {
+    "button": {
+      "default": "Kaufen Sie das Paket jetzt",
+      "renewal": "Jetzt erneuern",
+      "reset": "Verkehr jetzt zurücksetzen"
+    },
+    "hiname": "Halo, {Name}",
+    "title": "Genießen Sie von nun an die globale Netzwerkbeschleunigung\nVerbinde dich mit der Welt 👋 👋"
+  },
+  "quick": {
+    "title": "Hochgeschwindigkeitsnetzwerk-Beschleunigungsdienst speziell für die Benutzer auf Festland konzipiert",
+    "description": "Holen Sie sich Netzwerkbeschleunigungsdienste, die mit Hunderten von Inhaltsanbietern auf der ganzen Welt verbunden sind, globale Video -Websites abdecken, alle, ChatGPT, Telegram, YouTube und andere globale Apps ohne Einschränkungen und freien Zugriff jederzeit und überall entsperren, und überall und überall",
+    "features": {
+      "1": "Veröffentlichen Sie Verbote auf YouTube, Google, Facebook, Instagram, Twitter und anderen Websites",
+      "2": "Vollständige Unterstützung für iOS, macOS, Android, Windows, Router und Linux",
+      "3": "38 Servercluster decken die Welt ab. Sie können sich von überall auf der Welt verbinden",
+      "4": "7x24-stündige echte Kundendienste Online-Antwort Fragen"
+    },
+    "buy": {
+      "title": "Wählen Sie ein Paket"
+    },
+    "account": {
+      "title": "Erstellen Sie Ihr Konto",
+      "tips": "Das Konto wird Ihr zukünftiger Identitätsausweis auf dieser Website sein. Sie können sich jederzeit anmelden, um Ihren Abonnementstatus, die Verkehrsnutzung, den Bestelldatensätzen und andere Informationen anzuzeigen.",
+      "password": {
+        "button": "Verwenden Sie ein benutzerdefiniertes Passwort",
+        "tips": "Das Konto verwendet standardmäßig ein zufälliges Passwort. Nachdem die Zahlung erfolgreich ist, wird das Konto und das Passwort an Ihre E -Mail -Adresse gesendet. Wenn Sie ein benutzerdefiniertes Passwort verwenden möchten, klicken Sie bitte auf die Schaltfläche \"Benutzerdefiniertes Passwort verwenden\"."
+      }
+    },
+    "order": {
+      "title": "Bestätigen Sie die Bestellung und erledigen Sie die Zahlung",
+      "captcha": {
+        "title": "Bitte führen Sie die Überprüfung der Menschenmaschine ab",
+        "placeholder": "Bitte geben Sie den Bestätigungscode ein",
+        "refresh": "Aktualisieren Sie den Verifizierungscode",
+        "submit": "Überprüfungscode einreichen"
+      },
+      "coupon": {
+        "button": "Einen Gutschein haben? Klicken Sie hier, um einzugeben",
+        "title": "Gutscheine überprüfen",
+        "emptyPlan": "Bitte wählen Sie eine festgelegte Mahlzeit aus"
+      },
+      "message": {
+        "emptyEmail": "Bitte geben Sie Ihre E -Mail -Adresse ein",
+        "emptyPassword": "Bitte geben Sie Ihr Passwort ein",
+        "emptyPlan": "Bitte wählen Sie eine festgelegte Mahlzeit aus",
+        "emptyPayment": "Bitte wählen Sie eine Zahlungsmethode aus",
+        "emptyCaptcha": "Bitte geben Sie den Bestätigungscode ein"
+      }
+    }
+  }
+}

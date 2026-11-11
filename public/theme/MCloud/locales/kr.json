@@ -1,0 +1,903 @@
+{
+  "auth": {
+    "features": {
+      "first": {
+        "description": "Airbus는 고속 전송 전용 라인 연결을 사용하여 안정적인 네트워크, 고속 및 밀리 초 응답 속도",
+        "title": "고속 전체 전송 전용 라인 연결"
+      },
+      "second": {
+        "description": "Openai Chatgpt, Google Bard, Middlebury 및 기타 AI 서비스 무제한 액세스, 지능형 가속도",
+        "title": "AI 지능형 가속도"
+      },
+      "third": {
+        "description": "Netflix, YouTube, Hulu, BBC Iplayer, Amazon Prime Video 등과 같은 스트리밍 미디어 잠금 해제를 지원합니다.",
+        "title": "스트리밍 미디어 잠금 해제"
+      }
+    },
+    "logout": "로그 아웃하십시오",
+    "message": {
+      "LoggedIn": "로그인",
+      "loginPlease": "먼저 로그인을 완료하십시오"
+    },
+    "title": "여기에서 세계를 연결하십시오\n에어 버스 - 글로벌 네트워크 가속을 즐기십시오"
+  },
+  "bill": {
+    "balance": "잔액 지불",
+    "discount": "기존 패키지 할인",
+    "discountTips": "원래 패키지는 선주문 패키지의 가격을 공제합니다. 더 많은 환불을받을수록 보상이 적을수록 보상이 적을 수 있으며 환불은 계정 잔액에 환불됩니다.",
+    "handlingFee": "처리 수수료",
+    "original": "원래 가격",
+    "payButton": "지금 지불하십시오",
+    "payIconText": "안전한 지불",
+    "payment": "지불 방법",
+    "preferential": "할인",
+    "realPrice": "실제 지불 금액",
+    "title": "청구서 지불"
+  },
+  "client": {
+    "android": {
+      "description": "Huawei / Xiaomi / Oppo와 같은 모든 Android 시리즈",
+      "title": "안드로이드 클라이언트"
+    },
+    "btn": "지금 다운로드하십시오",
+    "homePage": {
+      "description": "자체 개발 클라이언트는 Windows, MacOS, iOS, Android 등과 같은 모든 터미널 장치를 지원하고 전체 터미널 장치를 모두 포함합니다.",
+      "title": "모든 터미널 지원\n아래 아이콘을 클릭하여 다운로드하십시오"
+    },
+    "ios": {
+      "description": "iPhone/iPad 전체 범위",
+      "title": "iOS 클라이언트"
+    },
+    "knowledgeAll": "모든 튜토리얼",
+    "knowledgePage": "클라이언트 튜토리얼",
+    "mac": {
+      "description": "인텔 / 애플 실리콘 풀 시리즈",
+      "title": "MACOS 클라이언트"
+    },
+    "windows": {
+      "description": "32/64 비트 풀 시리즈",
+      "title": "Windows 클라이언트"
+    }
+  },
+  "coupon": {
+    "button": "쿠폰을 확인하십시오",
+    "comment": "공식 전보 채널을 따라 최신 할인 정보를 얻으십시오.",
+    "placeholder": "쿠폰이 있습니까? 그렇지 않은 경우 여기에 입력하십시오",
+    "title": "쿠폰",
+    "message": {
+      "empty": "쿠폰을 입력하십시오",
+      "invalid": "잘못된 쿠폰",
+      "mismatch": "쿠폰은이주기에는 적용되지 않습니다. 사이클을 교체하고 다시 확인하십시오.",
+      "success": "쿠폰 확인이 성공적이었습니다"
+    }
+  },
+  "couponExchange": {
+    "checkButton": "검증 cdkey",
+    "exchangeButton": "패키지를 상환합니다",
+    "menu": "CDKE 구속",
+    "message": {
+      "empty": "CDKEY를 입력하십시오",
+      "error": "할인 코드 상환이 실패했습니다",
+      "incorrectType": "이 CDKey는 패키지에 대해 사용할 수 없습니다",
+      "notPeriod": "이 CDKey에는주기가 포함되어 있지 않습니다",
+      "notPlan": "이 CDKey에는 패키지가 포함되어 있지 않습니다",
+      "success": "{plan} 패키지를 성공적으로 사용하십시오"
+    },
+    "placeholder": "CDKey Redemption 코드를 입력하십시오",
+    "title": "CDKE"
+  },
+  "currency": {
+    "symbol": "¥",
+    "unit": "원"
+  },
+  "footer": {
+    "copyRight": "© 2025 AirBuddy 판권 소유",
+    "links": {
+      "1": {
+        "text": "대체 사이트",
+        "url": "https://baidu.com"
+      },
+      "2": {
+        "text": "Telegram 채널에 가입하십시오",
+        "url": "https://t.me/themebuddy"
+      },
+      "3": {
+        "text": "Telegram 고객 서비스에 문의하십시오",
+        "url": "https://t.me/themebuddy"
+      }
+    }
+  },
+  "giftcard": {
+    "button": "지금 구속하십시오",
+    "menu": "기프트 카드 상환",
+    "message": {
+      "balance": "성공, 계정 인상 금액 : {밸런스} 위안",
+      "empty": "기프트 카드 상환 코드를 입력하십시오",
+      "error": "기프트 카드 상환이 실패했습니다",
+      "plan": "성공적으로 상환, 새로운 구독 패키지가 추가됩니다. 시간 : {time} days",
+      "reset": "구독이 성공적으로 재설정 된 교통을 성공적으로 상환합니다",
+      "time": "성공적인 구독 시간을 상환합니다. 구독 시간이 증가했습니다. {time} 일",
+      "traffic": "성공적인 구독 트래픽이 증가합니다 : {트래픽} GB"
+    },
+    "placeholder": "기프트 카드 상환 코드를 입력하십시오",
+    "title": "기프트 카드"
+  },
+  "home": {
+    "matrix": {
+      "description": "글로벌 비디오 웹 사이트를 다루고, Chatgpt, Telegram, YouTube 등과 같은 모든 글로벌 앱에 대한 무제한 액세스 권한을 모두 잠금 해제합니다.",
+      "title": "스트리밍 미디어가 완전히 잠금 해제되었습니다\n글로벌 앱에 대한 무제한 무료 액세스"
+    },
+    "nodes": {
+      "country": {
+        "cn-hk": "홍콩, 중국",
+        "ca": "캐나다",
+        "de": "독일",
+        "in": "인도",
+        "en": "영국",
+        "us": "미국",
+        "kr": "대한민국",
+        "kp": "북한",
+        "jp": "일본",
+        "aq": "남극 대륙",
+        "sg": "싱가포르",
+        "tw": "대만, 중국",
+        "th": "태국",
+        "vn": "베트남",
+        "my": "말레이시아",
+        "ph": "필리핀",
+        "id": "인도네시아 공화국",
+        "tr": "Türkiye",
+        "ru": "러시아 제국",
+        "fr": "프랑스",
+        "es": "스페인",
+        "it": "이탈리아",
+        "br": "브라질",
+        "mx": "멕시코",
+        "ar": "아르헨티나",
+        "au": "호주",
+        "nz": "뉴질랜드",
+        "za": "남아프리카",
+        "eg": "이집트",
+        "il": "이스라엘",
+        "ae": "아랍 에미리트 연합",
+        "fi": "핀란드",
+        "se": "스웨덴",
+        "dk": "덴마크",
+        "nl": "네덜란드",
+        "be": "벨기에",
+        "no": "노르웨이",
+        "rs": "세르비아",
+        "rw": "르완다",
+        "sa": "사우디 아라비아",
+        "sb": "솔로몬 제도",
+        "sc": "세이셸",
+        "sd": "수단",
+        "sh": "세인트 헬레나 섬",
+        "si": "슬로베니아",
+        "sk": "슬로바키아",
+        "sl": "시에라 리온",
+        "sm": "산 마리노",
+        "sn": "세네갈",
+        "so": "소말리아",
+        "sr": "수리남",
+        "ss": "남 수단",
+        "su": "소비에트 연방",
+        "sv": "엘살바도르",
+        "sx": "네덜란드의 세인트 마틴",
+        "sy": "시리아",
+        "sz": "스와질란드",
+        "td": "차드",
+        "tg": "토고",
+        "tj": "타지키스탄",
+        "tk": "Tokelao",
+        "tl": "동 티모르",
+        "tm": "투르크 메니스탄",
+        "tn": "튀니지",
+        "to": "통가",
+        "tv": "투발루",
+        "tz": "탄자니아",
+        "ua": "우크라이나",
+        "ug": "우간다",
+        "uk": "영국",
+        "uy": "우루과이",
+        "uz": "우즈베키스탄",
+        "va": "바티칸 궁전",
+        "ve": "베네수엘라",
+        "vu": "바누아투",
+        "ws": "사모아",
+        "xk": "코소보",
+        "ye": "예멘 아랍 공화국",
+        "yt": "Mayot",
+        "yu": "유고 슬라비아",
+        "zm": "잠비아",
+        "zw": "짐바브웨"
+      },
+      "description": "전 세계 1,000 개 이상의 고속 서버, 언제 어디서나 빠르고 안정적인 링크를 즐기십시오.",
+      "title": "글로벌 노드, 고속 및 안정적인 연결"
+    },
+    "poster": {
+      "button": "지금 경험하십시오",
+      "description": "전 세계 수백 개의 컨텐츠 제공 업체에 연결된 최대 2000Mbps의 단일 와이어 액세스 기능을 얻으십시오.",
+      "features": {
+        "1": "스트리밍 미디어 잠금 해제",
+        "2": "전체 트랜지 시트 노드",
+        "3": "모든 터미널 지원",
+        "4": "터널 암호화",
+        "5": "라인을 영원히 유지하십시오",
+        "6": "전용 라인 가속도"
+      },
+      "title": "에어로켓\n제한없이 글로벌 네트워크 가속을 즐기십시오"
+    },
+    "privacy": {
+      "description": "전체 대중 교통 노드, 터널 암호화, 개인 정보 보호, 보안 암호화, 누출을 절대",
+      "steps": {
+        "node": "글로벌 고등 방어 노드",
+        "safe": "터널 암호화",
+        "target": "해외 서비스",
+        "transfer": "고속 대중 교통 서비스",
+        "user": "당신의 장치"
+      },
+      "title": "개인 정보 보호, 보안 암호화"
+    },
+    "service": {
+      "button": {
+        "text": "고객 서비스에 문의하십시오",
+        "url": "https://t.me/themebuddy"
+      },
+      "description": "궁금한 점이 있으시면 여러 연락처 정보에 문의하면 언제든지 네트워크 엔지니어가 전화를 걸고 언제든지 사용할 수 있으며 연락처가 잃지 않습니다.",
+      "title": "7x24 시간 고객 서비스에 대한 빠른 응답"
+    },
+    "shop": {
+      "button": "지금 구입하십시오",
+      "description": "글로벌 IEPL 전용 라인 노드, 월간/분기/연간 가입 패키지, 더 많은 할인을 즐기십시오.",
+      "plans": {
+        "cycle": {
+          "1": {
+            "features": {
+              "ad": "RMB 45.68의 연간 지불",
+              "list": "트래픽 : 매월 100g 트래픽, 매달 재설정\n장비 : 3 개의 장치가 동시에 온라인 상태입니다\n대역폭 : 속도 제한 100Mbps\n라인 : 고속 노드\n노드 : 32 개국/지역 노드",
+              "title": "패키지 기능"
+            },
+            "name": "기본 고속 패키지",
+            "price": "9.99",
+            "priceTime": "달",
+            "sid": "5"
+          },
+          "2": {
+            "features": {
+              "ad": "RMB 57.68의 연간 지불",
+              "list": "트래픽 : 매월 300g, 매달 재설정\n장비 : 6 개의 장치가 동시에 온라인 상태입니다\n대역폭 : 속도 제한 300mbps\n라인 : IEPL 전용 라인 노드 + 릴레이 터널\n노드 : 65 개 국가/지역 노드",
+              "title": "패키지 기능"
+            },
+            "name": "표준 전문 패키지",
+            "price": "19.99",
+            "priceTime": "달",
+            "sid": "6"
+          },
+          "3": {
+            "features": {
+              "ad": "RMB 177.68의 연간 지불",
+              "list": "트래픽 : 한 달에 1000GB의 트래픽, 매달 재설정\n장비 : 장비 수에는 제한이 없습니다\n대역폭 : 속도 제한 1000Mbps\n라인 : IEPL 전용 라인 노드 + 릴레이 터널 + 엔터프라이즈 전용 라인\n노드 : 108 개국/지역 노드\n스트리밍 미디어 잠금 해제",
+              "title": "패키지 기능"
+            },
+            "name": "프리미엄 주력 패키지",
+            "price": "29.99",
+            "priceTime": "달",
+            "sid": "7"
+          }
+        },
+        "flow": {
+          "1": {
+            "features": {
+              "ad": "영구 무제한 트래픽 패키지",
+              "list": "트래픽 : 100GB 영구 트래픽, 소비하자마자 중지\n장비 : 장비 수에는 제한이 없습니다\n대역폭 : 속도 제한 1000Mbps\n라인 : IEPL 전용 라인 노드 + 릴레이 터널 + 엔터프라이즈 전용 라인\n노드 : 108 개국/지역 노드",
+              "title": "패키지 기능"
+            },
+            "name": "로켓 100GB",
+            "price": "99",
+            "priceTime": "영구적인",
+            "sid": "8"
+          },
+          "2": {
+            "features": {
+              "ad": "영구 무제한 트래픽 패키지",
+              "list": "트래픽 : 100GB 영구 트래픽, 소비하자마자 중지\n장비 : 장비 수에는 제한이 없습니다\n대역폭 : 속도 제한 1000Mbps\n라인 : IEPL 전용 라인 노드 + 릴레이 터널 + 엔터프라이즈 전용 라인\n노드 : 108 개국/지역 노드",
+              "title": "패키지 기능"
+            },
+            "name": "로켓 500GB",
+            "price": "239",
+            "priceTime": "영구적인",
+            "sid": "9"
+          },
+          "3": {
+            "features": {
+              "ad": "영구 무제한 트래픽 패키지",
+              "list": "트래픽 : 100GB 영구 트래픽, 소비하자마자 중지\n장비 : 장비 수에는 제한이 없습니다\n대역폭 : 속도 제한 1000Mbps\n라인 : IEPL 전용 라인 노드 + 릴레이 터널 + 엔터프라이즈 전용 라인\n노드 : 108 개국/지역 노드",
+              "title": "패키지 기능"
+            },
+            "name": "로켓 1000GB",
+            "price": "489",
+            "priceTime": "영구적인",
+            "sid": "10"
+          }
+        },
+        "switch": {
+          "cycle": "주기적 구독",
+          "flow": "볼륨으로 지불하십시오"
+        }
+      },
+      "title": "패키지를 구매하고 글로벌 네트워크 가속을 즐기십시오"
+    }
+  },
+  "invite": {
+    "banner": {
+      "button": "지금 초대하십시오",
+      "description": "즉시 돈을 벌고 관대 한 커미션 캐쉬백을 받으십시오.",
+      "title": "친구를 초대하십시오\n관대 한 커미션을 얻으십시오"
+    },
+    "codeList": {
+      "button": "초대장 코드를 생성합니다",
+      "copy": "초대장 코드 링크를 복사하십시오",
+      "empty": "아직 초대 코드가 없습니다",
+      "item": "초대장 코드",
+      "tips": "초대장 링크를 복사하여 친구와 공유하십시오. 링크를 통해 등록하면 커미션을 받게됩니다.",
+      "title": "초대장 코드 관리"
+    },
+    "message": {
+      "codeCopySuccess": "초대장 코드는 성공적으로 복사되었습니다",
+      "codeCreateSuccess": "초대장 코드가 성공적으로 생성되었습니다"
+    },
+    "recordList": {
+      "commission": "수수료",
+      "createdTime": "창조 시간",
+      "empty": "아직 커미션 기록이 없습니다",
+      "orderAmount": "주문 금액",
+      "title": "커미션 기록"
+    },
+    "wallet": {
+      "button": {
+        "transfer": "옮기다",
+        "withdraw": "철수"
+      },
+      "confirm": "확인의 커미션",
+      "description": "현재 커미션 잔액",
+      "people": "초대장 수",
+      "proportion": "커미션 비율",
+      "title": "초대위원회",
+      "total": "축적 된위원회",
+      "transfer": {
+        "balance": "전송 금액",
+        "error": {
+          "empty": "전송 금액은 0보다 크기가 높아야합니다"
+        },
+        "max": "최대 양도 가능 금액",
+        "submit": "지금 전송하십시오",
+        "success": "홍보위원회 양도 균형을 성공적으로 송금합니다",
+        "title": "커미션 양도"
+      },
+      "withdraw": {
+        "account": "철수 계좌",
+        "description": "철수는 현재위원회 잔고를 없애고 인출 금액은 1-3 일 내에 입금됩니다.",
+        "method": "철수 방법",
+        "submit": "지금 현금을 인출하십시오",
+        "success": "위원회 철수 신청을 성공적으로 촉진하십시오",
+        "title": "위원회 철수"
+      }
+    }
+  },
+  "login": {
+    "description": "세계를 다루는 고속 네트워크",
+    "email": {
+      "placeholder": "이메일 주소를 입력하십시오",
+      "rules": {
+        "required": "올바른 이메일 주소를 입력하십시오"
+      }
+    },
+    "password": {
+      "placeholder": "비밀번호를 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "비밀번호를 입력하십시오"
+      }
+    },
+    "register": "아직 계정이 없습니까? 등록하려면 클릭하십시오",
+    "remember": "비밀번호를 기억하십시오",
+    "reset": "비밀번호를 잊어 버리시겠습니까?",
+    "submit": "로그인하십시오",
+    "success": "성공적으로 로그인하십시오",
+    "title": "에어 버스에 로그인하십시오"
+  },
+  "node": {
+    "banner": {
+      "button": "고객 서비스에 문의하십시오",
+      "title": "적절한 노드가 없습니까? 아래 버튼을 클릭하여 고객 서비스에 연락하여 사용자 정의하십시오."
+    },
+    "check": "최근 테스트",
+    "empty": "사용 가능한 노드가 없습니다",
+    "rate": "배가",
+    "ss": "복제 노드 SS 링크"
+  },
+  "notice": {
+    "clickText": "자세한 내용을 보려면 클릭하십시오",
+    "coupon": {
+      "btnText": "쿠폰 갱신을 받으려면 클릭하십시오",
+      "countText": "이벤트 남아 :",
+      "title": "오랫동안 당신을 보지 못했습니다\n제한된 시간 갱신 할인"
+    },
+    "empty": "아직 알림이 없습니다",
+    "iconBox": {
+      "button": "모든 알림을보십시오",
+      "more": "더 많은 알림을로드하십시오",
+      "title": "모든 알림"
+    },
+    "newUser": {
+      "btnText": "쿠폰을 받고 주문을 받으려면 클릭하십시오",
+      "countText": "이벤트 카운트 다운 :",
+      "title": "새로 온 회의 선물\n제한된 시간 할인"
+    },
+    "obj": {
+      "balance": "현금 쿠폰",
+      "balanceSuffix": "원",
+      "discount": "할인 쿠폰",
+      "discountSuffix": "겹"
+    },
+    "special": {
+      "btnText": "쿠폰을 받고 주문을 받으려면 클릭하십시오",
+      "countText": "이벤트 카운트 다운 :",
+      "title": "휴일 특별 제안\n제한된 시간 할인"
+    },
+    "top": "중요한 통지"
+  },
+  "order": {
+    "button": {
+      "cancel": "주문을 취소하십시오",
+      "detail": "세부 사항을 확인하십시오"
+    },
+    "deposit": "위로",
+    "detail": {
+      "createdTime": "주문 시간",
+      "message": {
+        "cancelError": "주문 취소에 실패했습니다",
+        "cancelSuccess": "주문 취소를 성공적으로 주문하십시오",
+        "copyError": "지불 주소를 복사하지 못했습니다",
+        "copySuccess": "지불 주소를 성공적으로 복사합니다"
+      },
+      "qrcodeTips": "WeChat/Alipay를 열어 지불 할 코드를 스캔하십시오",
+      "payCopy": "지불 주소를 복사하십시오",
+      "payTips": "스캔 코드 또는 새로 열린 결제 페이지에서 결제를 완료하십시오. 자동 리디렉션이없는 경우 위의 지불 주소를 수동으로 복사하여 열어주십시오. 마음대로 지불 명령을 취소하지 말고 반복적 인 지불 또는 지불 상태를 다시 전화 할 수 없음을 피하십시오.",
+      "payUrl": "지불 주소",
+      "payWaiting": "주문이 지불 될 때까지 기다리십시오",
+      "planInfo": "콤보",
+      "title": "주문 세부 사항",
+      "tradeNo": "주문 번호"
+    },
+    "list": {
+      "action": "작동하다",
+      "amount": "주문 금액",
+      "empty": "아직 주문 기록이 없습니다",
+      "number": "#",
+      "order": "주문 정보",
+      "status": "주문 상태"
+    },
+    "message": {
+      "cancelSuccess": "주문 취소를 성공적으로 주문하십시오",
+      "copyPayUrlError": "지불 주소를 복사하지 못했습니다",
+      "copyPayUrlSuccess": "지불 주소를 성공적으로 복사합니다"
+    },
+    "payPending": {
+      "copyPayUrl": "결제 링크를 복사하십시오",
+      "linkButton": "클릭하여 점프를 클릭하십시오",
+      "tips": "마음대로 지불 명령을 취소하지 말고 반복적 인 지불금 또는 지불 상태를 다시 전화 할 수없는 것을 피하십시오.",
+      "title": "당신은 지불 할 주문이 있습니다",
+      "url": "지불 주소"
+    },
+    "status": {
+      "cancelled": "취소",
+      "completed": "완전한",
+      "discounted": "더 이상 사용되지 않았습니다",
+      "paid": "열기",
+      "pending": "지불해야합니다"
+    },
+    "title": "주문하다"
+  },
+  "page": {
+    "auth": "로그인/등록",
+    "base": {
+      "dashboard": "내 패널",
+      "knowledge": "사용 튜토리얼",
+      "label": "베이스"
+    },
+    "commercial": {
+      "invite": "내 초대",
+      "label": "재원",
+      "order": "내 주문"
+    },
+    "download": "다운로드",
+    "home": "첫 페이지",
+    "menus": {
+      "all": "모든 메뉴",
+      "close": "닫기 메뉴"
+    },
+    "person": {
+      "label": "개인의",
+      "profile": "계정 설정",
+      "ticket": "서비스 주문",
+      "traffic": "트래픽 기록"
+    },
+    "subscribe": {
+      "label": "신청",
+      "node": "노드 상태",
+      "shop": "패키지를 구입하십시오"
+    }
+  },
+  "plan": {
+    "device": "장비 수",
+    "deviceUnit": "탑",
+    "name": "패키지 이름",
+    "period": "패키지주기",
+    "periodList": {
+      "half_year_price": "반년",
+      "month_price": "월별 결제",
+      "onetime_price": "일회성",
+      "quarter_price": "분기 별 지불",
+      "reset_price": "패키지를 재설정하십시오",
+      "three_year_price": "3 년",
+      "two_year_price": "2 년",
+      "year_price": "연간 지불"
+    },
+    "periodUnit": {
+      "half_year_price": "반년",
+      "month_price": "달",
+      "onetime_price": "일회성",
+      "quarter_price": "계절",
+      "reset_price": "패키지를 재설정하십시오",
+      "three_year_price": "3 년",
+      "two_year_price": "2 년",
+      "year_price": "년도"
+    },
+    "speed": "대역폭 속도",
+    "speedUnLimit": "속도 제한 없음",
+    "traffic": "패키지 트래픽"
+  },
+  "profile": {
+    "wallet": {
+      "balance": {
+        "account": "계정 잔액",
+        "invite": "커미션 균형"
+      },
+      "button": "위로",
+      "description": "사용 가능한 지갑 밸런스 및 커미션 지갑 균형이 포함되어 있습니다",
+      "recharge": {
+        "balance": "재충전 금액",
+        "newLabel": "재충전 후 균형",
+        "oldLabel": "현재 균형",
+        "submit": "지금 재충전",
+        "title": "균형 재충전"
+      },
+      "title": "내 지갑"
+    }
+  },
+  "register": {
+    "code": {
+      "button": "확인 코드를 보내십시오",
+      "placeholder": "이메일 확인 코드를 입력하십시오"
+    },
+    "description": "여기에서 세계를 연결하십시오",
+    "email": {
+      "placeholder": "이메일 주소를 입력하십시오",
+      "rules": {
+        "required": "올바른 이메일 주소를 입력하십시오"
+      }
+    },
+    "invite": {
+      "placeholder": "초대장 코드를 입력하십시오",
+      "rules": {
+        "required": "초대장 코드를 입력해야합니다"
+      }
+    },
+    "login": "이미 계정이 있습니까? 로그인하려면 클릭하십시오",
+    "password": {
+      "placeholder": "로그인 비밀번호를 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "비밀번호를 입력하십시오"
+      }
+    },
+    "password2": {
+      "placeholder": "로그인 비밀번호를 다시 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "로그인 비밀번호를 다시 입력하십시오",
+        "same": "두 번 입력 한 암호는 일관성이 없습니다"
+      }
+    },
+    "submit": "등록하다",
+    "success": "성공적으로 등록되었습니다",
+    "title": "에어 버스를 등록하십시오"
+  },
+  "reset": {
+    "changePwdByEmail": "비밀번호 수정 (이메일 확인)",
+    "changePwdByOldPwd": "비밀번호 수정 (이전 비밀번호 확인)",
+    "code": {
+      "button": "확인 코드를 보내십시오",
+      "label": "이메일 확인 코드",
+      "placeholder": "이메일 확인 코드를 입력하십시오",
+      "success": "확인 코드는 이메일 주소로 성공적으로 전송되었습니다."
+    },
+    "description": "로그인 비밀번호를 재설정하십시오",
+    "email": {
+      "placeholder": "이메일 주소를 입력하십시오",
+      "rules": {
+        "required": "올바른 이메일 주소를 입력하십시오"
+      }
+    },
+    "login": "로그인으로 돌아갑니다",
+    "password": {
+      "label": "새 비밀번호를 입력하십시오",
+      "placeholder": "새 로그인 비밀번호를 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "비밀번호를 입력하십시오"
+      }
+    },
+    "passwordConfirm": {
+      "label": "새 비밀번호를 확인하십시오",
+      "placeholder": "새 로그인 비밀번호를 다시 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "새 로그인 비밀번호를 다시 입력하십시오",
+        "same": "두 번 입력 한 암호는 일관성이 없습니다"
+      }
+    },
+    "passwordOld": {
+      "label": "원래 비밀번호를 입력하십시오",
+      "placeholder": "원래 로그인 비밀번호를 입력하십시오",
+      "rules": {
+        "min": "비밀번호 길이는 8 자리 이상입니다",
+        "required": "비밀번호를 입력하십시오"
+      }
+    },
+    "submit": "비밀번호를 재설정하십시오",
+    "success": "암호는 성공적으로 재설정됩니다",
+    "title": "비밀번호를 재설정하십시오"
+  },
+  "shop": {
+    "period": "지불주기",
+    "confirm": {
+      "description": "주문 정보를 확인하십시오. 각 지불 방법의 요금은 다를 수 있습니다.",
+      "title": "주문을 확인하십시오",
+      "override": {
+        "title": "패키지를 변경 하시겠습니까?",
+        "content": "패키지를 변경하면 현재 패키지가 새 패키지로 덮여 있습니다.",
+        "okText": "확신하는",
+        "cancelText": "취소"
+      }
+    },
+    "custom": {
+      "button": "고객 서비스에 문의하십시오",
+      "title": "적절한 패키지가 없습니까? 아래 버튼을 클릭하여 고객 서비스에 연락하여 사용자 정의하십시오."
+    },
+    "cycle": {
+      "description": "전체 IEPL 전용 라인 노드, 월간/분기/연간 구독 패키지, 더 많은 할인을 즐기십시오.",
+      "features": {
+        "more": "더 많은 기능을보십시오",
+        "title": "특징"
+      },
+      "month": "월별 결제",
+      "switchSuffix": "가격",
+      "tag": "🔥 핫 판매",
+      "title": "주기적 구독",
+      "year": "연간 지불",
+      "yearByMonth": "{할인}의 연간 지불, 월별 : {monthprice} yuan",
+      "yearByPrice": "연간 지불 {할인 ubtract} 위안"
+    },
+    "empty": "구매할 수있는 패키지가 없습니다",
+    "flow": {
+      "button": "지금 구입하십시오",
+      "description": "트래픽으로 청구 된 모든 iepl 전용 라인 노드, 실제 사용에 의해 지불 된 시간 제한 없음",
+      "features": {
+        "more": "더 많은 기능을보십시오",
+        "title": "패키지 기능"
+      },
+      "tag": "🔥 추천",
+      "tips": "무제한 트래픽 패키지",
+      "title": "볼륨으로 지불하십시오"
+    },
+    "hasToPayOrder": "지불하지 않은 주문이 있습니다",
+    "routerButton": "지금 구독하십시오"
+  },
+  "subscribe": {
+    "empty": "무료 구독 없음",
+    "expire": {
+      "empty": "영구적으로 효과적입니다",
+      "expired": "패키지가 만료되었습니다",
+      "expireSoon": "패키지가 남아 있습니다",
+      "expireUnit": "하늘",
+      "title": "만료 시간"
+    },
+    "message": {
+      "linkCopySuccess": "구독 링크가 성공적으로 복사되었습니다"
+    },
+    "renewal": {
+      "close": "자동 갱신이 꺼졌습니다",
+      "loading": "자동 갱신 상태 전환 ...",
+      "open": "자동 갱신이 활성화되었습니다",
+      "title": "자동 갱신"
+    },
+    "reset": {
+      "description": "{Resetday} Queen Reset",
+      "descriptionForToday": "오늘 재설정",
+      "empty": "재설정이 필요하지 않습니다",
+      "title": "트래픽 재설정 시간"
+    },
+    "shortcut": {
+      "apps": {
+        "clash": {
+          "comment": "타사 클라이언트의 경우 Windows/Mac/Android/Linux의 충돌",
+          "title": "충돌"
+        },
+        "export": "가져 오기",
+        "quantumult": {
+          "comment": "타사 클라이언트의 경우 iOS / iPhone / iPad / Mac / Android 용 Quantumult / Quantumult X",
+          "title": "양자"
+        },
+        "shadowrocket": {
+          "comment": "타사 클라이언트의 경우 iOS/iPhone/iPad/Mac 용 ShadowRocket",
+          "title": "섀도우 로켓"
+        },
+        "singbox": {
+          "comment": "iOS / iPhone / iPad / Mac 용 타사 클라이언트 Singbox의 경우",
+          "title": "싱 박스"
+        },
+        "surfboard": {
+          "comment": "Android 용 타사 고객 서핑 보드에 적합합니다",
+          "title": "서핑 보드"
+        },
+        "surge": {
+          "comment": "타사 고객의 경우 Windows / Mac / Android 용 Surge",
+          "title": "급등하다"
+        },
+        "title": "신속하게 제 3 자 고객에게 수입합니다"
+      },
+      "link": {
+        "button": "구독 링크를 복사하십시오",
+        "title": "구독 링크"
+      },
+      "qrcode": {
+        "tips": "QR 코드를 스캔하여 구독을 가져옵니다\nShadowRocket/Clash 및 기타 고객"
+      },
+      "reset": {
+        "button": "구독 재설정",
+        "modal": {
+          "cancel": "취소",
+          "content": "가입 주소 또는 정보가 유출되면이를 수행 할 수 있습니다. 재설정 후 UUID 및 구독이 변경되며 구독을 다시 홍보해야합니다.",
+          "ok": "확신하는",
+          "success": "구독 링크를 성공적으로 재설정하십시오",
+          "title": "구독 링크를 재설정 하시겠습니까?"
+        },
+        "success": "성공적으로 재설정하십시오"
+      },
+      "title": "가입 센터"
+    },
+    "title": "내 구독"
+  },
+  "ticket": {
+    "create": "티켓을 만듭니다",
+    "form": {
+      "cancelText": "취소",
+      "level": "티켓 수준",
+      "message": "작업 주문 내용",
+      "okText": "제출하다",
+      "subject": "티켓 테마",
+      "tips": {
+        "empty": "전체 작업 주문 정보를 작성하십시오",
+        "loading": "작업 명령 제출 ...",
+        "success": "작업 주문 제출이 성공적으로 제출됩니다"
+      },
+      "title": "새 티켓을 만듭니다"
+    },
+    "level": {
+      "0": "평범한",
+      "1": "중요한",
+      "2": "긴급한"
+    },
+    "status": {
+      "0": "답장을 기다리고 있습니다",
+      "1": "대답했다",
+      "2": "닫은"
+    },
+    "table": {
+      "action": "작동하다",
+      "close": "폐쇄",
+      "createdAt": "창조 시간",
+      "empty": "아직 작업 주문 기록이 없습니다",
+      "level": "티켓 수준",
+      "see": "확인하다",
+      "status": "티켓 상태",
+      "subject": "주제",
+      "updatedAt": "마지막 응답 시간"
+    },
+    "talk": {
+      "admin": "관리자",
+      "me": "나",
+      "placeholder": "작업 순서에 답장하려면 컨텐츠를 입력하십시오",
+      "submit": "보내다"
+    },
+    "title": "궁금한 점이 있으시면 작업 티켓을 작성하고 저희에게 연락하십시오."
+  },
+  "traffic": {
+    "description": {
+      "cycle": "현재 구독이 월간 청구되며 {resetday}는 향후 트래픽을 재설정합니다. {expiretime}은 만료됩니다",
+      "oneTime": "현재 구독은 트래픽에 의해 청구되며 트래픽은 영구적으로 유효하며 사용하면 중지됩니다."
+    },
+    "remaining": "이용 가능한 트래픽 남아 있습니다",
+    "statistics": "트래픽 통계를 구독하십시오",
+    "table": {
+      "date": "날짜",
+      "downloadUsage": "총 다운로드 트래픽",
+      "empty": "아직 트래픽 기록이 없습니다",
+      "inner": {
+        "downloadUsage": "트래픽을 다운로드하십시오",
+        "rate": "공제율",
+        "rateUnit": "더블",
+        "total": "총 트래픽",
+        "uploadUsage": "트래픽 업로드"
+      },
+      "total": "총 트래픽",
+      "uploadUsage": "총 업로드 트래픽"
+    },
+    "total": "총 트래픽",
+    "used": "중고 트래픽"
+  },
+  "welcomeCard": {
+    "button": {
+      "default": "지금 패키지를 구입하십시오",
+      "renewal": "지금 갱신하십시오",
+      "reset": "지금 트래픽을 재설정하십시오"
+    },
+    "hiname": "후광, {이름}",
+    "title": "지금부터 글로벌 네트워크 가속을 즐기십시오\n세상과 연결 👋"
+  },
+  "quick": {
+    "title": "본토 사용자를 위해 특별히 설계된 고속 네트워크 가속 서비스",
+    "description": "전 세계 수백 개의 컨텐츠 제공 업체와 연결되어 글로벌 비디오 웹 사이트를 다루고, 모두 잠금 해제, Chatgpt, Telegram, YouTube 및 기타 글로벌 앱을 제한없이 언제 어디서나 무료 액세스 할 수 있습니다.",
+    "features": {
+      "1": "YouTube, Google, Facebook, Instagram, Twitter 및 기타 사이트에서 금지",
+      "2": "iOS, MacOS, Android, Windows, Routers 및 Linux에 대한 전체 지원",
+      "3": "38 서버 클러스터가 세계를 커버합니다. 전 세계 어디에서나 연결할 수 있습니다",
+      "4": "7x24 시간 실제 고객 서비스 온라인 답변 질문"
+    },
+    "buy": {
+      "title": "패키지를 선택하십시오"
+    },
+    "account": {
+      "title": "계정을 만듭니다",
+      "tips": "계정은이 사이트의 향후 신분증이 될 것입니다. 언제든지 로그인하여 구독 상태, 트래픽 사용, 주문 기록 및 기타 정보를 볼 수 있습니다.",
+      "password": {
+        "button": "사용자 정의 비밀번호를 사용하십시오",
+        "tips": "계정은 기본적으로 임의의 비밀번호를 사용합니다. 결제가 성공하면 계정과 비밀번호가 이메일 주소로 전송됩니다. 사용자 정의 비밀번호를 사용하려면 \"사용자 정의 비밀번호 사용\"버튼을 클릭하십시오."
+      }
+    },
+    "order": {
+      "title": "주문을 확인하고 지불을 완료하십시오",
+      "captcha": {
+        "title": "인간-기계 검증을 완료하십시오",
+        "placeholder": "확인 코드를 입력하십시오",
+        "refresh": "검증 코드를 새로 고치십시오",
+        "submit": "확인 코드를 제출하십시오"
+      },
+      "coupon": {
+        "button": "쿠폰이 있습니까? 입력하려면 클릭하십시오",
+        "title": "쿠폰을 확인하십시오",
+        "emptyPlan": "정해진 식사를 선택하십시오"
+      },
+      "message": {
+        "emptyEmail": "이메일 주소를 입력하십시오",
+        "emptyPassword": "비밀번호를 입력하십시오",
+        "emptyPlan": "정해진 식사를 선택하십시오",
+        "emptyPayment": "결제 방법을 선택하십시오",
+        "emptyCaptcha": "확인 코드를 입력하십시오"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Mcloud 🚀",
+  "description": "Theme Design By Mcloud",
+  "version": "1.0.0",
+  "images": "https://gitee.com/wxbns/picx-images-hosting/raw/master/Air-Rocket-T-LOGO@1x.2vewwvqwbf.webp",
+  "configs": [
+    {
+      "label": "主题色",
+      "placeholder": "请输入十六进制颜色值，如#23b79c",
+      "field_name": "primary",
+      "field_type": "input",
+      "default_value": "#23b79c"
+    },
+    {
+      "label": "模式",
+      "placeholder": "请选择主题模式",
+      "field_name": "theme_mode",
+      "field_type": "select",
+      "select_options": {
+        "light": "亮",
+        "dark": "暗",
+        "auto": "自动"
+      },
+      "default_value": "auto"
+    },
+    {
+      "label": "布局",
+      "placeholder": "请选择主题布局",
+      "field_name": "layout",
+      "field_type": "select",
+      "select_options": {
+        "common": "常规",
+        "concise": "简约"
+      },
+      "default_value": "common"
+    }
+  ]
+}

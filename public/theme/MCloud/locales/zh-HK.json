@@ -1,0 +1,903 @@
+{
+  "auth": {
+    "features": {
+      "first": {
+        "description": "AirBus 採用高速全中轉專線連接，保證網絡穩定、高速、毫秒級的響應速度",
+        "title": "高速全中轉專線連接"
+      },
+      "second": {
+        "description": "OpenAI ChatGPT、Google Bard、Middlebury等 AI 服務無限制訪問，智能加速",
+        "title": "AI 智能加速"
+      },
+      "third": {
+        "description": "支持 Netflix、YouTube、Hulu、BBC iPlayer、Amazon Prime Video 等流媒體解鎖",
+        "title": "流媒體解鎖"
+      }
+    },
+    "logout": "退出登錄",
+    "message": {
+      "LoggedIn": "已登錄",
+      "loginPlease": "請先完成登錄"
+    },
+    "title": "從這開始連接世界 👏\nAirBus - 暢享全球網絡加速"
+  },
+  "bill": {
+    "balance": "餘額支付",
+    "discount": "現有套餐折抵",
+    "discountTips": "原有套餐將抵扣預購套餐的價格，多退少補，退將退至賬戶餘額",
+    "handlingFee": "手續費",
+    "original": "原價",
+    "payButton": "立即支付",
+    "payIconText": "安全支付",
+    "payment": "支付方式",
+    "preferential": "優惠",
+    "realPrice": "實付金額",
+    "title": "支付賬單"
+  },
+  "client": {
+    "android": {
+      "description": "華為 / 小米 / OPPO 等安卓全系列",
+      "title": "Android 客戶端"
+    },
+    "btn": "立即下載",
+    "homePage": {
+      "description": "自研客戶端，支持 Windows、MacOS、iOS、Android 等全終端設備，全面覆蓋",
+      "title": "全終端支持\n點擊下方圖標下載"
+    },
+    "ios": {
+      "description": "iPhone / iPad 全系列",
+      "title": "iOS 客戶端"
+    },
+    "knowledgeAll": "全部教程",
+    "knowledgePage": "客戶端教程",
+    "mac": {
+      "description": "Intel / Apple Silicon 全系列",
+      "title": "MacOS 客戶端"
+    },
+    "windows": {
+      "description": "32 / 64 位全系列",
+      "title": "Windows 客戶端"
+    }
+  },
+  "coupon": {
+    "button": "驗證優惠券",
+    "comment": "關注官方 Telegram 頻道獲取最新優惠信息",
+    "placeholder": "👋有優惠券？請在此輸入，沒有則忽略",
+    "title": "優惠券",
+    "message": {
+      "empty": "請輸入優惠券",
+      "invalid": "無效優惠券",
+      "mismatch": "優惠券不適用於此週期，請更換週期後重新驗證",
+      "success": "優惠券驗證成功"
+    }
+  },
+  "couponExchange": {
+    "checkButton": "驗證 CDKEY",
+    "exchangeButton": "兌換套餐",
+    "menu": "CDKEY 兌換",
+    "message": {
+      "empty": "請輸入 CDKEY",
+      "error": "優惠碼兌換失敗",
+      "incorrectType": "此 CDKEY 不能兌換套餐",
+      "notPeriod": "此 CDKEY 未包含任何週期",
+      "notPlan": "此 CDKEY 未包含任何套餐",
+      "success": "兌換 {plan} 套餐成功"
+    },
+    "placeholder": "請輸入 CDKEY 兌換碼",
+    "title": "CDKEY"
+  },
+  "currency": {
+    "symbol": "¥",
+    "unit": "元"
+  },
+  "footer": {
+    "copyRight": "© 2025 AirBuddy All Rights Reserved",
+    "links": {
+      "1": {
+        "text": "備用站點",
+        "url": "https://baidu.com"
+      },
+      "2": {
+        "text": "加入 Telegram 頻道",
+        "url": "https://t.me/themebuddy"
+      },
+      "3": {
+        "text": "聯繫 Telegram 客服",
+        "url": "https://t.me/themebuddy"
+      }
+    }
+  },
+  "giftcard": {
+    "button": "立即兌換",
+    "menu": "禮品卡兌換",
+    "message": {
+      "balance": "兌換成功，賬戶增加金額：{balance} 元",
+      "empty": "請輸入禮品卡兌換碼",
+      "error": "禮品卡兌換失敗",
+      "plan": "兌換成功，新增訂閱套餐，時長: {time} 天",
+      "reset": "兌換成功，訂閱重置流量成功",
+      "time": "兌換成功，訂閱時間增加：{time} 天",
+      "traffic": "兌換成功，訂閱流量增加：{traffic} GB"
+    },
+    "placeholder": "請輸入禮品卡兌換碼",
+    "title": "Gift Card"
+  },
+  "home": {
+    "matrix": {
+      "description": "覆蓋全球視頻網站，全部解鎖，ChatGPT，Telegram、Youtube 等全球 App 無限制隨時隨地自由訪問",
+      "title": "流媒體全解鎖\n全球APP無限制自由訪問"
+    },
+    "nodes": {
+      "country": {
+        "cn-hk": "中國香港",
+        "ca": "加拿大",
+        "de": "德國",
+        "in": "印度",
+        "en": "英格蘭",
+        "us": "美國",
+        "kr": "韓國",
+        "kp": "朝鮮",
+        "jp": "日本",
+        "aq": "南極洲",
+        "sg": "新加坡",
+        "tw": "中國台灣",
+        "th": "泰國",
+        "vn": "越南",
+        "my": "馬來西亞",
+        "ph": "菲律賓",
+        "id": "印度尼西亞",
+        "tr": "土耳其",
+        "ru": "俄羅斯",
+        "fr": "法國",
+        "es": "西班牙",
+        "it": "義大利",
+        "br": "巴西",
+        "mx": "墨西哥",
+        "ar": "阿根廷",
+        "au": "澳大利亞",
+        "nz": "紐西蘭",
+        "za": "南非",
+        "eg": "埃及",
+        "il": "以色列",
+        "ae": "阿拉伯聯合大公國",
+        "fi": "芬蘭",
+        "se": "瑞典",
+        "dk": "丹麥",
+        "nl": "荷蘭",
+        "be": "比利時",
+        "no": "挪威",
+        "rs": "塞爾維亞",
+        "rw": "盧安達",
+        "sa": "沙烏地阿拉伯",
+        "sb": "索羅門群島",
+        "sc": "塞席爾",
+        "sd": "蘇丹",
+        "sh": "聖赫勒拿島",
+        "si": "斯洛維尼亞",
+        "sk": "斯洛伐克",
+        "sl": "獅子山",
+        "sm": "聖馬利諾",
+        "sn": "塞內加爾",
+        "so": "索馬利亞",
+        "sr": "蘇利南",
+        "ss": "南蘇丹",
+        "su": "蘇聯",
+        "sv": "薩爾瓦多",
+        "sx": "荷屬聖馬丁",
+        "sy": "敘利亞",
+        "sz": "史瓦濟蘭",
+        "td": "查德",
+        "tg": "多哥",
+        "tj": "塔吉克斯坦",
+        "tk": "托克勞",
+        "tl": "東帝汶",
+        "tm": "土庫曼",
+        "tn": "突尼西亞",
+        "to": "東加",
+        "tv": "吐瓦魯",
+        "tz": "坦尚尼亞",
+        "ua": "烏克蘭",
+        "ug": "烏干達",
+        "uk": "英國",
+        "uy": "烏拉圭",
+        "uz": "烏茲別克",
+        "va": "梵蒂岡",
+        "ve": "委內瑞拉",
+        "vu": "萬那杜",
+        "ws": "薩摩亞",
+        "xk": "科索沃",
+        "ye": "葉門",
+        "yt": "馬約特",
+        "yu": "南斯拉夫",
+        "zm": "尚比亞",
+        "zw": "辛巴威"
+      },
+      "description": "全球 1000+ 台高速服服器，隨時隨地享受快速穩定的鏈接",
+      "title": "全球節點，高速穩定連接"
+    },
+    "poster": {
+      "button": "立即體驗",
+      "description": "獲取與全球數百內容供應商互聯的網絡加速服務高達2000Mbps的單線接入能力",
+      "features": {
+        "1": "流媒體解鎖",
+        "2": "全中轉節點",
+        "3": "全終端支持",
+        "4": "隧道加密",
+        "5": "永不斷線",
+        "6": "專線加速"
+      },
+      "title": "AirRocket\n無限制暢享全球網絡加速"
+    },
+    "privacy": {
+      "description": "全中轉節點，隧道加密，保護您的隱私，安全加密，永不洩露",
+      "steps": {
+        "node": "全球高防節點",
+        "safe": "隧道加密",
+        "target": "海外服務",
+        "transfer": "高速中轉服務",
+        "user": "您的設備"
+      },
+      "title": "隱私保護，安全加密"
+    },
+    "service": {
+      "button": {
+        "text": "聯繫客服",
+        "url": "https://t.me/themebuddy"
+      },
+      "description": "有任何問題，多種聯繫方式聯繫，網絡工程師隨時待命，隨傳隨到，永不失聯的 VIP 服務",
+      "title": "7x24 小時極速響應客服"
+    },
+    "shop": {
+      "button": "立即購買",
+      "description": "全球 IEPL 專線節點，按月/季度/年度訂閱套餐，享受更多優惠",
+      "plans": {
+        "cycle": {
+          "1": {
+            "features": {
+              "ad": "年付立省 45.68 元",
+              "list": "流量: 每月 100G 流量，每月重置\n設備: 3 台設備同時在線\n帶寬: 限速 100Mbps\n線路: 高速節點\n節點: 32 個國家/地區節點",
+              "title": "套餐特點"
+            },
+            "name": "Basis 高速套餐",
+            "price": "9.99",
+            "priceTime": "月",
+            "sid": "5"
+          },
+          "2": {
+            "features": {
+              "ad": "年付立省 57.68 元",
+              "list": "流量: 每月 300G 流量，每月重置\n設備: 6 台設備同時在線\n帶寬: 限速 300Mbps\n線路: IEPL 專線節點 + 中繼隧道\n節點: 65 個國家/地區節點",
+              "title": "套餐特點"
+            },
+            "name": "Standard 專業套餐",
+            "price": "19.99",
+            "priceTime": "月",
+            "sid": "6"
+          },
+          "3": {
+            "features": {
+              "ad": "年付立省 177.68 元",
+              "list": "流量: 每月 1000GB 流量，每月重置\n設備: 不限制設備數量\n帶寬: 限速 1000Mbps\n線路: IEPL 專線節點 + 中繼隧道 + 企業專線\n節點: 108 個國家/地區節點\n流媒體解鎖",
+              "title": "套餐特點"
+            },
+            "name": "Premium 旗艦套餐",
+            "price": "29.99",
+            "priceTime": "月",
+            "sid": "7"
+          }
+        },
+        "flow": {
+          "1": {
+            "features": {
+              "ad": "永久不限時流量包",
+              "list": "流量: 100GB 永久流量、用完即止\n設備: 不限設備數\n帶寬: 限速 1000Mbps\n線路: IEPL 專線節點 + 中繼隧道 + 企業專線\n節點: 108 個國家/地區節點",
+              "title": "套餐特點"
+            },
+            "name": "Rocket 100GB",
+            "price": "99",
+            "priceTime": "永久",
+            "sid": "8"
+          },
+          "2": {
+            "features": {
+              "ad": "永久不限時流量包",
+              "list": "流量: 100GB 永久流量、用完即止\n設備: 不限設備數\n帶寬: 限速 1000Mbps\n線路: IEPL 專線節點 + 中繼隧道 + 企業專線\n節點: 108 個國家/地區節點",
+              "title": "套餐特點"
+            },
+            "name": "Rocket 500GB",
+            "price": "239",
+            "priceTime": "永久",
+            "sid": "9"
+          },
+          "3": {
+            "features": {
+              "ad": "永久不限時流量包",
+              "list": "流量: 100GB 永久流量、用完即止\n設備: 不限設備數\n帶寬: 限速 1000Mbps\n線路: IEPL 專線節點 + 中繼隧道 + 企業專線\n節點: 108 個國家/地區節點",
+              "title": "套餐特點"
+            },
+            "name": "Rocket 1000GB",
+            "price": "489",
+            "priceTime": "永久",
+            "sid": "10"
+          }
+        },
+        "switch": {
+          "cycle": "週期訂閱",
+          "flow": "按量付費"
+        }
+      },
+      "title": "購買套餐，暢享全球網絡加速"
+    }
+  },
+  "invite": {
+    "banner": {
+      "button": "立即邀請",
+      "description": "立刻賺錢豐厚佣金返現，可提現或用於消費",
+      "title": "邀請好友\n賺取豐厚佣金"
+    },
+    "codeList": {
+      "button": "生成邀請碼",
+      "copy": "複製邀請碼鏈接",
+      "empty": "暫無邀請碼",
+      "item": "邀請碼",
+      "tips": "複製邀請鏈接，分享給好友，好友通過鏈接註冊，您將獲得佣金",
+      "title": "邀請碼管理"
+    },
+    "message": {
+      "codeCopySuccess": "邀請碼複製成功",
+      "codeCreateSuccess": "邀請碼生成成功"
+    },
+    "recordList": {
+      "commission": "佣金",
+      "createdTime": "創建時間",
+      "empty": "暫無佣金記錄",
+      "orderAmount": "訂單金額",
+      "title": "佣金記錄"
+    },
+    "wallet": {
+      "button": {
+        "transfer": "劃轉",
+        "withdraw": "提現"
+      },
+      "confirm": "確認中的佣金",
+      "description": "當前佣金餘額",
+      "people": "邀請數量",
+      "proportion": "佣金比例",
+      "title": "邀請佣金",
+      "total": "累計佣金",
+      "transfer": {
+        "balance": "劃轉金額",
+        "error": {
+          "empty": "劃轉金額必須大於0"
+        },
+        "max": "最大可劃轉金額",
+        "submit": "立即劃轉",
+        "success": "推廣佣金劃轉至餘額成功",
+        "title": "佣金劃轉"
+      },
+      "withdraw": {
+        "account": "提現賬號",
+        "description": "提現會清空當前佣金餘額，提現金額將在 1-3 個工作日內到賬",
+        "method": "提現方式",
+        "submit": "立即提現",
+        "success": "推廣佣金提現申請成功",
+        "title": "佣金提現"
+      }
+    }
+  },
+  "login": {
+    "description": "覆蓋全球的高速網絡",
+    "email": {
+      "placeholder": "請輸入郵箱",
+      "rules": {
+        "required": "請輸入正確的郵箱"
+      }
+    },
+    "password": {
+      "placeholder": "請輸入密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請輸入密碼"
+      }
+    },
+    "register": "還沒賬號？點擊註冊",
+    "remember": "記住密碼",
+    "reset": "忘記密碼？",
+    "submit": "登入",
+    "success": "登錄成功",
+    "title": "登錄 AirBus"
+  },
+  "node": {
+    "banner": {
+      "button": "聯繫客服",
+      "title": "沒有合適的節點？點擊下方按鈕聯繫客服定制"
+    },
+    "check": "最近檢測",
+    "empty": "暫無節點可用",
+    "rate": "倍率",
+    "ss": "複製節點 SS 鏈接"
+  },
+  "notice": {
+    "clickText": "點擊查看詳情",
+    "coupon": {
+      "btnText": "點擊領券續費",
+      "countText": "活動還剩:",
+      "title": "好久不見\n限時續費享折扣"
+    },
+    "empty": "暫無通知",
+    "iconBox": {
+      "button": "查看全部通知",
+      "more": "加載更多通知",
+      "title": "全部通知"
+    },
+    "newUser": {
+      "btnText": "點擊領券下單",
+      "countText": "活動倒計時:",
+      "title": "新人見面禮\n限時享優惠"
+    },
+    "obj": {
+      "balance": "現金優惠券",
+      "balanceSuffix": "元",
+      "discount": "折扣優惠券",
+      "discountSuffix": "折"
+    },
+    "special": {
+      "btnText": "點擊領券下單",
+      "countText": "活動倒計時:",
+      "title": "節日特惠\n限時享折扣"
+    },
+    "top": "重要通知"
+  },
+  "order": {
+    "button": {
+      "cancel": "取消訂單",
+      "detail": "查看詳情"
+    },
+    "deposit": "儲值",
+    "detail": {
+      "createdTime": "下單時間",
+      "message": {
+        "cancelError": "訂單取消失敗",
+        "cancelSuccess": "訂單取消成功",
+        "copyError": "複製支付地址失敗",
+        "copySuccess": "複製支付地址成功"
+      },
+      "qrcodeTips": "請打開微信/支付寶進行掃碼支付",
+      "payCopy": "複製支付地址",
+      "payTips": "請在掃碼或者新打開的支付頁面完成支付，如果沒有自動跳轉，請手動複製以上支付地址進行打開，支付中的訂單請勿隨意取消，避免重複支付或無法回調支付狀態",
+      "payUrl": "支付地址",
+      "payWaiting": "等待訂單完成支付",
+      "planInfo": "套餐",
+      "title": "訂單詳情",
+      "tradeNo": "訂單號"
+    },
+    "list": {
+      "action": "操作",
+      "amount": "訂單金額",
+      "empty": "暫無訂單記錄",
+      "number": "#",
+      "order": "訂單信息",
+      "status": "訂單狀態"
+    },
+    "message": {
+      "cancelSuccess": "訂單取消成功",
+      "copyPayUrlError": "複製支付地址失敗",
+      "copyPayUrlSuccess": "複製支付地址成功"
+    },
+    "payPending": {
+      "copyPayUrl": "複製支付鏈接",
+      "linkButton": "點擊跳轉支付",
+      "tips": "支付中的訂單請勿隨意取消，避免重複支付或無法回調支付狀態",
+      "title": "你有一筆待支付訂單",
+      "url": "支付地址"
+    },
+    "status": {
+      "cancelled": "已取消",
+      "completed": "已完成",
+      "discounted": "已折抵",
+      "paid": "開通中",
+      "pending": "待支付"
+    },
+    "title": "訂單"
+  },
+  "page": {
+    "auth": "登錄/註冊",
+    "base": {
+      "dashboard": "我的面板",
+      "knowledge": "使用教程",
+      "label": "基礎"
+    },
+    "commercial": {
+      "invite": "我的邀請",
+      "label": "財務",
+      "order": "我的訂單"
+    },
+    "download": "下載",
+    "home": "首頁",
+    "menus": {
+      "all": "全部菜單",
+      "close": "關閉菜單"
+    },
+    "person": {
+      "label": "個人",
+      "profile": "賬號設置",
+      "ticket": "服務工單",
+      "traffic": "流量記錄"
+    },
+    "subscribe": {
+      "label": "訂閱",
+      "node": "節點狀態",
+      "shop": "購買套餐"
+    }
+  },
+  "plan": {
+    "device": "設備數量",
+    "deviceUnit": "台",
+    "name": "套餐名稱",
+    "period": "套餐週期",
+    "periodList": {
+      "half_year_price": "半年",
+      "month_price": "月付",
+      "onetime_price": "一次性",
+      "quarter_price": "季付",
+      "reset_price": "重置包",
+      "three_year_price": "三年",
+      "two_year_price": "兩年",
+      "year_price": "年付"
+    },
+    "periodUnit": {
+      "half_year_price": "半年",
+      "month_price": "月",
+      "onetime_price": "一次性",
+      "quarter_price": "季",
+      "reset_price": "重置包",
+      "three_year_price": "三年",
+      "two_year_price": "兩年",
+      "year_price": "年"
+    },
+    "speed": "帶寬速率",
+    "speedUnLimit": "不限速",
+    "traffic": "套餐流量"
+  },
+  "profile": {
+    "wallet": {
+      "balance": {
+        "account": "賬戶餘額",
+        "invite": "佣金餘額"
+      },
+      "button": "儲值",
+      "description": "包含可用錢包餘額和佣金錢包餘額",
+      "recharge": {
+        "balance": "充值金額",
+        "newLabel": "充值後餘額",
+        "oldLabel": "當前餘額",
+        "submit": "立即充值",
+        "title": "餘額充值"
+      },
+      "title": "我的錢包"
+    }
+  },
+  "register": {
+    "code": {
+      "button": "發送驗證碼",
+      "placeholder": "請輸入郵箱驗證碼"
+    },
+    "description": "從這開始連接世界",
+    "email": {
+      "placeholder": "請輸入您的郵箱",
+      "rules": {
+        "required": "請輸入正確的郵箱"
+      }
+    },
+    "invite": {
+      "placeholder": "請輸入邀請碼",
+      "rules": {
+        "required": "必須輸入邀請碼"
+      }
+    },
+    "login": "已有賬號？點擊登錄",
+    "password": {
+      "placeholder": "請輸入你的登錄密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請輸入密碼"
+      }
+    },
+    "password2": {
+      "placeholder": "請再次輸入登錄密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請再次輸入登錄密碼",
+        "same": "兩次輸入的密碼不一致"
+      }
+    },
+    "submit": "註冊",
+    "success": "註冊成功",
+    "title": "註冊 AirBus"
+  },
+  "reset": {
+    "changePwdByEmail": "修改密碼（郵箱驗證）",
+    "changePwdByOldPwd": "修改密碼（舊密碼驗證）",
+    "code": {
+      "button": "發送驗證碼",
+      "label": "郵箱驗證碼",
+      "placeholder": "請輸入郵箱驗證碼",
+      "success": "驗證碼發送成功至您的郵箱"
+    },
+    "description": "重新設置您的登錄密碼",
+    "email": {
+      "placeholder": "請輸入您的郵箱",
+      "rules": {
+        "required": "請輸入正確的郵箱"
+      }
+    },
+    "login": "返回登錄",
+    "password": {
+      "label": "輸入新密碼",
+      "placeholder": "請輸入你的新登錄密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請輸入密碼"
+      }
+    },
+    "passwordConfirm": {
+      "label": "確認新密碼",
+      "placeholder": "請再次輸入新登錄密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請再次輸入新登錄密碼",
+        "same": "兩次輸入的密碼不一致"
+      }
+    },
+    "passwordOld": {
+      "label": "輸入原密碼",
+      "placeholder": "請輸入您的原有登錄密碼",
+      "rules": {
+        "min": "密碼長度至少為 8 位",
+        "required": "請輸入密碼"
+      }
+    },
+    "submit": "重置密碼",
+    "success": "重置密碼成功",
+    "title": "重置密碼"
+  },
+  "shop": {
+    "period": "付款週期",
+    "confirm": {
+      "description": "請確認您的訂單信息，每種支付方式的費率可能會有所不同",
+      "title": "確認訂單",
+      "override": {
+        "title": "確定更換套餐嗎？",
+        "content": "請注意，變更套餐會導致當前套餐被新套餐覆蓋",
+        "okText": "確定",
+        "cancelText": "取消"
+      }
+    },
+    "custom": {
+      "button": "聯繫客服",
+      "title": "沒有合適的套餐？點擊下方按鈕聯繫客服定制"
+    },
+    "cycle": {
+      "description": "全 IEPL 專線節點，按月/季度/年度訂閱套餐，享受更多優惠",
+      "features": {
+        "more": "查看更多特點",
+        "title": "Features"
+      },
+      "month": "月付",
+      "switchSuffix": "價格",
+      "tag": "🔥 熱售款",
+      "title": "週期訂閱",
+      "year": "年付",
+      "yearByMonth": "年付 {discount} 折,  每月僅需: {monthPrice} 元",
+      "yearByPrice": "年付立省 {discountSubtract} 元"
+    },
+    "empty": "暫無可購買的套餐",
+    "flow": {
+      "button": "立即購買",
+      "description": "全 IEPL 專線節點，按流量計費，無時間限制，按實際使用量付費",
+      "features": {
+        "more": "查看更多特點",
+        "title": "套餐特點"
+      },
+      "tag": "🔥 推薦",
+      "tips": "不限時流量包",
+      "title": "按量付費"
+    },
+    "hasToPayOrder": "您有未支付訂單",
+    "routerButton": "立即購買訂閱"
+  },
+  "subscribe": {
+    "empty": "Free 無訂閱",
+    "expire": {
+      "empty": "永久有效",
+      "expired": "套餐已過期",
+      "expireSoon": "套餐還剩",
+      "expireUnit": "天",
+      "title": "到期時間"
+    },
+    "message": {
+      "linkCopySuccess": "訂閱鏈接複製成功"
+    },
+    "renewal": {
+      "close": "已關閉自動續費",
+      "loading": "正在切換自動續費狀態...",
+      "open": "已開啟自動續費",
+      "title": "自動續費"
+    },
+    "reset": {
+      "description": "{resetDay} 天后重置",
+      "descriptionForToday": "已在今天重置",
+      "empty": "無需重置",
+      "title": "流量重置時間"
+    },
+    "shortcut": {
+      "apps": {
+        "clash": {
+          "comment": "適用於第三方客戶端 Clash for Windows / Mac / Android / Linux",
+          "title": "Clash"
+        },
+        "export": "導入到",
+        "quantumult": {
+          "comment": "適用於第三方客戶端 Quantumult / Quantumult X for iOS / iPhone / iPad / Mac / Android",
+          "title": "Quantumult"
+        },
+        "shadowrocket": {
+          "comment": "適用於第三方客戶端 Shadowrocket for iOS / iPhone / iPad / Mac",
+          "title": "Shadowrocket"
+        },
+        "singbox": {
+          "comment": "適用於第三方客戶端 SingBox for iOS / iPhone / iPad / Mac",
+          "title": "SingBox"
+        },
+        "surfboard": {
+          "comment": "適用於第三方客戶端 Surfboard for Android",
+          "title": "Surfboard"
+        },
+        "surge": {
+          "comment": "適用於第三方客戶端 Surge for Windows / Mac / Android",
+          "title": "Surge"
+        },
+        "title": "快速導入到第三方客戶端"
+      },
+      "link": {
+        "button": "複製訂閱鏈接",
+        "title": "訂閱鏈接"
+      },
+      "qrcode": {
+        "tips": "掃描二維碼導入訂閱到\nShadowrocket / Clash 等客戶端"
+      },
+      "reset": {
+        "button": "重置訂閱",
+        "modal": {
+          "cancel": "取消",
+          "content": "如果您的訂閱地址或信息發生洩露可以執行此操作。重置後您的 UUID 及訂閱將會變更，需要重新導入訂閱。",
+          "ok": "確定",
+          "success": "重置訂閱鏈接成功",
+          "title": "確定要重置訂閱鏈接嗎？"
+        },
+        "success": "重置成功"
+      },
+      "title": "訂閱中心"
+    },
+    "title": "我的訂閱"
+  },
+  "ticket": {
+    "create": "創建工單",
+    "form": {
+      "cancelText": "取消",
+      "level": "工單級別",
+      "message": "工單內容",
+      "okText": "提交",
+      "subject": "工單主題",
+      "tips": {
+        "empty": "請填寫完整的工單信息",
+        "loading": "正在提交工單...",
+        "success": "工單提交成功"
+      },
+      "title": "創建新的工單"
+    },
+    "level": {
+      "0": "普通",
+      "1": "重要",
+      "2": "緊急"
+    },
+    "status": {
+      "0": "待回复",
+      "1": "已回复",
+      "2": "已關閉"
+    },
+    "table": {
+      "action": "操作",
+      "close": "關閉",
+      "createdAt": "創建時間",
+      "empty": "暫無工單記錄",
+      "level": "工單級別",
+      "see": "查看",
+      "status": "工單狀態",
+      "subject": "主題",
+      "updatedAt": "最後回复時間"
+    },
+    "talk": {
+      "admin": "管理員",
+      "me": "我",
+      "placeholder": "輸入內容回復工單",
+      "submit": "發送"
+    },
+    "title": "有任何問題，請創建工單聯繫我們"
+  },
+  "traffic": {
+    "description": {
+      "cycle": "當前訂閱按月計費，{resetDay} 日後重置流量，{expireTime} 過期",
+      "oneTime": "當前訂閱按流量計費，流量永久有效，用完即止"
+    },
+    "remaining": "剩餘可用流量",
+    "statistics": "訂閱流量統計",
+    "table": {
+      "date": "日期",
+      "downloadUsage": "下載總流量",
+      "empty": "暫無流量記錄",
+      "inner": {
+        "downloadUsage": "下載流量",
+        "rate": "扣費倍率",
+        "rateUnit": "倍",
+        "total": "合計流量",
+        "uploadUsage": "上傳流量"
+      },
+      "total": "總流量",
+      "uploadUsage": "上傳總流量"
+    },
+    "total": "總流量",
+    "used": "已用流量"
+  },
+  "welcomeCard": {
+    "button": {
+      "default": "立即購買套餐",
+      "renewal": "立即續費",
+      "reset": "立即重置流量"
+    },
+    "hiname": "Halo, {name}",
+    "title": "從現在開始暢享全球網絡加速\n與世界連接 👋"
+  },
+  "quick": {
+    "title": "專為大陸用戶打造的高速網絡加速服務",
+    "description": "獲取與全球數百內容供應商互聯的網絡加速服務，覆蓋全球視頻網站，全部解鎖，ChatGPT，Telegram、Youtube 等全球 App 無限制隨時隨地自由訪問",
+    "features": {
+      "1": "解除對 YouTube、Google、Facebook、Instagram、Twitter 等網站的封禁",
+      "2": "IOS、macOS、Android、Windows、路由器、Linux 全面支持",
+      "3": "38 組服務器集群覆蓋全球。您可以從世界上任何地方連接",
+      "4": "7x24小時真人專線客服在線答疑"
+    },
+    "buy": {
+      "title": "選擇套餐"
+    },
+    "account": {
+      "title": "創建你的賬號",
+      "tips": "賬號將是你未來在本站的身份憑證，您可以隨時登錄查看您的訂閱狀態、流量使用情況、訂單記錄等信息",
+      "password": {
+        "button": "使用自定義密碼",
+        "tips": "賬號默認採用隨機密碼，支付成功後，賬號和密碼將發送到您的郵箱，如果您想使用自定義密碼，請點擊 「使用自定義密碼」 按鈕"
+      }
+    },
+    "order": {
+      "title": "確認訂單，完成支付",
+      "captcha": {
+        "title": "請完成人機驗證",
+        "placeholder": "請輸入驗證碼",
+        "refresh": "刷新驗證碼",
+        "submit": "提交驗證碼"
+      },
+      "coupon": {
+        "button": "有優惠券?點擊輸入",
+        "title": "驗證優惠券",
+        "emptyPlan": "請選擇一個套餐"
+      },
+      "message": {
+        "emptyEmail": "請輸入您的郵箱",
+        "emptyPassword": "請輸入您的密碼",
+        "emptyPlan": "請選擇一個套餐",
+        "emptyPayment": "請選擇一個支付方式",
+        "emptyCaptcha": "請輸入驗證碼"
+      }
+    }
+  }
+}
