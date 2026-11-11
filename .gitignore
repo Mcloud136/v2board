@@ -27,3 +27,4 @@ workerman.log
 CLAUDE.md
 .claude/
 /.user.ini
+/proxy_cache_dir/
