@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * 自己写别抄，抄NMB抄
+ */
+namespace App\Payments;
+
+use \Curl\Curl;
+
+class MGate {
+    private $config;
+
+    public function __construct($config)
+    {
+        $this->config = $config;
+    }
+
+    public function form()
+    {
+        return [
+            'mgate_url' => [
+                'label' => 'API地址',
+                'description' => '',
+                'type' => 'input',
+            ],
+            'mgate_app_id' => [
+                'label' => 'APPID',
+                'description' => '',
+                'type' => 'input',
+            ],
+            'mgate_app_secret' => [
+                'label' => 'AppSecret',
+                'description' => '',
+                'type' => 'input',
+            ],
+            'mgate_source_currency' => [
+                'label' => '源货币',
+                'description' => '默认CNY',
+                'type' => 'input'
+            ]
+        ];
+    }
+
+    public function pay($order)
+    {
+        $params = [
+            'out_trade_no' => $order['trade_no'],
+            'total_amount' => $order['total_amount'],
+            'notify_url' => $order['notify_url'],
+            'return_url' => $order['return_url']
+        ];
+        if (isset($this->config['mgate_source_currency'])) {
+            $params['source_currency'] = $this->config['mgate_source_currency'];
+        }
+        $params['app_id'] = $this->config['mgate_app_id'];
+        ksort($params);
+        $str = http_build_query($params) . $this->config['mgate_app_secret'];
+        $params['sign'] = md5($str);
+        $curl = new Curl();
+        $curl->setUserAgent('MGate');
+        $curl->setOpt(CURLOPT_SSL_VERIFYPEER, true);
+        $curl->post($this->config['mgate_url'] . '/v1/gateway/fetch', http_build_query($params));
+        $result = $curl->response;
+        if (!$result) {
+            \Log::error('MGate: network error');
+            abort(500, '支付处理失败');
+        }
+        if ($curl->error) {
+            if (isset($result->errors)) {
+                \Log::error('MGate: validation errors', (array)$result->errors);
+            }
+            if (isset($result->message)) {
+                \Log::error('MGate: ' . $result->message);
+            }
+            abort(500, '支付处理失败');
+        }
+        $curl->close();
+        if (!isset($result->data->trade_no)) {
+            \Log::error('MGate: missing trade_no in response');
+            abort(500, '支付处理失败');
+        }
+        return [
+            'type' => 1, // 0:qrcode 1:url
+            'data' => $result->data->pay_url
+        ];
+    }
+
+    public function notify($params)
+    {
+        $sign = $params['sign'];
+        unset($params['sign']);
+        ksort($params);
+        reset($params);
+        $str = http_build_query($params) . $this->config['mgate_app_secret'];
+        $generateSignature = md5($str);
+        if (!hash_equals($generateSignature, $sign)) {
+            return false;
+        }
+        return [
+            'trade_no' => $params['out_trade_no'],
+            'callback_no' => $params['trade_no']
+        ];
+    }
+}
