@@ -40,9 +40,11 @@
 
   function isAdminPage() {
     try {
-      var securePath = (window.settings && window.settings.secure_path) || 'cx136572'
+      var securePath = String((window.settings && window.settings.secure_path) || '').replace(/^\/+|\/+$/g, '')
+      // 后台路径只来自面板设置注入的值；缺失时不能退化成 '/'，否则会把站点首页误判为后台
+      if (!securePath) return false
       var path = location.pathname.replace(/\/+$/, '')
-      return path === '/' + securePath.replace(/^\/+|\/+$/g, '')
+      return path === '/' + securePath
     } catch (e) {
       return false
     }

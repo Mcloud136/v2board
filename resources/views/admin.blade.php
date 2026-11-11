@@ -62,7 +62,7 @@
 
 <body>
 <div id="root"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f3f5f9;color:#6b7280;font-size:14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">正在载入控制台…</div></div>
-<script src="/assets/auth-shim.js?v={{$version}}-ws3"></script>
+<script src="/assets/auth-shim.js?v={{$version}}-ws4"></script>
 <script src="/assets/admin/vendors.async.js?v={{$version}}"></script>
 <script src="/assets/admin/components.async.js?v={{$version}}"></script>
 <script src="/assets/admin/umi.lg1.js?v={{$version}}"></script>
